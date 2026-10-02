@@ -46,7 +46,7 @@
                                                 <div class="carousel-inner">
                                                     @foreach($product->images as $index => $img)
                                                         <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                                            <img src="{{ asset('storage/' . $img) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalAll{{ $product->id }}">
+                                                            <img src="{{ asset('storage/' . $img) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: contain; background-color: #f8f9fa; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalAll{{ $product->id }}">
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -58,7 +58,7 @@
                                                 </button>
                                             </div>
                                         @else
-                                            <img src="{{ asset('storage/' . $product->images[0]) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalAll{{ $product->id }}">
+                                            <img src="{{ asset('storage/' . $product->images[0]) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: contain; background-color: #f8f9fa; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalAll{{ $product->id }}">
                                         @endif
 
                                         <!-- Image Modal -->
@@ -132,7 +132,7 @@
                                                 <div class="carousel-inner">
                                                     @foreach($product->images as $index => $img)
                                                         <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                                            <img src="{{ asset('storage/' . $img) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalCat{{ $product->id }}">
+                                                            <img src="{{ asset('storage/' . $img) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: contain; background-color: #f8f9fa; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalCat{{ $product->id }}">
                                                         </div>
                                                     @endforeach
                                                 </div>
@@ -144,7 +144,7 @@
                                                 </button>
                                             </div>
                                         @else
-                                            <img src="{{ asset('storage/' . $product->images[0]) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalCat{{ $product->id }}">
+                                            <img src="{{ asset('storage/' . $product->images[0]) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: contain; background-color: #f8f9fa; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalCat{{ $product->id }}">
                                         @endif
 
                                         <!-- Image Modal -->
