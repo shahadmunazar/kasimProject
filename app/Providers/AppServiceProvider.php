@@ -21,7 +21,12 @@ class AppServiceProvider extends ServiceProvider
     {
         \Illuminate\Pagination\Paginator::useBootstrapFive();
         \Illuminate\Support\Facades\View::composer('frontend.layouts.navbar', function ($view) {
-            $view->with('navbarCategories', \App\Models\Category::with('productModels')->where('is_active', true)->get());
+            try {
+                $categories = \App\Models\Category::with('productModels')->where('is_active', true)->get();
+            } catch (\Exception $e) {
+                $categories = collect(); // Fallback to empty collection if table doesn't exist yet
+            }
+            $view->with('navbarCategories', $categories);
         });
     }
 }
