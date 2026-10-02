@@ -161,7 +161,7 @@
 
 
 /*** Header ***/
-.carousel .carousel-caption {
+#header-carousel .carousel-caption {
     top: 0;
     left: 0;
     right: 0;
@@ -177,7 +177,7 @@
     z-index: 1;
 }
 
-.carousel .carousel-indicators {
+#header-carousel .carousel-indicators {
     top: 0;
     bottom: 0;
     left: 0;
@@ -188,7 +188,7 @@
     margin-left: 3rem;
 }
 
-.carousel .carousel-indicators [data-bs-target] {
+#header-carousel .carousel-indicators [data-bs-target] {
     width: 70px;
     height: 70px;
     text-indent: 0;
@@ -197,52 +197,52 @@
     overflow: hidden;
 }
 
-.carousel .carousel-indicators [data-bs-target] img {
+#header-carousel .carousel-indicators [data-bs-target] img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
 @media (max-width: 992px) {
-    .carousel .carousel-item {
+    #header-carousel .carousel-item {
         position: relative;
         min-height: 600px;
     }
     
-    .carousel .carousel-item img {
+    #header-carousel .carousel-item img {
         position: absolute;
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    .carousel .carousel-indicators [data-bs-target] {
+    #header-carousel .carousel-indicators [data-bs-target] {
         width: 60px;
         height: 60px;
     }
 
-    .carousel .carousel-caption {
+    #header-carousel .carousel-caption {
         padding-left: 10rem;
     }
 }
 
 @media (max-width: 768px) {
-    .carousel .carousel-item {
+    #header-carousel .carousel-item {
         min-height: 500px;
     }
 
-    .carousel .carousel-indicators [data-bs-target] {
+    #header-carousel .carousel-indicators [data-bs-target] {
         width: 50px;
         height: 50px;
     }
 
-    .carousel .carousel-caption {
+    #header-carousel .carousel-caption {
         padding-left: 9rem;
     }
 }
 
 @media (min-width: 1200px) {
-    .carousel .carousel-item .display-1 {
+    #header-carousel .carousel-item .display-1 {
         font-size: 7rem;
     }
 }
