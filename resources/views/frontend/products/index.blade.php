@@ -38,7 +38,7 @@
                 <div class="row">
                     @foreach($categories as $category)
                         @foreach($category->products as $product)
-                            <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="col-lg-4 col-md-6 col-12 mb-4">
                                 <div class="card h-100 shadow-sm border-0">
                                     @if($product->images && count($product->images) > 0)
                                         @if(count($product->images) > 1)
@@ -102,7 +102,7 @@
                                             <p class="card-text mb-0"><strong>${{ $product->price }}</strong></p>
                                         @endif
                                         <p class="card-text mt-3">{!! $product->description !!}</p>
-                                        <div class="d-flex justify-content-center gap-2 mt-3">
+                                        <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
                                             <a href="{{ route('product.details', $product->slug) }}" class="btn btn-outline-primary">View Details</a>
                                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">Buy Now</button>
                                         </div>
@@ -124,7 +124,7 @@
                             </div>
                         @else
                             @foreach($category->products as $product)
-                                <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="col-lg-4 col-md-6 col-12 mb-4">
                                     <div class="card h-100 shadow-sm border-0">
                                     @if($product->images && count($product->images) > 0)
                                         @if(count($product->images) > 1)
@@ -187,7 +187,7 @@
                                             <p class="card-text mb-0"><strong>${{ $product->price }}</strong></p>
                                         @endif
                                         <p class="card-text mt-3">{!! $product->description !!}</p>
-                                        <div class="d-flex justify-content-center gap-2 mt-3">
+                                        <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
                                             <a href="{{ route('product.details', $product->slug) }}" class="btn btn-outline-primary">View Details</a>
                                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">Buy Now</button>
                                         </div>
