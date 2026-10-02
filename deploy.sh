@@ -10,11 +10,13 @@ echo "Starting deployment..."
 git fetch origin
 git reset --hard origin/main
 
+# Clear caches FIRST to prevent composer post-install scripts from crashing on stale config
+rm -f bootstrap/cache/*.php
+php artisan config:clear || true
+php artisan cache:clear || true
+
 export COMPOSER_HOME=/tmp
 composer install --no-dev --optimize-autoloader
-
-php artisan config:clear
-php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
 
