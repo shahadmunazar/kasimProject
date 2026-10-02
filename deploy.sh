@@ -2,8 +2,8 @@
 
 set -e
 
-# NOTE: Update the "kasimproject.com" to your actual domain name on Hostinger!
-cd /home/u492713652/domains/kasimproject.com/public_html
+# Dynamically change to the directory where this script is located
+cd "$(dirname "$0")"
 
 echo "Starting deployment..."
 
