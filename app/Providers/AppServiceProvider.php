@@ -29,4 +29,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('navbarCategories', $categories);
         });
     }
+
+
+    
 }
