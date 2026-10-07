@@ -30,7 +30,20 @@ class DashboardController extends Controller
         $user->phone = $request->phone;
 
         if ($request->hasFile('avatar')) {
-            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+            $imageFile = $request->file('avatar');
+            $filename = uniqid() . '_' . time() . '.' . $imageFile->getClientOriginalExtension();
+            $path = storage_path('app/public/avatars');
+            
+            if (!file_exists($path)) {
+                mkdir($path, 0775, true);
+            }
+            
+            $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
+            $image = $manager->read($imageFile);
+            $image->cover(300, 300);
+            $image->save($path . '/' . $filename);
+            
+            $user->avatar = 'avatars/' . $filename;
         }
 
         $user->save();

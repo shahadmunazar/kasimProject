@@ -205,7 +205,45 @@
                     </div>
 
                     <a href="{{ route('contact.index') }}" class="nav-item nav-link {{ request()->routeIs('contact.index') ? 'active' : '' }}">Contact</a>
-                        </div>
+                    
+                    <!-- Mobile User Profile & Logout -->
+                    <div class="d-lg-none mt-3 border-top pt-3">
+                        @auth
+                            @php
+                                $nameParts = explode(' ', trim(Auth::user()->name));
+                                $initials = strtoupper(substr($nameParts[0], 0, 1));
+                                if (count($nameParts) > 1) {
+                                    $initials .= strtoupper(substr(end($nameParts), 0, 1));
+                                }
+                            @endphp
+                            <div class="d-flex align-items-center justify-content-between px-3 mb-3">
+                                <a href="{{ route('frontend.dashboard.profile') }}" class="text-decoration-none d-flex align-items-center bg-light rounded p-2 border flex-grow-1 me-2 shadow-sm">
+                                    @if(Auth::user()->avatar)
+                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="rounded-circle" style="width: 36px; height: 36px; object-fit: cover;">
+                                    @else
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 36px; height: 36px; font-size: 14px;">
+                                            {{ $initials }}
+                                        </div>
+                                    @endif
+                                    <div class="ms-3 d-flex flex-column">
+                                        <span class="text-dark fw-bold" style="font-size: 14px;">{{ Auth::user()->name }}</span>
+                                        <small class="text-muted" style="font-size: 11px;">View Profile</small>
+                                    </div>
+                                </a>
+                                <form action="{{ route('frontend.auth.logout') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-danger text-white rounded shadow-sm d-flex align-items-center justify-content-center" style="height: 55px; width: 55px;" title="Logout">
+                                        <i class="fa fa-sign-out-alt fs-5"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        @else
+                            <div class="px-3 mb-3">
+                                <a href="{{ route('frontend.auth.login') }}" class="btn btn-primary w-100 py-3 shadow-sm rounded fw-bold"><i class="fa fa-user me-2"></i>Login / Register</a>
+                            </div>
+                        @endauth
+                    </div>
+                </div>
         
                         <div class="ms-auto d-none d-lg-block">
                             <a href="{{ route('appointment.index') }}" class="btn btn-primary py-2 px-3">Get A Quote</a>
