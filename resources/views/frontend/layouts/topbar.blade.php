@@ -33,6 +33,37 @@
                         <a class="btn btn-sm-square btn-light text-primary" href="https://www.linkedin.com/company/tc-smart-technology/"><i
                                 class="fab fa-linkedin-in"></i></a>
                     </div>
+                    <div class="d-flex align-items-center ms-3">
+                        @auth
+                            @php
+                                $nameParts = explode(' ', trim(Auth::user()->name));
+                                $initials = strtoupper(substr($nameParts[0], 0, 1));
+                                if (count($nameParts) > 1) {
+                                    $initials .= strtoupper(substr(end($nameParts), 0, 1));
+                                }
+                            @endphp
+                            <a href="{{ route('frontend.dashboard.profile') }}" title="My Profile" class="text-decoration-none d-flex align-items-center bg-light rounded p-1 border">
+                                @if(Auth::user()->avatar)
+                                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+                                @else
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; font-size: 14px;">
+                                        {{ $initials }}
+                                    </div>
+                                @endif
+                                <span class="ms-2 me-3 text-dark fw-bold small">{{ $nameParts[0] }}</span>
+                            </a>
+                            <form action="{{ route('frontend.auth.logout') }}" method="POST" class="d-inline ms-2">
+                                @csrf
+                                <button type="submit" class="btn btn-sm-square btn-danger text-white" title="Logout">
+                                    <i class="fa fa-sign-out-alt"></i>
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ route('frontend.auth.login') }}" class="btn btn-sm-square btn-light text-primary" title="Login / Register">
+                                <i class="fa fa-user"></i>
+                            </a>
+                        @endauth
+                    </div>
                 </div>
             </div>
         </div>

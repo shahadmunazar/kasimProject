@@ -35,10 +35,32 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                            $prod = $order->product;
+                            $imageUrl = null;
+                            if ($prod) {
+                                if (!empty($prod->image)) {
+                                    $imageUrl = asset('storage/' . $prod->image);
+                                } elseif (is_array($prod->images) && count($prod->images) > 0) {
+                                    $imageUrl = asset('storage/' . $prod->images[0]);
+                                } else {
+                                    $imageUrl = asset('assets/images/no-image.png');
+                                }
+                            }
+                        @endphp
                         <tr>
-                            <td>{{ $order->product->name ?? 'N/A' }}</td>
-                            <td>{{ $order->quantity }}</td>
-                            <td class="text-end">₹{{ $order->amount }}</td>
+                            <td>
+                                @if($prod)
+                                    <a href="{{ route('product.details', $prod->slug) }}" target="_blank" class="text-decoration-none text-dark d-flex align-items-center">
+                                        <img src="{{ $imageUrl }}" class="rounded me-3 border" style="width: 50px; height: 50px; object-fit:cover;">
+                                        <span class="fw-bold">{{ $prod->name }}</span>
+                                    </a>
+                                @else
+                                    <span class="text-muted">Product Removed</span>
+                                @endif
+                            </td>
+                            <td class="align-middle text-center">{{ $order->quantity }}</td>
+                            <td class="text-end align-middle fw-bold">₹{{ number_format($order->amount, 2) }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -52,16 +74,20 @@
                     @csrf
                     @method('PUT')
                     <div class="row align-items-end">
-                        <div class="col-md-8">
+                        <div class="col-md-6">
                             <label class="form-label">Status</label>
-                            <select name="status" class="form-select">
+                            <select name="status" id="orderStatusSelect" class="form-select">
                                 <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>Pending Verification</option>
                                 <option value="approved" {{ $order->status === 'approved' ? 'selected' : '' }}>Approved (Payment Verified)</option>
                                 <option value="disapproved" {{ $order->status === 'disapproved' ? 'selected' : '' }}>Disapproved (Payment Invalid)</option>
                                 <option value="dispatched" {{ $order->status === 'dispatched' ? 'selected' : '' }}>Dispatched</option>
                             </select>
                         </div>
-                        <div class="col-md-4 mt-3 mt-md-0">
+                        <div class="col-md-6 mt-3 mt-md-0" id="deliveryDateContainer" style="display: {{ in_array($order->status, ['approved', 'dispatched']) ? 'block' : 'none' }}">
+                            <label class="form-label">Expected Delivery Date <span class="text-danger">*</span></label>
+                            <input type="date" name="expected_delivery_date" id="expected_delivery_date" class="form-control" value="{{ $order->expected_delivery_date }}">
+                        </div>
+                        <div class="col-12 mt-3 text-end">
                             <button type="submit" class="btn btn-primary w-100">Update Status</button>
                         </div>
                     </div>
@@ -115,6 +141,16 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
+    $('#orderStatusSelect').on('change', function() {
+        if ($(this).val() === 'approved' || $(this).val() === 'dispatched') {
+            $('#deliveryDateContainer').slideDown();
+            $('#expected_delivery_date').attr('required', true);
+        } else {
+            $('#deliveryDateContainer').slideUp();
+            $('#expected_delivery_date').removeAttr('required');
+        }
+    });
+
     $('#statusForm').on('submit', function(e) {
         e.preventDefault();
         

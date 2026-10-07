@@ -154,6 +154,34 @@ Route::prefix('industrial-standard-machine')->group(function () {
     Route::get('/appointment', [HomeController::class, 'appointment'])->name('appointment.index');
     Route::post('/appointment', [HomeController::class, 'store'])->name('appointment.store');
 
+// Frontend Auth Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\Frontend\AuthController::class, 'showLogin'])->name('frontend.auth.login');
+    Route::get('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'showLogin'])->name('frontend.auth.register-view');
+    Route::post('/login/password', [\App\Http\Controllers\Frontend\AuthController::class, 'loginWithPassword'])->name('frontend.auth.login-password');
+    Route::post('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('frontend.auth.register');
+    Route::post('/login/otp/send', [\App\Http\Controllers\Frontend\AuthController::class, 'sendOtp'])->name('frontend.auth.send-otp');
+    Route::post('/login/verify', [\App\Http\Controllers\Frontend\AuthController::class, 'verifyOtp'])->name('frontend.auth.verify-otp');
+});
+
+Route::post('/logout', [\App\Http\Controllers\Frontend\AuthController::class, 'logout'])->name('frontend.auth.logout');
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Frontend\DashboardController::class, 'profile'])->name('frontend.dashboard.profile');
+    Route::post('/dashboard/profile', [\App\Http\Controllers\Frontend\DashboardController::class, 'updateProfile'])->name('frontend.dashboard.profile.update');
+    Route::get('/dashboard/orders', [\App\Http\Controllers\Frontend\DashboardController::class, 'orders'])->name('frontend.dashboard.orders');
+    Route::get('/dashboard/orders/{id}', [\App\Http\Controllers\Frontend\DashboardController::class, 'showOrder'])->name('frontend.dashboard.order.show');
+    Route::get('/dashboard/addresses', [\App\Http\Controllers\Frontend\DashboardController::class, 'addresses'])->name('frontend.dashboard.addresses');
+    Route::post('/dashboard/addresses', [\App\Http\Controllers\Frontend\DashboardController::class, 'storeAddress'])->name('frontend.dashboard.addresses.store');
+    Route::post('/dashboard/addresses/{id}', [\App\Http\Controllers\Frontend\DashboardController::class, 'updateAddress'])->name('frontend.dashboard.addresses.update');
+    Route::delete('/dashboard/addresses/{id}', [\App\Http\Controllers\Frontend\DashboardController::class, 'deleteAddress'])->name('frontend.dashboard.addresses.delete');
+
+    // Checkout Routes
+    Route::get('/checkout/{product_id}', [\App\Http\Controllers\Frontend\CheckoutController::class, 'index'])->name('frontend.checkout');
+    Route::post('/checkout/{product_id}', [\App\Http\Controllers\Frontend\CheckoutController::class, 'process'])->name('frontend.checkout.process');
+});
+
 // Admin Routes
 use App\Http\Controllers\Admin\AdminController;
 
