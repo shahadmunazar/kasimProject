@@ -18,6 +18,14 @@ class ProductController extends Controller
         return view('admin.products.index', compact('categories', 'models'));
     }
 
+    public function getModelsByCategory($category_id)
+    {
+        $models = ProductModel::where('category_id', $category_id)
+                              ->where('is_active', true)
+                              ->get();
+        return response()->json($models);
+    }
+
     public function store(Request $request) {
         $request->validate([
             'name' => 'required', 
@@ -34,15 +42,22 @@ class ProductController extends Controller
             }
         }
 
+        $slug = Str::slug($request->slug ?: $request->name);
+        $originalSlug = $slug;
+        $count = 1;
+        while (Product::where('slug', $slug)->exists()) {
+            $slug = "{$originalSlug}-" . $count++;
+        }
+
         $product = Product::create([
             'name' => $request->name,
-            'slug' => Str::slug($request->slug ?: $request->name),
+            'slug' => $slug,
             'category_id' => $request->category_id,
-            'product_model_id' => $request->product_model_id ?? null,
+            'product_model_id' => $request->filled('product_model_id') ? $request->product_model_id : null,
             'description' => $request->description,
             'is_active' => $request->is_active == '1' || $request->is_active == 'true',
-            'price' => $request->price,
-            'offer_price' => $request->offer_price,
+            'price' => $request->filled('price') ? $request->price : null,
+            'offer_price' => $request->filled('offer_price') ? $request->offer_price : null,
             'images' => $imagePaths,
             'meta_title' => $request->meta_title,
             'meta_description' => $request->meta_description,
@@ -74,15 +89,22 @@ class ProductController extends Controller
         // Note: For AJAX file uploads, PHP uses POST for form data. But update is usually PUT.
         // We will pass _method=PUT in the form data so Laravel knows it's an update, but the actual request will be POST.
 
+        $slug = Str::slug($request->slug ?: $request->name);
+        $originalSlug = $slug;
+        $count = 1;
+        while (Product::where('slug', $slug)->where('id', '!=', $product->id)->exists()) {
+            $slug = "{$originalSlug}-" . $count++;
+        }
+
         $product->update([
             'name' => $request->name,
-            'slug' => Str::slug($request->slug ?: $request->name),
+            'slug' => $slug,
             'category_id' => $request->category_id,
-            'product_model_id' => $request->product_model_id ?? null,
+            'product_model_id' => $request->filled('product_model_id') ? $request->product_model_id : null,
             'description' => $request->description,
             'is_active' => $request->is_active == '1' || $request->is_active == 'true',
-            'price' => $request->price,
-            'offer_price' => $request->offer_price,
+            'price' => $request->filled('price') ? $request->price : null,
+            'offer_price' => $request->filled('offer_price') ? $request->offer_price : null,
             'images' => $imagePaths,
             'meta_title' => $request->meta_title,
             'meta_description' => $request->meta_description,

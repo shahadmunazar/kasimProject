@@ -82,9 +82,14 @@
                             </div>
                         </div>
 
-                        <button type="button" class="btn btn-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
-                            Buy Now
-                        </button>
+                        <div class="d-flex gap-2 w-100">
+                            <button type="button" class="btn btn-outline-secondary btn-lg w-50" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
+                                Enquiry
+                            </button>
+                            <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-primary btn-lg w-50">
+                                Buy Now
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -195,7 +200,7 @@
       <form action="{{ route('products.inquiry') }}" method="POST">
         @csrf
         <div class="modal-header border-0 pb-0">
-          <h5 class="modal-title fw-bold">Buy Product</h5>
+          <h5 class="modal-title fw-bold">Product Enquiry</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">

@@ -142,8 +142,8 @@
                     tr.append('<td>' + prod.name + '<br><small>' + prod.slug + '</small></td>');
                     tr.append('<td>' + categoryName + '</td>');
                     tr.append('<td>' + modelName + '</td>');
-                    tr.append('<td>$' + (prod.price || '0.00') + '</td>');
-                    tr.append('<td>$' + (prod.offer_price || '0.00') + '</td>');
+                    tr.append('<td>₹' + (prod.price || '0.00') + '</td>');
+                    tr.append('<td>₹' + (prod.offer_price || '0.00') + '</td>');
                     tr.append('<td>' + status + '</td>');
                     tr.append(`
                         <td>
@@ -166,6 +166,7 @@
         $('#formMethod').val('POST');
         if(myEditor) myEditor.setData('');
         $('#productModalLabel').text('Add Product');
+        $('#productModel').empty().append('<option value="">Select Model (Optional)</option>');
         productModal.show();
     }
 
@@ -175,7 +176,7 @@
             $('#productName').val(data.name);
             $('#productSlug').val(data.slug);
             $('#productCategory').val(data.category_id);
-            $('#productModel').val(data.product_model_id);
+            loadModels(data.category_id, data.product_model_id);
             $('#productPrice').val(data.price);
             $('#productOfferPrice').val(data.offer_price);
             $('#productMetaTitle').val(data.meta_title);
@@ -188,6 +189,25 @@
             productModal.show();
         });
     }
+
+    function loadModels(categoryId, selectedModelId = null) {
+        var modelSelect = $('#productModel');
+        modelSelect.empty().append('<option value="">Select Model (Optional)</option>');
+        if(categoryId) {
+            $.get("{{ url('admin/get-models-by-category') }}/" + categoryId, function(data) {
+                $.each(data, function(index, model) {
+                    modelSelect.append('<option value="'+model.id+'">'+model.name+'</option>');
+                });
+                if(selectedModelId) {
+                    modelSelect.val(selectedModelId);
+                }
+            });
+        }
+    }
+
+    $('#productCategory').on('change', function() {
+        loadModels($(this).val());
+    });
 
     $('#productName').on('input', function() {
         if ($('#productId').val() === '') {

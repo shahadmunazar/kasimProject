@@ -170,6 +170,7 @@ Route::prefix('admin')->group(function () {
         Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class)->names('admin.categories');
         Route::resource('product_models', \App\Http\Controllers\Admin\ProductModelController::class)->names('admin.product_models');
         Route::resource('products', \App\Http\Controllers\Admin\ProductController::class)->names('admin.products');
+        Route::get('get-models-by-category/{category_id}', [\App\Http\Controllers\Admin\ProductController::class, 'getModelsByCategory'])->name('admin.get-models-by-category');
         Route::get('product_inquiries', [\App\Http\Controllers\Admin\ProductInquiryController::class, 'index'])->name('admin.product_inquiries.index');
         
         Route::get('product_reviews', [\App\Http\Controllers\Admin\ProductReviewController::class, 'index'])->name('admin.product_reviews.index');
@@ -177,3 +178,16 @@ Route::prefix('admin')->group(function () {
         Route::delete('product_reviews/{id}', [\App\Http\Controllers\Admin\ProductReviewController::class, 'destroy']);
     });
 });
+
+// Payment and Orders Admin Routes
+Route::prefix('admin')->middleware(['auth'])->group(function () {
+    Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
+    Route::post('/settings/qr-code', [App\Http\Controllers\Admin\SettingController::class, 'updateQrCode'])->name('admin.settings.qr_code');
+    
+    Route::resource('orders', App\Http\Controllers\Admin\OrderController::class)->names('admin.orders');
+});
+
+// Checkout Routes
+Route::get('/checkout/{product}', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout/{product}', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/checkout/success/{order}', [App\Http\Controllers\CheckoutController::class, 'success'])->name('checkout.success');

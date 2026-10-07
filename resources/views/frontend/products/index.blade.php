@@ -104,7 +104,8 @@
                                         <p class="card-text mt-3">{!! $product->description !!}</p>
                                         <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
                                             <a href="{{ route('product.details', $product->slug) }}" class="btn btn-outline-primary">View Details</a>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">Buy Now</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">Enquiry</button>
+                                            <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-primary">Buy Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -189,7 +190,8 @@
                                         <p class="card-text mt-3">{!! $product->description !!}</p>
                                         <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
                                             <a href="{{ route('product.details', $product->slug) }}" class="btn btn-outline-primary">View Details</a>
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">Buy Now</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">Enquiry</button>
+                                            <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-primary">Buy Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -211,7 +213,7 @@
       <form action="{{ route('products.inquiry') }}" method="POST">
         @csrf
         <div class="modal-header">
-          <h5 class="modal-title" id="buyModalLabel">Buy Product</h5>
+          <h5 class="modal-title" id="buyModalLabel">Product Enquiry</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
