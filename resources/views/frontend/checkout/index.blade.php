@@ -140,7 +140,7 @@
                                     @else
                                         <div class="alert alert-warning">Admin hasn't uploaded a QR Code yet.</div>
                                     @endif
-                                    <p class="small text-muted mt-2">Scan to pay ₹{{ number_format($product->price, 2) }}</p>
+                                    <p class="small text-muted mt-2">Scan to pay ₹{{ number_format(($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price, 2) }}</p>
                                 </div>
                                 
                                 <div class="row g-3">
@@ -158,7 +158,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label small">Amount Paid <span class="text-danger">*</span></label>
-                                        <input type="number" step="0.01" name="payment_amount" id="payment_amount" class="form-control" value="{{ $product->price }}" readonly>
+                                        <input type="number" step="0.01" name="payment_amount" id="payment_amount" class="form-control" value="{{ ($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price }}" readonly>
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label small">Payment Screenshot (Optional)</label>
@@ -183,7 +183,10 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="d-flex p-3 border-bottom align-items-center">
-                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="rounded me-3" style="width: 70px; height: 70px; object-fit: cover;">
+                        @php
+                            $checkoutImage = ($product->images && count($product->images) > 0) ? $product->images[0] : 'default.png';
+                        @endphp
+                        <img src="{{ asset('storage/' . $checkoutImage) }}" alt="{{ $product->name }}" class="rounded me-3" style="width: 70px; height: 70px; object-fit: cover;">
                         <div>
                             <h6 class="fw-bold mb-1">{{ $product->name }}</h6>
                             <p class="text-muted small mb-0">Qty: 1</p>
@@ -193,7 +196,7 @@
                     <div class="p-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Subtotal</span>
-                            <span class="fw-bold">₹{{ number_format($product->price, 2) }}</span>
+                            <span class="fw-bold">₹{{ number_format(($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price, 2) }}</span>
                         </div>
                         <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
                             <span class="text-muted">Delivery</span>
@@ -201,7 +204,7 @@
                         </div>
                         <div class="d-flex justify-content-between">
                             <h5 class="fw-bold">Total</h5>
-                            <h5 class="fw-bold text-primary">₹{{ number_format($product->price, 2) }}</h5>
+                            <h5 class="fw-bold text-primary">₹{{ number_format(($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price, 2) }}</h5>
                         </div>
                     </div>
                 </div>

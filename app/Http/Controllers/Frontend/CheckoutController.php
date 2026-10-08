@@ -26,6 +26,7 @@ class CheckoutController extends Controller
     public function process(Request $request, $product_id)
     {
         $product = Product::findOrFail($product_id);
+        $activePrice = ($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price;
         $user = Auth::user();
         
         $request->validate([
@@ -81,7 +82,7 @@ class CheckoutController extends Controller
 
             $paymentData['transaction_id'] = $request->transaction_id;
             $paymentData['utr_number'] = $request->utr_number;
-            $paymentData['payment_amount'] = $product->price;
+            $paymentData['payment_amount'] = $activePrice;
             $paymentData['payment_date'] = $request->payment_date;
 
             if ($request->hasFile('payment_screenshot')) {
@@ -103,7 +104,7 @@ class CheckoutController extends Controller
             'pincode' => $address->zip,
             'product_id' => $product->id,
             'quantity' => 1,
-            'amount' => $product->price,
+            'amount' => $activePrice,
             'payment_method' => $request->payment_method,
             'status' => 'pending',
             'is_confirmed' => false,
@@ -119,7 +120,7 @@ class CheckoutController extends Controller
             'order_id' => $order->id,
             'product_id' => $product->id,
             'quantity' => 1,
-            'price' => $product->price,
+            'price' => $activePrice,
         ]);
 
         // Send Emails
