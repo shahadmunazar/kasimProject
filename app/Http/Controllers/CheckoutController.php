@@ -34,7 +34,8 @@ class CheckoutController extends Controller
             'confirmation' => 'accepted'
         ]);
 
-        $amount = $product->offer_price ? $product->offer_price * $request->quantity : $product->price * $request->quantity;
+        $activePrice = ($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price;
+        $amount = $activePrice * $request->quantity;
 
         $order = new Order($request->except(['payment_screenshot', 'confirmation']));
         $order->product_id = $product->id;

@@ -125,7 +125,8 @@
                             @endif
                             <div>
                                 <h6 class="mb-1">{{ $product->name }}</h6>
-                                @if($product->offer_price)
+                                @if($product->offer_price && $product->offer_price > 0)
+                                    <span class="text-muted text-decoration-line-through me-2">₹{{ $product->price }}</span>
                                     <span class="text-danger fw-bold">₹<span id="priceDisplay">{{ $product->offer_price }}</span></span>
                                 @else
                                     <span class="fw-bold">₹<span id="priceDisplay">{{ $product->price }}</span></span>

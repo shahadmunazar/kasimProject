@@ -31,7 +31,7 @@ class ProductController extends Controller
             'name' => 'required', 
             'category_id' => 'required',
             'price' => 'nullable|numeric',
-            'offer_price' => 'nullable|numeric',
+            'offer_price' => 'nullable|numeric|lte:price',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
         
@@ -74,7 +74,7 @@ class ProductController extends Controller
             'name' => 'required', 
             'category_id' => 'required',
             'price' => 'nullable|numeric',
-            'offer_price' => 'nullable|numeric',
+            'offer_price' => 'nullable|numeric|lte:price',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 

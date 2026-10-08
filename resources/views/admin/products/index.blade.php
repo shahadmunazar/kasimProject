@@ -242,7 +242,13 @@
             },
             error: function(xhr) {
                 $('#saveProductBtn').prop('disabled', false).text('Save changes');
-                alert('Error occurred.');
+                let errorMessage = 'Error occurred.';
+                if(xhr.responseJSON && xhr.responseJSON.errors) {
+                    errorMessage = Object.values(xhr.responseJSON.errors).map(err => err.join('\\n')).join('\\n');
+                } else if(xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                alert(errorMessage);
                 console.error(xhr.responseText);
             }
         });
