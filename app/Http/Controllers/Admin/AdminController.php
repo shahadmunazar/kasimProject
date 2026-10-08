@@ -17,8 +17,19 @@ class AdminController extends Controller
         $totalViews = \App\Models\Blog::sum('views');
         $totalContacts = \App\Models\Contact::count();
         $totalVisitors = \App\Models\Visitor::count();
+        
+        $totalProducts = \App\Models\Product::count();
+        $totalCategories = \App\Models\Category::count();
+        $totalModels = \App\Models\ProductModel::count();
+        $totalOrders = \App\Models\Order::count();
+        $totalUsers = \App\Models\User::count();
+        $totalReviews = \App\Models\ProductReview::count();
+        $totalInquiries = \App\Models\ProductInquiry::count();
 
-        return view('admin.dashboard', compact('totalBlogs', 'activeBlogs', 'inactiveBlogs', 'totalViews', 'totalContacts', 'totalVisitors'));
+        return view('admin.dashboard', compact(
+            'totalBlogs', 'activeBlogs', 'inactiveBlogs', 'totalViews', 'totalContacts', 'totalVisitors',
+            'totalProducts', 'totalCategories', 'totalModels', 'totalOrders', 'totalUsers', 'totalReviews', 'totalInquiries'
+        ));
     }
 
     public function login()
