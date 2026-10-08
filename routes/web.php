@@ -28,9 +28,6 @@ Route::get('/sameer-roozy', [HomeController::class, 'sameer_day'])->name('sameer
 Route::get('/purpose-day', [HomeController::class, 'purpose_day'])->name('purpose_day');
 
 // Products
-Route::get('/login', function () {
-    return redirect()->route('admin.login');
-})->name('login');
 
 Route::prefix('products')->group(function () {
     // TC IOT Product
