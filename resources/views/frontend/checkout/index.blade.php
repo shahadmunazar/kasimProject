@@ -140,7 +140,11 @@
                                     @else
                                         <div class="alert alert-warning">Admin hasn't uploaded a QR Code yet.</div>
                                     @endif
-                                    <p class="small text-muted mt-2">Scan to pay ₹{{ number_format(($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price, 2) }}</p>
+                                    @php
+                                        $basePrice = ($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price;
+                                        $totalPrice = $basePrice + $deliveryCharge;
+                                    @endphp
+                                    <p class="small text-muted mt-2">Scan to pay <span class="total-amount-display">₹{{ number_format($totalPrice, 2) }}</span></p>
                                 </div>
                                 
                                 <div class="row g-3">
@@ -196,15 +200,21 @@
                     <div class="p-3">
                         <div class="d-flex justify-content-between mb-2">
                             <span class="text-muted">Subtotal</span>
-                            <span class="fw-bold">₹{{ number_format(($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price, 2) }}</span>
+                            <span class="fw-bold">₹{{ number_format($basePrice, 2) }}</span>
                         </div>
                         <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
                             <span class="text-muted">Delivery</span>
-                            <span class="text-success fw-bold">Free</span>
+                            <span class="fw-bold delivery-charge-display">
+                            @if($deliveryCharge > 0)
+                                ₹{{ number_format($deliveryCharge, 2) }}
+                            @else
+                                Free
+                            @endif
+                            </span>
                         </div>
                         <div class="d-flex justify-content-between">
                             <h5 class="fw-bold">Total</h5>
-                            <h5 class="fw-bold text-primary">₹{{ number_format(($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price, 2) }}</h5>
+                            <h5 class="fw-bold text-primary total-amount-display">₹{{ number_format($totalPrice, 2) }}</h5>
                         </div>
                     </div>
                 </div>
@@ -275,6 +285,71 @@
             onlineForm.classList.add('d-none');
             reqFields.forEach(f => document.getElementById(f).removeAttribute('required'));
         }
+    }
+
+    // Delivery charge calculation
+    function calculateDelivery() {
+        const addressId = document.querySelector('input[name="address_id"]:checked');
+        const address = document.querySelector('input[name="address_line_1"]')?.value || '';
+        const city = document.querySelector('input[name="city"]')?.value || '';
+        const state = document.querySelector('input[name="state"]')?.value || '';
+        const pincode = document.querySelector('input[name="zip"]')?.value || '';
+        
+        let payload = {
+            product_id: {{ $product->id }},
+            quantity: 1
+        };
+
+        if (addressId && addressId.value !== 'new') {
+            payload.address_id = addressId.value;
+        } else {
+            if (!address || !city || !state || !pincode) return;
+            payload.address = address;
+            payload.city = city;
+            payload.state = state;
+            payload.pincode = pincode;
+        }
+
+        fetch('{{ route('checkout.calculate_delivery') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const charge = parseFloat(data.charge);
+                const subtotal = {{ ($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price }};
+                const total = subtotal + charge;
+
+                // Update UI
+                const deliveryEls = document.querySelectorAll('.delivery-charge-display');
+                deliveryEls.forEach(el => el.textContent = charge > 0 ? '₹' + charge.toFixed(2) : 'Free');
+                
+                const totalEls = document.querySelectorAll('.total-amount-display');
+                totalEls.forEach(el => el.textContent = '₹' + total.toFixed(2));
+            } else {
+                alert(data.error || 'Delivery is not available to this location.');
+            }
+        })
+        .catch(error => console.error('Error calculating delivery:', error));
+    }
+
+    // Bind events
+    document.querySelectorAll('input[name="address_id"]').forEach(el => el.addEventListener('change', calculateDelivery));
+    const newAddressFields = ['address_line_1', 'city', 'state', 'zip'];
+    newAddressFields.forEach(field => {
+        const el = document.querySelector(`input[name="${field}"]`);
+        if (el) el.addEventListener('change', calculateDelivery);
+        if (el) el.addEventListener('keyup', calculateDelivery); // Also trigger on typing
+    });
+
+    // Initial calculation if address is pre-selected
+    if (document.querySelector('input[name="address_id"]:checked')) {
+        calculateDelivery();
     }
 </script>
 @endpush

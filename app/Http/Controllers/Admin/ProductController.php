@@ -32,6 +32,7 @@ class ProductController extends Controller
             'category_id' => 'required',
             'price' => 'nullable|numeric',
             'offer_price' => 'nullable|numeric|lte:price',
+            'delivery_charge' => 'nullable|numeric|min:0',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
         
@@ -58,6 +59,7 @@ class ProductController extends Controller
             'is_active' => $request->is_active == '1' || $request->is_active == 'true',
             'price' => $request->filled('price') ? $request->price : null,
             'offer_price' => $request->filled('offer_price') ? $request->offer_price : null,
+            'delivery_charge' => $request->filled('delivery_charge') ? $request->delivery_charge : 0,
             'images' => $imagePaths,
             'meta_title' => $request->meta_title,
             'meta_description' => $request->meta_description,
@@ -75,6 +77,7 @@ class ProductController extends Controller
             'category_id' => 'required',
             'price' => 'nullable|numeric',
             'offer_price' => 'nullable|numeric|lte:price',
+            'delivery_charge' => 'nullable|numeric|min:0',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
@@ -105,6 +108,7 @@ class ProductController extends Controller
             'is_active' => $request->is_active == '1' || $request->is_active == 'true',
             'price' => $request->filled('price') ? $request->price : null,
             'offer_price' => $request->filled('offer_price') ? $request->offer_price : null,
+            'delivery_charge' => $request->filled('delivery_charge') ? $request->delivery_charge : 0,
             'images' => $imagePaths,
             'meta_title' => $request->meta_title,
             'meta_description' => $request->meta_description,

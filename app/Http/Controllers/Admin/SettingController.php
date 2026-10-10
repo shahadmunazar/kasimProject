@@ -12,7 +12,14 @@ class SettingController extends Controller
     public function index()
     {
         $qrCode = Setting::where('key', 'payment_qr_code')->first();
-        return view('admin.settings.index', compact('qrCode'));
+        
+        $settings = Setting::whereIn('key', [
+            'delivery_charge_enabled', 'delivery_distance_enabled', 'free_delivery_enabled',
+            'delivery_base_fee', 'delivery_per_km_fee', 'delivery_min_fee', 'delivery_max_fee',
+            'free_delivery_min_order', 'delivery_max_distance', 'warehouse_address'
+        ])->pluck('value', 'key');
+        
+        return view('admin.settings.index', compact('qrCode', 'settings'));
     }
 
     public function updateQrCode(Request $request)
@@ -40,5 +47,28 @@ class SettingController extends Controller
         }
 
         return redirect()->back()->with('success', 'QR Code updated successfully!');
+    }
+
+    public function updateDeliveryCharge(Request $request)
+    {
+        $settings = [
+            'delivery_charge_enabled', 'delivery_distance_enabled', 'free_delivery_enabled',
+            'delivery_base_fee', 'delivery_per_km_fee', 'delivery_min_fee', 'delivery_max_fee',
+            'free_delivery_min_order', 'delivery_max_distance', 'warehouse_address'
+        ];
+
+        foreach ($settings as $key) {
+            if ($request->has($key)) {
+                $value = $request->input($key);
+                Setting::updateOrCreate(['key' => $key], ['value' => is_array($value) ? implode(',', $value) : $value]);
+            } else {
+                // For checkboxes
+                if (in_array($key, ['delivery_charge_enabled', 'delivery_distance_enabled', 'free_delivery_enabled'])) {
+                    Setting::updateOrCreate(['key' => $key], ['value' => '0']);
+                }
+            }
+        }
+
+        return redirect()->back()->with('success', 'Delivery settings updated successfully!');
     }
 }

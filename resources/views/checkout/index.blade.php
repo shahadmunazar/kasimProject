@@ -142,6 +142,10 @@
                                 <button class="btn btn-outline-secondary btn-sm" type="button" id="btnPlus">+</button>
                             </div>
                         </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Delivery Charge</span>
+                            <span class="text-muted">₹<span id="deliveryChargeDisplay">{{ $deliveryCharge }}</span></span>
+                        </div>
                         <hr>
                         <div class="d-flex justify-content-between">
                             <h5 class="fw-bold">Total Amount</h5>
@@ -202,12 +206,13 @@
         document.querySelector('form').appendChild(formQtyInput);
 
         const price = parseFloat(document.getElementById('priceDisplay').textContent);
+        let deliveryCharge = parseFloat(document.getElementById('deliveryChargeDisplay').textContent);
         const totalAmountEls = [document.getElementById('totalAmount'), document.getElementById('qrTotalAmount')];
         const modalTotalEls = document.querySelectorAll('.modalTotalAmount');
 
         function updateTotal() {
             const qty = parseInt(qtyInput.value);
-            const total = (price * qty).toFixed(2);
+            const total = ((price * qty) + deliveryCharge).toFixed(2);
             totalAmountEls.forEach(el => el.textContent = total);
             modalTotalEls.forEach(el => el.textContent = total);
             formQtyInput.value = qty;
@@ -217,13 +222,59 @@
             if(qtyInput.value > 1) {
                 qtyInput.value = parseInt(qtyInput.value) - 1;
                 updateTotal();
+                calculateDelivery();
             }
         });
 
         document.getElementById('btnPlus').addEventListener('click', function() {
             qtyInput.value = parseInt(qtyInput.value) + 1;
             updateTotal();
+            calculateDelivery();
         });
+
+        // Add AJAX calculation
+        const formFields = ['address', 'city', 'state', 'pincode'];
+        formFields.forEach(field => {
+            const el = document.querySelector(`[name="${field}"]`);
+            if (el) {
+                el.addEventListener('change', calculateDelivery);
+                el.addEventListener('keyup', calculateDelivery);
+            }
+        });
+
+        function calculateDelivery() {
+            const address = document.querySelector('[name="address"]').value;
+            const city = document.querySelector('[name="city"]').value;
+            const state = document.querySelector('[name="state"]').value;
+            const pincode = document.querySelector('[name="pincode"]').value;
+            const qty = parseInt(qtyInput.value);
+
+            if (!address || !city || !state || !pincode) return;
+
+            fetch('{{ route('checkout.calculate_delivery') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    address, city, state, pincode, qty,
+                    product_id: {{ $product->id }},
+                    quantity: qty
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    deliveryCharge = parseFloat(data.charge);
+                    document.getElementById('deliveryChargeDisplay').textContent = deliveryCharge;
+                    updateTotal();
+                } else {
+                    alert(data.error || 'Delivery not available to this location');
+                }
+            })
+            .catch(error => console.error('Error calculating delivery:', error));
+        }
 
         updateTotal();
     });

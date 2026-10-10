@@ -76,6 +76,10 @@
                     <label>Offer Price</label>
                     <input type="number" step="0.01" name="offer_price" id="productOfferPrice" class="form-control">
                 </div>
+                <div class="col-md-6 mb-3">
+                    <label>Delivery Charge</label>
+                    <input type="number" step="0.01" name="delivery_charge" id="productDeliveryCharge" class="form-control" value="0">
+                </div>
                 <div class="col-md-12 mb-3">
                     <label>Images</label>
                     <input type="file" name="images[]" id="productImages" class="form-control" multiple accept="image/*">
@@ -161,6 +165,9 @@
         $('#productForm')[0].reset();
         $('#productId').val('');
         $('#productSlug').val('');
+        $('#productPrice').val('');
+        $('#productOfferPrice').val('');
+        $('#productDeliveryCharge').val('0');
         $('#productMetaTitle').val('');
         $('#productMetaDesc').val('');
         $('#formMethod').val('POST');
@@ -179,6 +186,7 @@
             loadModels(data.category_id, data.product_model_id);
             $('#productPrice').val(data.price);
             $('#productOfferPrice').val(data.offer_price);
+            $('#productDeliveryCharge').val(data.delivery_charge);
             $('#productMetaTitle').val(data.meta_title);
             $('#productMetaDesc').val(data.meta_description);
             $('#productActive').prop('checked', data.is_active);

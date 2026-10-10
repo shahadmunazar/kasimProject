@@ -9,6 +9,8 @@ use App\Models\UserAddress;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
+use App\Services\Delivery\GoogleRoutesService;
+use App\Services\Delivery\DeliveryPricingService;
 
 class CheckoutController extends Controller
 {
@@ -20,7 +22,9 @@ class CheckoutController extends Controller
         $qrCodeSetting = \App\Models\Setting::where('key', 'payment_qr_code')->first();
         $qrCodePath = $qrCodeSetting ? $qrCodeSetting->value : null;
         
-        return view('frontend.checkout.index', compact('product', 'user', 'addresses', 'qrCodePath'));
+        $deliveryCharge = 0; // Will be calculated dynamically in real app via AJAX, for now default to 0 on load.
+        
+        return view('frontend.checkout.index', compact('product', 'user', 'addresses', 'qrCodePath', 'deliveryCharge'));
     }
 
     public function process(Request $request, $product_id)
@@ -73,6 +77,22 @@ class CheckoutController extends Controller
             'payment_screenshot' => null,
         ];
 
+        // Calculate actual delivery charge
+        $destination = $address->address_line_1 . ' ' . $address->address_line_2 . ' ' . $address->city . ' ' . $address->state . ' ' . $address->zip;
+        
+        $routesService = new GoogleRoutesService();
+        $pricingService = new DeliveryPricingService();
+        
+        $distanceKm = $routesService->getDistanceInKm($destination);
+        $pricingResult = $pricingService->calculate($distanceKm, $activePrice);
+        
+        if (!$pricingResult['success']) {
+            return redirect()->back()->withErrors(['delivery' => $pricingResult['error']])->withInput();
+        }
+
+        $deliveryCharge = $pricingResult['charge'];
+        $totalAmount = $activePrice + $deliveryCharge;
+
         if ($request->payment_method === 'QR') {
             $request->validate([
                 'transaction_id' => 'required|string|max:255',
@@ -82,7 +102,7 @@ class CheckoutController extends Controller
 
             $paymentData['transaction_id'] = $request->transaction_id;
             $paymentData['utr_number'] = $request->utr_number;
-            $paymentData['payment_amount'] = $activePrice;
+            $paymentData['payment_amount'] = $totalAmount;
             $paymentData['payment_date'] = $request->payment_date;
 
             if ($request->hasFile('payment_screenshot')) {
@@ -104,7 +124,12 @@ class CheckoutController extends Controller
             'pincode' => $address->zip,
             'product_id' => $product->id,
             'quantity' => 1,
-            'amount' => $activePrice,
+            'amount' => $totalAmount,
+            'delivery_distance_km' => $pricingResult['distance_km'],
+            'delivery_charge' => $pricingResult['charge'],
+            'base_delivery_charge' => $pricingResult['base_charge'],
+            'per_km_rate' => $pricingResult['per_km_rate'],
+            'free_delivery_reason' => $pricingResult['free_reason'],
             'payment_method' => $request->payment_method,
             'status' => 'pending',
             'is_confirmed' => false,

@@ -162,7 +162,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', [\App\Http\Controllers\Frontend\AuthController::class, 'logout'])->name('frontend.auth.logout');
-
+Route::post('/checkout/calculate-delivery', [App\Http\Controllers\CheckoutController::class, 'calculateDelivery'])->name('checkout.calculate_delivery');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Frontend\DashboardController::class, 'profile'])->name('frontend.dashboard.profile');
@@ -208,6 +208,7 @@ Route::prefix('admin')->group(function () {
 Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
     Route::post('/settings/qr-code', [App\Http\Controllers\Admin\SettingController::class, 'updateQrCode'])->name('admin.settings.qr_code');
+    Route::post('/settings/delivery-charge', [App\Http\Controllers\Admin\SettingController::class, 'updateDeliveryCharge'])->name('admin.settings.delivery_charge');
     
     Route::resource('orders', App\Http\Controllers\Admin\OrderController::class)->names('admin.orders');
 });

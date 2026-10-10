@@ -46,6 +46,72 @@
         </div>
     </div>
 </div>
+
+<div class="card shadow-sm border-0 mt-4">
+    <div class="card-body">
+        <h4 class="card-title fw-bold mb-4">Delivery Settings</h4>
+        
+        <form action="{{ route('admin.settings.delivery_charge') }}" method="POST">
+            @csrf
+            
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="delivery_charge_enabled" id="delivery_charge_enabled" value="1" {{ ($settings['delivery_charge_enabled'] ?? '0') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label fw-semibold" for="delivery_charge_enabled">Enable Delivery Charges</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="delivery_distance_enabled" id="delivery_distance_enabled" value="1" {{ ($settings['delivery_distance_enabled'] ?? '0') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label fw-semibold" for="delivery_distance_enabled">Enable Road-Distance Pricing</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="free_delivery_enabled" id="free_delivery_enabled" value="1" {{ ($settings['free_delivery_enabled'] ?? '0') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label fw-semibold" for="free_delivery_enabled">Enable Free Delivery rules</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label class="form-label fw-semibold">Warehouse Full Address (include PIN Code) <span class="text-danger">*</span></label>
+                    <input type="text" name="warehouse_address" class="form-control" value="{{ $settings['warehouse_address'] ?? '110025, India' }}" required>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-semibold">Base Delivery Fee (₹)</label>
+                    <input type="number" name="delivery_base_fee" class="form-control" min="0" step="0.01" value="{{ $settings['delivery_base_fee'] ?? '30' }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-semibold">Price Per Km (₹)</label>
+                    <input type="number" name="delivery_per_km_fee" class="form-control" min="0" step="0.01" value="{{ $settings['delivery_per_km_fee'] ?? '8' }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-semibold">Max Serviceable Distance (km)</label>
+                    <input type="number" name="delivery_max_distance" class="form-control" min="1" step="1" value="{{ $settings['delivery_max_distance'] ?? '100' }}">
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-semibold">Minimum Delivery Fee (₹)</label>
+                    <input type="number" name="delivery_min_fee" class="form-control" min="0" step="0.01" value="{{ $settings['delivery_min_fee'] ?? '30' }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-semibold">Maximum Delivery Fee (₹)</label>
+                    <input type="number" name="delivery_max_fee" class="form-control" min="0" step="0.01" value="{{ $settings['delivery_max_fee'] ?? '300' }}">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label fw-semibold">Free Delivery Min Order (₹)</label>
+                    <input type="number" name="free_delivery_min_order" class="form-control" min="0" step="0.01" value="{{ $settings['free_delivery_min_order'] ?? '1000' }}">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary mt-3">Save Delivery Settings</button>
+        </form>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
