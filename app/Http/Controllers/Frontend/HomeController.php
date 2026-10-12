@@ -157,27 +157,92 @@ public function testingFrameworks() {
         return view('frontend.home.index');
     }
 
-    public function products_listing()
+    public function products_listing(Request $request)
     {
-        $allCategories = \App\Models\Category::with(['productModels' => function($q) { 
-            $q->where('is_active', true); 
-        }])->where('is_active', true)->get();
-
-        $allModels = \App\Models\ProductModel::with('category')->where('is_active', true)->get();
-
-        $allProducts = \App\Models\Product::with(['category', 'productModel'])
+        $allCategories = \App\Models\Category::select(['id', 'name', 'slug'])
+            ->with(['productModels' => function($q) { 
+                $q->select(['id', 'category_id', 'name', 'slug'])->where('is_active', true); 
+            }])
+            ->withCount(['products' => function($q) {
+                $q->where('is_active', true);
+            }])
             ->where('is_active', true)
-            ->latest()
             ->get();
 
-        $selectedCategorySlugs = request()->has('categories') 
-            ? explode(',', request()->query('categories')) 
-            : [];
+        $allModels = \App\Models\ProductModel::select(['id', 'category_id', 'name', 'slug'])
+            ->with('category:id,name,slug')
+            ->withCount(['products' => function($q) {
+                $q->where('is_active', true);
+            }])
+            ->where('is_active', true)
+            ->get();
 
-        $selectedModelSlugs = request()->has('models') 
-            ? explode(',', request()->query('models')) 
-            : [];
+        $query = \App\Models\Product::select([
+                'id', 'category_id', 'product_model_id', 'name', 'slug', 'images', 'image', 'price', 'offer_price', 'description', 'is_active'
+            ])
+            ->with([
+                'category:id,name,slug',
+                'productModel:id,category_id,name,slug'
+            ])
+            ->where('is_active', true);
 
+        // Filter by categories if provided
+        $selectedCategorySlugs = $request->has('categories') && $request->filled('categories')
+            ? array_filter(explode(',', $request->query('categories')))
+            : [];
+        if (!empty($selectedCategorySlugs)) {
+            $query->whereHas('category', function($q) use ($selectedCategorySlugs) {
+                $q->whereIn('slug', $selectedCategorySlugs);
+            });
+        }
+
+        // Filter by models if provided
+        $selectedModelSlugs = $request->has('models') && $request->filled('models')
+            ? array_filter(explode(',', $request->query('models')))
+            : [];
+        if (!empty($selectedModelSlugs)) {
+            $query->whereHas('productModel', function($q) use ($selectedModelSlugs) {
+                $q->whereIn('slug', $selectedModelSlugs);
+            });
+        }
+
+        // Search by keyword if provided
+        if ($request->filled('search')) {
+            $search = $request->query('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        // Sorting
+        $sort = $request->query('sort', 'default');
+        if ($sort === 'price_asc') {
+            $query->orderBy('price', 'asc');
+        } elseif ($sort === 'price_desc') {
+            $query->orderBy('price', 'desc');
+        } elseif ($sort === 'name_asc') {
+            $query->orderBy('name', 'asc');
+        } else {
+            $query->latest();
+        }
+
+        $perPage = 20;
+        $paginatedProducts = $query->paginate($perPage);
+
+        // If AJAX request for "Load More" / infinite scroll / filters, return JSON with rendered HTML and pagination metadata
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = '';
+            foreach ($paginatedProducts as $product) {
+                $html .= view('frontend.products.partials.card', ['product' => $product, 'prefix' => 'p_' . $product->id . '_'])->render();
+            }
+            return response()->json([
+                'html' => $html,
+                'current_page' => $paginatedProducts->currentPage(),
+                'has_more' => $paginatedProducts->hasMorePages(),
+                'total' => $paginatedProducts->total(),
+                'count' => $paginatedProducts->count()
+            ]);
+        }
+
+        $allProducts = $paginatedProducts;
         $currentCategory = null;
         $category = null;
         $categories = $allCategories;
@@ -194,29 +259,75 @@ public function testingFrameworks() {
         ));
     }
 
-    public function products_by_category($category_slug)
+    public function products_by_category(Request $request, $category_slug)
     {
         $currentCategory = \App\Models\Category::where('slug', $category_slug)->where('is_active', true)->firstOrFail();
 
         $allCategories = \App\Models\Category::with(['productModels' => function($q) { 
             $q->where('is_active', true); 
+        }])->withCount(['products' => function($q) {
+            $q->where('is_active', true);
         }])->where('is_active', true)->get();
 
-        $allModels = \App\Models\ProductModel::with('category')->where('is_active', true)->get();
+        $allModels = \App\Models\ProductModel::with('category')->withCount(['products' => function($q) {
+            $q->where('is_active', true);
+        }])->where('is_active', true)->get();
 
-        $allProducts = \App\Models\Product::with(['category', 'productModel'])
-            ->where('is_active', true)
-            ->latest()
-            ->get();
+        $query = \App\Models\Product::with(['category', 'productModel'])
+            ->where('is_active', true);
 
-        $selectedCategorySlugs = request()->has('categories') 
-            ? explode(',', request()->query('categories')) 
+        $selectedCategorySlugs = $request->has('categories') && $request->filled('categories')
+            ? array_filter(explode(',', $request->query('categories')))
             : [$category_slug];
+        if (!empty($selectedCategorySlugs)) {
+            $query->whereHas('category', function($q) use ($selectedCategorySlugs) {
+                $q->whereIn('slug', $selectedCategorySlugs);
+            });
+        }
 
-        $selectedModelSlugs = request()->has('models') 
-            ? explode(',', request()->query('models')) 
+        $selectedModelSlugs = $request->has('models') && $request->filled('models')
+            ? array_filter(explode(',', $request->query('models')))
             : [];
+        if (!empty($selectedModelSlugs)) {
+            $query->whereHas('productModel', function($q) use ($selectedModelSlugs) {
+                $q->whereIn('slug', $selectedModelSlugs);
+            });
+        }
 
+        if ($request->filled('search')) {
+            $search = $request->query('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $sort = $request->query('sort', 'default');
+        if ($sort === 'price_asc') {
+            $query->orderBy('price', 'asc');
+        } elseif ($sort === 'price_desc') {
+            $query->orderBy('price', 'desc');
+        } elseif ($sort === 'name_asc') {
+            $query->orderBy('name', 'asc');
+        } else {
+            $query->latest();
+        }
+
+        $perPage = 20;
+        $paginatedProducts = $query->paginate($perPage);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = '';
+            foreach ($paginatedProducts as $product) {
+                $html .= view('frontend.products.partials.card', ['product' => $product, 'prefix' => 'p_' . $product->id . '_'])->render();
+            }
+            return response()->json([
+                'html' => $html,
+                'current_page' => $paginatedProducts->currentPage(),
+                'has_more' => $paginatedProducts->hasMorePages(),
+                'total' => $paginatedProducts->total(),
+                'count' => $paginatedProducts->count()
+            ]);
+        }
+
+        $allProducts = $paginatedProducts;
         $category = $currentCategory;
         $categories = $allCategories;
 
@@ -232,29 +343,75 @@ public function testingFrameworks() {
         ));
     }
 
-    public function products_by_model($category_slug, $model_slug)
+    public function products_by_model(Request $request, $category_slug, $model_slug)
     {
         $currentCategory = \App\Models\Category::where('slug', $category_slug)->where('is_active', true)->firstOrFail();
 
         $allCategories = \App\Models\Category::with(['productModels' => function($q) { 
             $q->where('is_active', true); 
+        }])->withCount(['products' => function($q) {
+            $q->where('is_active', true);
         }])->where('is_active', true)->get();
 
-        $allModels = \App\Models\ProductModel::with('category')->where('is_active', true)->get();
+        $allModels = \App\Models\ProductModel::with('category')->withCount(['products' => function($q) {
+            $q->where('is_active', true);
+        }])->where('is_active', true)->get();
 
-        $allProducts = \App\Models\Product::with(['category', 'productModel'])
-            ->where('is_active', true)
-            ->latest()
-            ->get();
+        $query = \App\Models\Product::with(['category', 'productModel'])
+            ->where('is_active', true);
 
-        $selectedCategorySlugs = request()->has('categories') 
-            ? explode(',', request()->query('categories')) 
+        $selectedCategorySlugs = $request->has('categories') && $request->filled('categories')
+            ? array_filter(explode(',', $request->query('categories')))
             : [$category_slug];
+        if (!empty($selectedCategorySlugs)) {
+            $query->whereHas('category', function($q) use ($selectedCategorySlugs) {
+                $q->whereIn('slug', $selectedCategorySlugs);
+            });
+        }
 
-        $selectedModelSlugs = request()->has('models') 
-            ? explode(',', request()->query('models')) 
+        $selectedModelSlugs = $request->has('models') && $request->filled('models')
+            ? array_filter(explode(',', $request->query('models')))
             : [$model_slug];
+        if (!empty($selectedModelSlugs)) {
+            $query->whereHas('productModel', function($q) use ($selectedModelSlugs) {
+                $q->whereIn('slug', $selectedModelSlugs);
+            });
+        }
 
+        if ($request->filled('search')) {
+            $search = $request->query('search');
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $sort = $request->query('sort', 'default');
+        if ($sort === 'price_asc') {
+            $query->orderBy('price', 'asc');
+        } elseif ($sort === 'price_desc') {
+            $query->orderBy('price', 'desc');
+        } elseif ($sort === 'name_asc') {
+            $query->orderBy('name', 'asc');
+        } else {
+            $query->latest();
+        }
+
+        $perPage = 20;
+        $paginatedProducts = $query->paginate($perPage);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = '';
+            foreach ($paginatedProducts as $product) {
+                $html .= view('frontend.products.partials.card', ['product' => $product, 'prefix' => 'p_' . $product->id . '_'])->render();
+            }
+            return response()->json([
+                'html' => $html,
+                'current_page' => $paginatedProducts->currentPage(),
+                'has_more' => $paginatedProducts->hasMorePages(),
+                'total' => $paginatedProducts->total(),
+                'count' => $paginatedProducts->count()
+            ]);
+        }
+
+        $allProducts = $paginatedProducts;
         $category = $currentCategory;
         $categories = $allCategories;
 

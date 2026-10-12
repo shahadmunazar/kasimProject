@@ -56,6 +56,56 @@
         box-shadow: 0 10px 24px rgba(0,0,0,0.08) !important;
     }
 
+    /* Fast Loading Shimmer Skeleton Styles */
+    .skeleton-box {
+        background: #f1f3f5;
+        background: linear-gradient(90deg, #f1f3f5 25%, #e2e8f0 37%, #f1f3f5 63%);
+        background-size: 400% 100%;
+        animation: skeleton-shimmer 1.4s ease infinite;
+        border-radius: 6px;
+    }
+    @keyframes skeleton-shimmer {
+        0% { background-position: 100% 50%; }
+        100% { background-position: 0 50%; }
+    }
+    .skeleton-card {
+        border-radius: 0.85rem;
+        background: #ffffff;
+        min-height: 460px;
+    }
+    .skeleton-card .skeleton-img {
+        height: 200px;
+        width: 100%;
+        border-radius: 0.5rem;
+    }
+    .skeleton-card .skeleton-badge {
+        height: 22px;
+        width: 70px;
+        border-radius: 50rem;
+    }
+    .skeleton-card .skeleton-title {
+        height: 22px;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .skeleton-card .skeleton-price {
+        height: 24px;
+        width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .skeleton-card .skeleton-desc {
+        height: 60px;
+        width: 100%;
+        border-radius: 0.35rem;
+    }
+    .skeleton-card .skeleton-buttons {
+        height: 32px;
+        width: 100%;
+        border-radius: 0.35rem;
+    }
+
     /* Responsive Mobile Filter Drawer */
     @media (max-width: 991.98px) {
         .filter-drawer-wrapper {
@@ -272,7 +322,7 @@
                                     <div class="filter-options-list" style="max-height: 220px; overflow-y: auto;">
                                         @foreach($allCategories as $cat)
                                             @php
-                                                $catProductCount = $allProducts->where('category_id', $cat->id)->count();
+                                                $catProductCount = $cat->products_count ?? 0;
                                                 $isCatChecked = in_array($cat->slug, $selectedCategorySlugs ?? []);
                                             @endphp
                                             <div class="form-check mb-2">
@@ -304,7 +354,7 @@
                                     <div class="filter-options-list" style="max-height: 240px; overflow-y: auto;">
                                         @foreach($allModels as $model)
                                             @php
-                                                $modelProductCount = $allProducts->where('product_model_id', $model->id)->count();
+                                                $modelProductCount = $model->products_count ?? 0;
                                                 $isModelChecked = in_array($model->slug, $selectedModelSlugs ?? []);
                                             @endphp
                                             <div class="form-check mb-2 filter-model-item" data-category-id="{{ $model->category_id }}">
@@ -396,14 +446,28 @@
 
                 <!-- PRODUCTS GRID CONTAINER -->
                 <div class="row" id="productsGridContainer">
-                    @forelse($allProducts as $product)
-                        @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'p_' . $product->id . '_'])
-                    @empty
-                        <div class="col-12 text-center py-5">
-                            <i class="fa fa-box-open fa-3x text-muted mb-3 d-block"></i>
-                            <h4 class="text-muted">No products available in the catalog.</h4>
-                        </div>
-                    @endforelse
+
+                    <!-- SKELETON PLACEHOLDER LOADING GRID (Displayed on initial load & during filter fetching) -->
+                    <div id="productsSkeletonContainer" class="row w-100 m-0 p-0">
+                        @for($i = 0; $i < 6; $i++)
+                            <div class="col-lg-4 col-md-6 col-12 mb-4 d-flex">
+                                <div class="card w-100 shadow-sm border-0 skeleton-card p-3 d-flex flex-column">
+                                    <div class="skeleton-box skeleton-img mb-3"></div>
+                                    <div class="d-flex justify-content-center gap-2 mb-2">
+                                        <div class="skeleton-box skeleton-badge"></div>
+                                        <div class="skeleton-box skeleton-badge"></div>
+                                    </div>
+                                    <div class="skeleton-box skeleton-title mb-2"></div>
+                                    <div class="skeleton-box skeleton-price mb-3"></div>
+                                    <div class="skeleton-box skeleton-desc mb-3"></div>
+                                    <div class="skeleton-box skeleton-buttons mt-auto"></div>
+                                </div>
+                            </div>
+                        @endfor
+                    </div>
+
+                    <!-- DYNAMIC PRODUCT CARDS LIST (Populated via jQuery AJAX) -->
+                    <div id="productsGridItems" class="row w-100 m-0 p-0"></div>
 
                     <!-- NO PRODUCTS FOUND EMPTY STATE (Shown dynamically via JS when filters yield 0 items) -->
                     <div id="noProductsState" class="col-12 text-center py-5 d-none">
@@ -416,6 +480,20 @@
                             </button>
                         </div>
                     </div>
+
+                    <!-- LOAD MORE & INFINITE SCROLL CONTAINER -->
+                    <div id="loadMoreContainer" class="col-12 text-center py-4 d-none">
+                        <div class="d-inline-flex flex-column align-items-center">
+                            <p class="text-muted small mb-2" id="loadMoreStatusText">Showing 0 of 0 products</p>
+                            <button type="button" id="loadMoreBtn" class="btn btn-primary px-4 py-2 shadow-sm rounded-pill fw-semibold" onclick="loadMoreProducts()">
+                                <span class="spinner-border spinner-border-sm me-2 d-none" id="loadMoreSpinner" role="status" aria-hidden="true"></span>
+                                <span>Load More Products</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SENTINEL FOR AUTO INFINITE SCROLL -->
+                    <div id="infiniteScrollSentinel" style="height: 20px; width: 100%;"></div>
                 </div>
 
             </div>
@@ -489,222 +567,289 @@
         });
     }
 
-    // Interactive Filtering Engine
+    // Global Product Catalog AJAX Engine
+    const PRODUCTS_PER_PAGE = 20;
+    const PRODUCTS_AJAX_URL = "{{ route('products.listing') }}";
+    
+    let currentPage = 1;
+    let hasMorePages = false;
+    let totalProducts = 0;
+    let loadedProductsCount = 0;
+    let isLoading = false;
+    let activeAjaxRequest = null;
+    let searchDebounceTimer = null;
+
     function handleFilterChange() {
-        applyFilters();
+        if (activeAjaxRequest) {
+            activeAjaxRequest.abort();
+        }
+        loadProducts(1, false);
     }
 
     function handleSortChange() {
-        applySorting();
+        if (activeAjaxRequest) {
+            activeAjaxRequest.abort();
+        }
+        loadProducts(1, false);
     }
 
-    function applyFilters() {
-        // Collect selected categories
+    // Compatibility aliases to prevent ReferenceError from cached scripts/calls
+    window.applyFilters = function() {
+        handleFilterChange();
+    };
+    window.applySorting = function() {
+        handleSortChange();
+    };
+
+    function loadMoreProducts() {
+        if (isLoading || !hasMorePages) return;
+        loadProducts(currentPage + 1, true);
+    }
+
+    function getSelectedFilters() {
         var selectedCatSlugs = [];
         var selectedCatNames = {};
-        document.querySelectorAll('.filter-category-checkbox:checked').forEach(function(cb) {
-            var slug = cb.getAttribute('data-slug');
-            selectedCatSlugs.push(slug);
-            selectedCatNames[slug] = cb.getAttribute('data-name');
+        $('.filter-category-checkbox:checked').each(function() {
+            var slug = $(this).attr('data-slug');
+            if (slug) {
+                selectedCatSlugs.push(slug);
+                selectedCatNames[slug] = $(this).attr('data-name');
+            }
         });
 
-        // Collect selected models / subcategories
         var selectedModelSlugs = [];
         var selectedModelNames = {};
-        document.querySelectorAll('.filter-model-checkbox:checked').forEach(function(cb) {
-            var slug = cb.getAttribute('data-slug');
-            selectedModelSlugs.push(slug);
-            selectedModelNames[slug] = cb.getAttribute('data-name');
-        });
-
-        var searchQuery = (document.getElementById('productSearchInput').value || '').trim().toLowerCase();
-
-        var productItems = document.querySelectorAll('.product-card-wrapper');
-        var visibleCount = 0;
-
-        productItems.forEach(function(item) {
-            var itemCatSlug = item.getAttribute('data-category-slug');
-            var itemModelSlug = item.getAttribute('data-model-slug');
-            var itemName = (item.getAttribute('data-name') || '').toLowerCase();
-
-            // Match Category: if no category is checked, match all. Else must be in selected categories.
-            var matchCategory = selectedCatSlugs.length === 0 || selectedCatSlugs.includes(itemCatSlug);
-
-            // Match Model: if no model is checked, match all. Else must be in selected models.
-            var matchModel = selectedModelSlugs.length === 0 || (itemModelSlug && selectedModelSlugs.includes(itemModelSlug));
-
-            // Match Search
-            var matchSearch = !searchQuery || itemName.indexOf(searchQuery) !== -1;
-
-            if (matchCategory && matchModel && matchSearch) {
-                item.classList.remove('d-none');
-                item.classList.add('d-flex');
-                visibleCount++;
-            } else {
-                item.classList.add('d-none');
-                item.classList.remove('d-flex');
+        $('.filter-model-checkbox:checked').each(function() {
+            var slug = $(this).attr('data-slug');
+            if (slug) {
+                selectedModelSlugs.push(slug);
+                selectedModelNames[slug] = $(this).attr('data-name');
             }
         });
 
-        // Update count display
-        var countEl = document.getElementById('productsCountDisplay');
-        if (countEl) countEl.innerText = visibleCount;
+        var searchQuery = ($.trim($('#productSearchInput').val()) || '').toLowerCase();
+        var sortVal = $('#productSortSelect').val() || 'default';
 
-        // Update mobile filter badges & drawer button text
-        var activeCount = selectedCatSlugs.length + selectedModelSlugs.length + (searchQuery ? 1 : 0);
-        document.querySelectorAll('.mobile-filter-count-badge').forEach(function(badge) {
-            badge.textContent = activeCount;
-            if (activeCount > 0) {
-                badge.classList.remove('d-none');
-            } else {
-                badge.classList.add('d-none');
-            }
-        });
-
-        var applyBtnText = document.getElementById('applyFilterBtnText');
-        if (applyBtnText) {
-            applyBtnText.textContent = `View ${visibleCount} Product${visibleCount === 1 ? '' : 's'}`;
-        }
-
-        // Show/hide empty state message
-        var emptyState = document.getElementById('noProductsState');
-        if (emptyState) {
-            if (visibleCount === 0) {
-                emptyState.classList.remove('d-none');
-            } else {
-                emptyState.classList.add('d-none');
-            }
-        }
-
-        // Render Active Filter Chips
-        renderActiveChips(selectedCatSlugs, selectedCatNames, selectedModelSlugs, selectedModelNames, searchQuery);
-
-        // Update browser URL query params without reloading
-        updateUrlParams(selectedCatSlugs, selectedModelSlugs);
+        return {
+            categories: selectedCatSlugs,
+            categoryNames: selectedCatNames,
+            models: selectedModelSlugs,
+            modelNames: selectedModelNames,
+            search: searchQuery,
+            sort: sortVal
+        };
     }
 
-    function renderActiveChips(catSlugs, catNames, modelSlugs, modelNames, searchQuery) {
-        var container = document.getElementById('activeFilterChipsContainer');
-        var list = document.getElementById('activeFilterChipsList');
-        if (!container || !list) return;
+    function loadProducts(page, isAppend) {
+        if (isLoading && isAppend) return;
 
+        var filters = getSelectedFilters();
+
+        // Update URL query parameters seamlessly without page reload
+        updateUrlParams(filters.categories, filters.models, filters.search, filters.sort);
+
+        // Update active filter pills/chips and mobile counters
+        renderActiveChips(filters.categories, filters.categoryNames, filters.models, filters.modelNames, filters.search);
+        updateFilterBadgeCounts(filters.categories.length + filters.models.length + (filters.search ? 1 : 0));
+
+        if (!isAppend) {
+            isLoading = true;
+            $('#productsSkeletonContainer').removeClass('d-none');
+            $('#productsGridItems').html('');
+            $('#noProductsState').addClass('d-none');
+            $('#loadMoreContainer').addClass('d-none');
+            currentPage = 1;
+            loadedProductsCount = 0;
+        } else {
+            isLoading = true;
+            $('#loadMoreSpinner').removeClass('d-none');
+            $('#loadMoreBtn').prop('disabled', true);
+        }
+
+        activeAjaxRequest = $.ajax({
+            url: PRODUCTS_AJAX_URL,
+            type: 'GET',
+            dataType: 'json',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            },
+            data: {
+                categories: filters.categories.join(','),
+                models: filters.models.join(','),
+                search: filters.search,
+                sort: filters.sort,
+                page: page
+            },
+            success: function(response) {
+                $('#productsSkeletonContainer').addClass('d-none');
+                currentPage = response.current_page || page;
+                hasMorePages = !!response.has_more;
+                totalProducts = response.total || 0;
+                var html = response.html ? response.html.trim() : '';
+
+                if (isAppend) {
+                    $('#productsGridItems').append(html);
+                    loadedProductsCount += (response.count || 0);
+                } else {
+                    if (totalProducts === 0 || !html) {
+                        $('#productsGridItems').html('');
+                        $('#noProductsState').removeClass('d-none');
+                        $('#loadMoreContainer').addClass('d-none');
+                        loadedProductsCount = 0;
+                    } else {
+                        $('#productsGridItems').html(html);
+                        $('#noProductsState').addClass('d-none');
+                        loadedProductsCount = (response.count || 0);
+                    }
+                }
+
+                // Update items counter
+                $('#productsCountDisplay').text(totalProducts);
+                $('#applyFilterBtnText').text('View ' + totalProducts + ' Product' + (totalProducts === 1 ? '' : 's'));
+
+                // Update Load More UI
+                updateLoadMoreUI();
+            },
+            error: function(xhr, status, error) {
+                if (status === 'abort') return;
+                $('#productsSkeletonContainer').addClass('d-none');
+                console.error('AJAX products error:', error);
+            },
+            complete: function() {
+                isLoading = false;
+                $('#loadMoreSpinner').addClass('d-none');
+                $('#loadMoreBtn').prop('disabled', false);
+            }
+        });
+    }
+
+    function updateLoadMoreUI() {
+        var $container = $('#loadMoreContainer');
+        var $status = $('#loadMoreStatusText');
+        var $btn = $('#loadMoreBtn');
+
+        if (totalProducts === 0) {
+            $container.addClass('d-none');
+            return;
+        }
+
+        if (hasMorePages) {
+            $container.removeClass('d-none');
+            $btn.removeClass('d-none');
+            $status.text('Showing ' + loadedProductsCount + ' of ' + totalProducts + ' products');
+        } else if (totalProducts > PRODUCTS_PER_PAGE) {
+            $container.removeClass('d-none');
+            $btn.addClass('d-none');
+            $status.text('All ' + totalProducts + ' products loaded');
+        } else {
+            $container.addClass('d-none');
+        }
+    }
+
+    function updateFilterBadgeCounts(count) {
+        var $badges = $('.mobile-filter-count-badge');
+        $badges.text(count);
+        if (count > 0) {
+            $badges.removeClass('d-none');
+        } else {
+            $badges.addClass('d-none');
+        }
+    }
+
+
+
+    function renderActiveChips(catSlugs, catNames, modelSlugs, modelNames, searchQuery) {
+        var $container = $('#activeFilterChipsContainer');
+        var $list = $('#activeFilterChipsList');
         var chipsHtml = '';
 
         catSlugs.forEach(function(slug) {
-            chipsHtml += `<span class="filter-chip">
-                Category: ${catNames[slug] || slug}
-                <span class="chip-remove" onclick="uncheckCategory('${slug}')">&times;</span>
-            </span>`;
+            chipsHtml += '<span class="filter-chip">' +
+                'Category: ' + (catNames[slug] || slug) +
+                '<span class="chip-remove" onclick="uncheckCategory(\'' + slug + '\')">&times;</span>' +
+            '</span>';
         });
 
         modelSlugs.forEach(function(slug) {
-            chipsHtml += `<span class="filter-chip">
-                Model: ${modelNames[slug] || slug}
-                <span class="chip-remove" onclick="uncheckModel('${slug}')">&times;</span>
-            </span>`;
+            chipsHtml += '<span class="filter-chip">' +
+                'Model: ' + (modelNames[slug] || slug) +
+                '<span class="chip-remove" onclick="uncheckModel(\'' + slug + '\')">&times;</span>' +
+            '</span>';
         });
 
         if (searchQuery) {
-            chipsHtml += `<span class="filter-chip">
-                Search: "${searchQuery}"
-                <span class="chip-remove" onclick="clearSearch()">&times;</span>
-            </span>`;
+            chipsHtml += '<span class="filter-chip">' +
+                'Search: "' + $('<div>').text(searchQuery).html() + '"' +
+                '<span class="chip-remove" onclick="clearSearch()">&times;</span>' +
+            '</span>';
         }
 
-        list.innerHTML = chipsHtml;
+        $list.html(chipsHtml);
 
         if (catSlugs.length > 0 || modelSlugs.length > 0 || searchQuery) {
-            container.classList.remove('d-none');
+            $container.removeClass('d-none');
         } else {
-            container.classList.add('d-none');
+            $container.addClass('d-none');
         }
     }
 
     function uncheckCategory(slug) {
-        var cb = document.querySelector(`.filter-category-checkbox[data-slug="${slug}"]`);
-        if (cb) {
-            cb.checked = false;
-            applyFilters();
-        }
+        $('.filter-category-checkbox[data-slug="' + slug + '"]').prop('checked', false);
+        handleFilterChange();
     }
 
     function uncheckModel(slug) {
-        var cb = document.querySelector(`.filter-model-checkbox[data-slug="${slug}"]`);
-        if (cb) {
-            cb.checked = false;
-            applyFilters();
-        }
+        $('.filter-model-checkbox[data-slug="' + slug + '"]').prop('checked', false);
+        handleFilterChange();
     }
 
     function clearSearch() {
-        var input = document.getElementById('productSearchInput');
-        if (input) {
-            input.value = '';
-            applyFilters();
-        }
+        $('#productSearchInput').val('');
+        handleFilterChange();
     }
 
     function resetAllFilters() {
-        document.querySelectorAll('.filter-category-checkbox').forEach(function(cb) {
-            cb.checked = false;
-        });
-        document.querySelectorAll('.filter-model-checkbox').forEach(function(cb) {
-            cb.checked = false;
-        });
-        var searchInput = document.getElementById('productSearchInput');
-        if (searchInput) searchInput.value = '';
-
-        var sortSelect = document.getElementById('productSortSelect');
-        if (sortSelect) sortSelect.value = 'default';
-
-        applyFilters();
+        $('.filter-category-checkbox').prop('checked', false);
+        $('.filter-model-checkbox').prop('checked', false);
+        $('#productSearchInput').val('');
+        $('#productSortSelect').val('default');
+        handleFilterChange();
     }
 
-    function updateUrlParams(catSlugs, modelSlugs) {
+    function updateUrlParams(catSlugs, modelSlugs, searchQuery, sortVal) {
         if (!history.replaceState) return;
 
         var url = new URL(window.location.href);
-        if (catSlugs.length > 0) {
+
+        if (catSlugs && catSlugs.length > 0) {
             url.searchParams.set('categories', catSlugs.join(','));
         } else {
             url.searchParams.delete('categories');
         }
 
-        if (modelSlugs.length > 0) {
+        if (modelSlugs && modelSlugs.length > 0) {
             url.searchParams.set('models', modelSlugs.join(','));
         } else {
             url.searchParams.delete('models');
         }
 
+        if (searchQuery) {
+            url.searchParams.set('search', searchQuery);
+        } else {
+            url.searchParams.delete('search');
+        }
+
+        if (sortVal && sortVal !== 'default') {
+            url.searchParams.set('sort', sortVal);
+        } else {
+            url.searchParams.delete('sort');
+        }
+
+        // Clean page parameter when filter changes
+        url.searchParams.delete('page');
+
         history.replaceState(null, null, url.toString());
-    }
-
-    function applySorting() {
-        var sortVal = document.getElementById('productSortSelect').value;
-        var container = document.getElementById('productsGridContainer');
-        var items = Array.from(container.querySelectorAll('.product-card-wrapper'));
-
-        items.sort(function(a, b) {
-            var priceA = parseFloat(a.getAttribute('data-price') || 0);
-            var priceB = parseFloat(b.getAttribute('data-price') || 0);
-            var nameA = (a.getAttribute('data-name') || '').toLowerCase();
-            var nameB = (b.getAttribute('data-name') || '').toLowerCase();
-
-            if (sortVal === 'price_asc') {
-                return priceA - priceB;
-            } else if (sortVal === 'price_desc') {
-                return priceB - priceA;
-            } else if (sortVal === 'name_asc') {
-                return nameA.localeCompare(nameB);
-            }
-            return 0;
-        });
-
-        // Re-append sorted items before the empty state container
-        var emptyState = document.getElementById('noProductsState');
-        items.forEach(function(item) {
-            container.insertBefore(item, emptyState);
-        });
     }
 
     // Mobile Drawer Open / Close Functions
@@ -736,9 +881,35 @@
         }
     });
 
-    // Initialize filters on page load
-    document.addEventListener("DOMContentLoaded", function () {
-        applyFilters();
+    // jQuery Document Ready Initialization
+    $(function() {
+        // Debounced search input handler
+        $('#productSearchInput').on('input', function() {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(function() {
+                handleFilterChange();
+            }, 300);
+        });
+
+        // Initial AJAX load of products into the catalog
+        loadProducts(1, false);
+
+        // Auto infinite scroll when scrolling to bottom sentinel
+        var sentinel = document.getElementById('infiniteScrollSentinel');
+        if (sentinel && 'IntersectionObserver' in window) {
+            var scrollObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting && hasMorePages && !isLoading) {
+                        loadMoreProducts();
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: '250px',
+                threshold: 0
+            });
+            scrollObserver.observe(sentinel);
+        }
 
         // Show floating filter button on the side ONLY when the top toggle button is scrolled out of view
         var topFilterBtn = document.getElementById('topMobileFilterBtn');

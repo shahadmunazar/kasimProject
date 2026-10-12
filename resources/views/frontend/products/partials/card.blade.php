@@ -19,7 +19,7 @@
                         @foreach($product->images as $index => $img)
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                                 <a href="{{ $productUrl }}" title="{{ $product->name }}">
-                                    <img src="{{ asset('storage/' . $img) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
+                                    <img src="{{ asset('storage/' . $img) }}" class="card-img-top" alt="{{ $product->name }}" loading="lazy" style="height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
                                 </a>
                             </div>
                         @endforeach
@@ -33,7 +33,7 @@
                 </div>
             @else
                 <a href="{{ $productUrl }}" title="{{ $product->name }}">
-                    <img src="{{ asset('storage/' . $product->images[0]) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
+                    <img src="{{ asset('storage/' . $product->images[0]) }}" class="card-img-top" alt="{{ $product->name }}" loading="lazy" style="height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
                 </a>
             @endif
         @else
