@@ -55,6 +55,11 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $orders = \App\Models\Order::where('user_id', $user->id)->latest()->get();
+
+        if ($orders->isEmpty()) {
+            return redirect()->route('products.listing')->with('info', 'No orders found. Explore our products to place an order!');
+        }
+
         return view('frontend.user.orders', compact('user', 'orders'));
     }
 

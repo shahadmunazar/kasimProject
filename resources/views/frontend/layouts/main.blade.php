@@ -113,6 +113,13 @@
                 title: "{{ session('error') }}"
             });
         @endif
+
+        @if(session('info'))
+            Toast.fire({
+                icon: 'info',
+                title: "{{ session('info') }}"
+            });
+        @endif
     </script>
 
     @stack('scripts') <!-- Optional custom scripts -->

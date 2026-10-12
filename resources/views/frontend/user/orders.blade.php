@@ -17,7 +17,7 @@
                 <i class="fa fa-shopping-bag fa-3x mb-3 text-muted"></i>
                 <h5>No orders yet</h5>
                 <p>Looks like you haven't placed any orders yet. Start shopping!</p>
-                <a href="{{ url('/') }}" class="btn btn-primary mt-2">Browse Products</a>
+                <a href="{{ route('products.listing') }}" class="btn btn-primary mt-2">Browse Products</a>
             </div>
         @else
             <div class="table-responsive">
