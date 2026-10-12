@@ -24,10 +24,12 @@ class GoogleRoutesService
         
         return Cache::remember($cacheKey, now()->addDays(30), function () use ($warehouseAddress, $destination) {
             try {
-                $apiKey = config('services.google.routes_api_key', env('GOOGLE_MAPS_ROUTES_API_KEY'));
+                $apiKey = config('services.google.routes_api_key') 
+                    ?: Setting::where('key', 'google_maps_api_key')->value('value') 
+                    ?: env('GOOGLE_MAPS_ROUTES_API_KEY');
                 
                 if (empty($apiKey)) {
-                    Log::error('Google Maps Routes API key is missing.');
+                    Log::warning('Google Maps Routes API key is missing. Falling back to base delivery fee.');
                     return null;
                 }
 

@@ -232,13 +232,19 @@
             calculateDelivery();
         });
 
+        let deliveryTimeout = null;
+        function debouncedCalculateDelivery() {
+            clearTimeout(deliveryTimeout);
+            deliveryTimeout = setTimeout(calculateDelivery, 600);
+        }
+
         // Add AJAX calculation
         const formFields = ['address', 'city', 'state', 'pincode'];
         formFields.forEach(field => {
             const el = document.querySelector(`[name="${field}"]`);
             if (el) {
                 el.addEventListener('change', calculateDelivery);
-                el.addEventListener('keyup', calculateDelivery);
+                el.addEventListener('keyup', debouncedCalculateDelivery);
             }
         });
 

@@ -338,13 +338,19 @@
         .catch(error => console.error('Error calculating delivery:', error));
     }
 
+    let deliveryTimeout = null;
+    function debouncedCalculateDelivery() {
+        clearTimeout(deliveryTimeout);
+        deliveryTimeout = setTimeout(calculateDelivery, 600);
+    }
+
     // Bind events
     document.querySelectorAll('input[name="address_id"]').forEach(el => el.addEventListener('change', calculateDelivery));
     const newAddressFields = ['address_line_1', 'city', 'state', 'zip'];
     newAddressFields.forEach(field => {
         const el = document.querySelector(`input[name="${field}"]`);
         if (el) el.addEventListener('change', calculateDelivery);
-        if (el) el.addEventListener('keyup', calculateDelivery); // Also trigger on typing
+        if (el) el.addEventListener('keyup', debouncedCalculateDelivery);
     });
 
     // Initial calculation if address is pre-selected

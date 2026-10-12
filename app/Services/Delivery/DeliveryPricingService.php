@@ -34,12 +34,9 @@ class DeliveryPricingService
         }
 
         if ($distanceKm === null) {
-            // Distance could not be calculated
-            if ($roadDistanceEnabled) {
-                return $this->error('Could not calculate distance. Please check your address.');
-            }
-            // Fallback to base fee if road distance pricing is not mandatory
-            return $this->result($baseFee, null, $baseFee, $perKmFee, 'Flat base fee applied (distance unknown).');
+            // Distance could not be calculated (API key not configured, address unreachable, or service unavailable)
+            // Fallback to base delivery fee so customer checkout is not blocked
+            return $this->result($baseFee, null, $baseFee, $perKmFee, 'Standard delivery fee applied.');
         }
 
         if ($distanceKm > $maxDistance) {

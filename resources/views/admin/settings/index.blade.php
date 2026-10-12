@@ -80,6 +80,12 @@
                     <label class="form-label fw-semibold">Warehouse Full Address (include PIN Code) <span class="text-danger">*</span></label>
                     <input type="text" name="warehouse_address" class="form-control" value="{{ $settings['warehouse_address'] ?? '110025, India' }}" required>
                 </div>
+
+                <div class="col-md-12 mb-3">
+                    <label class="form-label fw-semibold">Google Maps API Key (Optional)</label>
+                    <input type="text" name="google_maps_api_key" class="form-control" value="{{ $settings['google_maps_api_key'] ?? '' }}" placeholder="AIzaSy... (leave blank to use Base Delivery Fee)">
+                    <small class="text-muted">Used for road-distance calculation. If not provided or invalid, delivery fee safely defaults to Base Delivery Fee without blocking checkout.</small>
+                </div>
                 
                 <div class="col-md-4 mb-3">
                     <label class="form-label fw-semibold">Base Delivery Fee (₹)</label>

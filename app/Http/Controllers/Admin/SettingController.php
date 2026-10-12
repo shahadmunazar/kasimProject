@@ -16,7 +16,7 @@ class SettingController extends Controller
         $settings = Setting::whereIn('key', [
             'delivery_charge_enabled', 'delivery_distance_enabled', 'free_delivery_enabled',
             'delivery_base_fee', 'delivery_per_km_fee', 'delivery_min_fee', 'delivery_max_fee',
-            'free_delivery_min_order', 'delivery_max_distance', 'warehouse_address'
+            'free_delivery_min_order', 'delivery_max_distance', 'warehouse_address', 'google_maps_api_key'
         ])->pluck('value', 'key');
         
         return view('admin.settings.index', compact('qrCode', 'settings'));
@@ -54,7 +54,7 @@ class SettingController extends Controller
         $settings = [
             'delivery_charge_enabled', 'delivery_distance_enabled', 'free_delivery_enabled',
             'delivery_base_fee', 'delivery_per_km_fee', 'delivery_min_fee', 'delivery_max_fee',
-            'free_delivery_min_order', 'delivery_max_distance', 'warehouse_address'
+            'free_delivery_min_order', 'delivery_max_distance', 'warehouse_address', 'google_maps_api_key'
         ];
 
         foreach ($settings as $key) {
