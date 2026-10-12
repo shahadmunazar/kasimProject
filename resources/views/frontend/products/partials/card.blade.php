@@ -4,7 +4,13 @@
     $productUrl = route('product.details', $product->slug);
 @endphp
 
-<div class="col-lg-4 col-md-6 col-12 mb-4 d-flex">
+<div class="col-lg-4 col-md-6 col-12 mb-4 d-flex product-card-wrapper"
+     data-category-id="{{ $product->category_id }}"
+     data-category-slug="{{ $product->category->slug ?? '' }}"
+     data-model-id="{{ $product->product_model_id ?? '' }}"
+     data-model-slug="{{ $product->productModel->slug ?? '' }}"
+     data-name="{{ strtolower($product->name) }}"
+     data-price="{{ $product->offer_price ?: $product->price ?: 0 }}">
     <div class="card w-100 shadow-sm border-0 product-item-card d-flex flex-column">
         @if($product->images && count($product->images) > 0)
             @if(count($product->images) > 1)

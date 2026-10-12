@@ -1,51 +1,50 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', isset($category) ? $category->name . ' Products' : 'Products')
+@section('meta_title', isset($currentCategory) ? $currentCategory->name . ' Products' : 'Products Catalog')
 
 @section('content')
 <style>
-    .product-filter-nav {
-        gap: 8px;
-        padding: 6px;
-        background: #f8f9fa;
-        border-radius: 50px;
-        display: inline-flex;
-        max-width: 100%;
-        overflow-x: auto;
-        border: 1px solid #e9ecef;
+    .filter-card {
+        border-radius: 1rem;
+        background: #ffffff;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        border: 1px solid #edf2f7;
     }
-    .product-filter-nav .nav-link {
-        color: #495057;
-        background-color: transparent;
-        border: none;
-        border-radius: 50rem;
-        padding: 0.6rem 1.4rem;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: all 0.25s ease;
-        white-space: nowrap;
+    .filter-section-title {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #718096;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+    .filter-checkbox-label {
+        font-size: 0.92rem;
+        color: #2d3748;
+        cursor: pointer;
+        user-select: none;
+    }
+    .filter-chip {
         display: inline-flex;
         align-items: center;
-    }
-    .product-filter-nav .nav-link:hover {
-        background-color: rgba(13, 110, 253, 0.08);
-        color: #0d6efd;
-    }
-    .product-filter-nav .nav-link.active {
-        background-color: #0d6efd;
-        color: #ffffff !important;
-        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
-    }
-    .product-filter-nav .nav-link .badge {
-        margin-left: 0.5rem;
-        font-size: 0.75rem;
-        padding: 0.3em 0.6em;
+        background-color: #ebf8ff;
+        color: #2b6cb0;
+        border: 1px solid #bee3f8;
         border-radius: 50rem;
-        transition: all 0.2s ease;
+        padding: 0.3rem 0.8rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin-right: 0.4rem;
+        margin-bottom: 0.4rem;
     }
-    .product-filter-nav .nav-link.active .badge {
-        background-color: #ffffff !important;
-        color: #0d6efd !important;
+    .filter-chip .chip-remove {
+        cursor: pointer;
+        margin-left: 0.4rem;
+        color: #2b6cb0;
+        transition: color 0.15s ease;
+    }
+    .filter-chip .chip-remove:hover {
+        color: #e53e3e;
     }
     .product-item-card {
         border-radius: 0.85rem;
@@ -53,8 +52,8 @@
         transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
     .product-item-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08) !important;
+        transform: translateY(-4px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.08) !important;
     }
 </style>
 
@@ -64,11 +63,11 @@
     <div class="row">
       <div class="col-md-12">
         <div class="block text-center">
-          <span class="text-white">{{ isset($category) ? 'Category Catalog' : 'Our Products' }}</span>
-          <h1 class="text-capitalize mb-4 text-lg">{{ isset($category) ? $category->name : 'Categories & Products' }}</h1>
-          @if(isset($category))
-            <p class="text-white-50 mb-0">Browse all products and models under <strong>{{ $category->name }}</strong></p>
-          @endif
+          <span class="text-white">Our Products Catalog</span>
+          <h1 class="text-capitalize mb-3 text-lg">
+            {{ isset($currentCategory) ? $currentCategory->name . ' Products' : 'All Products & Categories' }}
+          </h1>
+          <p class="text-white-50 mb-0">Select multiple categories and subcategories / models below to filter</p>
         </div>
       </div>
     </div>
@@ -77,203 +76,176 @@
 
 <section class="section py-5">
     <div class="container">
-        <!-- Tab Navigation Filters -->
-        <div class="text-center mb-5">
-            <ul class="nav nav-pills product-filter-nav justify-content-center" id="product-tabs" role="tablist">
-                @if(isset($isCategoryPage) && $isCategoryPage && isset($category))
-                    {{-- Category Page: Filter by Models --}}
-                    @php
-                        $totalCatProducts = $category->products->count();
-                        $noModelCount = $category->products->whereNull('product_model_id')->count();
-                    @endphp
+        <div class="row">
 
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link {{ ($activeModelSlug ?? 'all') == 'all' ? 'active' : '' }}" 
-                                id="tab-btn-all" 
-                                data-bs-toggle="pill" 
-                                data-bs-target="#tab-pane-all" 
-                                data-filter-slug="all" 
-                                type="button" 
-                                role="tab" 
-                                aria-controls="tab-pane-all" 
-                                aria-selected="{{ ($activeModelSlug ?? 'all') == 'all' ? 'true' : 'false' }}">
-                            All <span class="badge bg-secondary">{{ $totalCatProducts }}</span>
-                        </button>
-                    </li>
+            <!-- MOBILE FILTER TOGGLE BUTTON -->
+            <div class="col-12 d-lg-none mb-3">
+                <button class="btn btn-outline-primary w-100 d-flex justify-content-between align-items-center py-2" type="button" data-bs-toggle="collapse" data-bs-target="#mobileFilterCollapse" aria-expanded="false">
+                    <span><i class="fa fa-filter me-2"></i> Filter Products (Categories & Models)</span>
+                    <i class="fa fa-chevron-down"></i>
+                </button>
+            </div>
 
-                    @foreach($models as $model)
-                        @php
-                            $modelCount = $category->products->where('product_model_id', $model->id)->count();
-                            $isModelActive = ($activeModelSlug ?? '') == $model->slug;
-                        @endphp
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link {{ $isModelActive ? 'active' : '' }}" 
-                                    id="tab-btn-{{ $model->slug }}" 
-                                    data-bs-toggle="pill" 
-                                    data-bs-target="#tab-pane-{{ $model->slug }}" 
-                                    data-filter-slug="{{ $model->slug }}" 
-                                    type="button" 
-                                    role="tab" 
-                                    aria-controls="tab-pane-{{ $model->slug }}" 
-                                    aria-selected="{{ $isModelActive ? 'true' : 'false' }}">
-                                {{ $model->name }} <span class="badge bg-secondary">{{ $modelCount }}</span>
+            <!-- FILTER SIDEBAR -->
+            <div class="col-lg-3 col-md-4 mb-4">
+                <div class="collapse d-lg-block" id="mobileFilterCollapse">
+                    <div class="filter-card p-4 sticky-top" style="top: 100px; z-index: 10;">
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                            <h5 class="fw-bold mb-0 text-dark">
+                                <i class="fa fa-sliders-h text-primary me-2"></i> Filters
+                            </h5>
+                            <button type="button" class="btn btn-link text-danger p-0 text-decoration-none small fw-semibold" onclick="resetAllFilters()">
+                                Reset All
                             </button>
-                        </li>
-                    @endforeach
+                        </div>
 
-                    @if($noModelCount > 0 && $models->count() > 0)
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link {{ ($activeModelSlug ?? '') == 'other' ? 'active' : '' }}" 
-                                    id="tab-btn-other" 
-                                    data-bs-toggle="pill" 
-                                    data-bs-target="#tab-pane-other" 
-                                    data-filter-slug="other" 
-                                    type="button" 
-                                    role="tab" 
-                                    aria-controls="tab-pane-other" 
-                                    aria-selected="{{ ($activeModelSlug ?? '') == 'other' ? 'true' : 'false' }}">
-                                General <span class="badge bg-secondary">{{ $noModelCount }}</span>
-                            </button>
-                        </li>
-                    @endif
-
-                @else
-                    {{-- Global Products Page: Filter by Categories --}}
-                    @php
-                        $grandTotal = $categories->pluck('products')->flatten()->count();
-                    @endphp
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" 
-                                id="tab-btn-all" 
-                                data-bs-toggle="pill" 
-                                data-bs-target="#tab-pane-all" 
-                                data-filter-slug="all" 
-                                type="button" 
-                                role="tab" 
-                                aria-controls="tab-pane-all" 
-                                aria-selected="true">
-                            All <span class="badge bg-secondary">{{ $grandTotal }}</span>
-                        </button>
-                    </li>
-
-                    @foreach($categories as $cat)
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" 
-                                    id="tab-btn-{{ $cat->slug }}" 
-                                    data-bs-toggle="pill" 
-                                    data-bs-target="#tab-pane-{{ $cat->slug }}" 
-                                    data-filter-slug="{{ $cat->slug }}" 
-                                    type="button" 
-                                    role="tab" 
-                                    aria-controls="tab-pane-{{ $cat->slug }}" 
-                                    aria-selected="false">
-                                {{ $cat->name }} <span class="badge bg-secondary">{{ $cat->products->count() }}</span>
-                            </button>
-                        </li>
-                    @endforeach
-                @endif
-            </ul>
-        </div>
-
-        <!-- Tab Panes Content -->
-        <div class="tab-content" id="product-tabContent">
-            @if(isset($isCategoryPage) && $isCategoryPage && isset($category))
-                {{-- Pane: ALL Category Products --}}
-                <div class="tab-pane fade {{ ($activeModelSlug ?? 'all') == 'all' ? 'show active' : '' }}" 
-                     id="tab-pane-all" 
-                     role="tabpanel" 
-                     aria-labelledby="tab-btn-all">
-                    <div class="row">
-                        @forelse($category->products as $product)
-                            @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'all_'])
-                        @empty
-                            <div class="col-12 text-center py-5">
-                                <i class="fa fa-box-open fa-3x text-muted mb-3 d-block"></i>
-                                <h5 class="text-muted">No products available in this category yet.</h5>
+                        <!-- SEARCH FILTER -->
+                        <div class="mb-4">
+                            <div class="filter-section-title">Search Products</div>
+                            <div class="input-group">
+                                <input type="text" id="productSearchInput" class="form-control form-control-sm" placeholder="Search by name..." oninput="handleFilterChange()">
+                                <button class="btn btn-outline-secondary btn-sm" type="button" onclick="document.getElementById('productSearchInput').value=''; handleFilterChange();">
+                                    <i class="fa fa-times"></i>
+                                </button>
                             </div>
-                        @endforelse
+                        </div>
+
+                        <!-- MULTI-SELECT CATEGORIES -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="filter-section-title mb-0">Categories</div>
+                                <span class="badge bg-light text-muted border small">{{ count($allCategories) }}</span>
+                            </div>
+                            <div class="filter-options-list" style="max-height: 220px; overflow-y: auto;">
+                                @foreach($allCategories as $cat)
+                                    @php
+                                        $catProductCount = $allProducts->where('category_id', $cat->id)->count();
+                                        $isCatChecked = in_array($cat->slug, $selectedCategorySlugs ?? []);
+                                    @endphp
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input filter-category-checkbox" 
+                                               type="checkbox" 
+                                               value="{{ $cat->id }}" 
+                                               data-slug="{{ $cat->slug }}" 
+                                               data-name="{{ $cat->name }}"
+                                               id="filter_cat_{{ $cat->id }}"
+                                               {{ $isCatChecked ? 'checked' : '' }}
+                                               onchange="handleFilterChange()">
+                                        <label class="form-check-label filter-checkbox-label d-flex justify-content-between align-items-center w-100" for="filter_cat_{{ $cat->id }}">
+                                            <span>{{ $cat->name }}</span>
+                                            <span class="badge bg-light text-muted border rounded-pill small">{{ $catProductCount }}</span>
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <hr class="my-3 text-muted">
+
+                        <!-- MULTI-SELECT SUBCATEGORIES / MODELS -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="filter-section-title mb-0">Subcategory / Model</div>
+                                <span class="badge bg-light text-muted border small">{{ count($allModels) }}</span>
+                            </div>
+                            <div class="filter-options-list" style="max-height: 240px; overflow-y: auto;">
+                                @foreach($allModels as $model)
+                                    @php
+                                        $modelProductCount = $allProducts->where('product_model_id', $model->id)->count();
+                                        $isModelChecked = in_array($model->slug, $selectedModelSlugs ?? []);
+                                    @endphp
+                                    <div class="form-check mb-2 filter-model-item" data-category-id="{{ $model->category_id }}">
+                                        <input class="form-check-input filter-model-checkbox" 
+                                               type="checkbox" 
+                                               value="{{ $model->id }}" 
+                                               data-category-id="{{ $model->category_id }}" 
+                                               data-slug="{{ $model->slug }}" 
+                                               data-name="{{ $model->name }}"
+                                               id="filter_model_{{ $model->id }}"
+                                               {{ $isModelChecked ? 'checked' : '' }}
+                                               onchange="handleFilterChange()">
+                                        <label class="form-check-label filter-checkbox-label d-flex justify-content-between align-items-center w-100" for="filter_model_{{ $model->id }}">
+                                            <span>
+                                                {{ $model->name }}
+                                                @if($model->category)
+                                                    <small class="text-muted d-block" style="font-size: 0.72rem;">({{ $model->category->name }})</small>
+                                                @endif
+                                            </span>
+                                            <span class="badge bg-light text-muted border rounded-pill small">{{ $modelProductCount }}</span>
+                                        </label>
+                                    </div>
+                                @endforeach
+
+                                @if(count($allModels) == 0)
+                                    <p class="text-muted small mb-0">No subcategories available.</p>
+                                @endif
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN PRODUCT CATALOG AREA -->
+            <div class="col-lg-9 col-md-8">
+                
+                <!-- TOP CONTROLS & ACTIVE CHIPS BAR -->
+                <div class="card border-0 shadow-sm p-3 mb-4 rounded-3 bg-light">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                        <div>
+                            <span class="text-muted">Showing </span>
+                            <span id="productsCountDisplay" class="fw-bold text-dark fs-5">0</span>
+                            <span class="text-muted"> products</span>
+                        </div>
+
+                        <!-- SORT DROPDOWN -->
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="small text-muted text-nowrap fw-semibold mb-0">Sort By:</label>
+                            <select id="productSortSelect" class="form-select form-select-sm" style="min-width: 170px;" onchange="handleSortChange()">
+                                <option value="default">Default</option>
+                                <option value="price_asc">Price: Low to High</option>
+                                <option value="price_desc">Price: High to Low</option>
+                                <option value="name_asc">Name: A to Z</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- ACTIVE FILTER PILLS / CHIPS -->
+                    <div id="activeFilterChipsContainer" class="mt-3 pt-2 border-top d-none">
+                        <div class="d-flex align-items-center flex-wrap">
+                            <span class="small text-muted me-2 fw-semibold">Active:</span>
+                            <div id="activeFilterChipsList" class="d-inline-flex flex-wrap align-items-center"></div>
+                            <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-2 text-decoration-none small" onclick="resetAllFilters()">Clear All</button>
+                        </div>
                     </div>
                 </div>
 
-                {{-- Panes: For Each Model --}}
-                @foreach($models as $model)
-                    @php
-                        $modelProducts = $category->products->where('product_model_id', $model->id);
-                        $isModelActive = ($activeModelSlug ?? '') == $model->slug;
-                    @endphp
-                    <div class="tab-pane fade {{ $isModelActive ? 'show active' : '' }}" 
-                         id="tab-pane-{{ $model->slug }}" 
-                         role="tabpanel" 
-                         aria-labelledby="tab-btn-{{ $model->slug }}">
-                        <div class="row">
-                            @forelse($modelProducts as $product)
-                                @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'm_' . $model->id . '_'])
-                            @empty
-                                <div class="col-12 text-center py-5">
-                                    <i class="fa fa-box-open fa-3x text-muted mb-3 d-block"></i>
-                                    <h5 class="text-muted">No products currently available under <strong>{{ $model->name }}</strong> model.</h5>
-                                    <button type="button" class="btn btn-sm btn-outline-primary mt-3" onclick="switchFilterTab('all')">View All Products in {{ $category->name }}</button>
-                                </div>
-                            @endforelse
+                <!-- PRODUCTS GRID CONTAINER -->
+                <div class="row" id="productsGridContainer">
+                    @forelse($allProducts as $product)
+                        @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'p_' . $product->id . '_'])
+                    @empty
+                        <div class="col-12 text-center py-5">
+                            <i class="fa fa-box-open fa-3x text-muted mb-3 d-block"></i>
+                            <h4 class="text-muted">No products available in the catalog.</h4>
                         </div>
-                    </div>
-                @endforeach
+                    @endforelse
 
-                {{-- Pane: Products Without Model --}}
-                @if($noModelCount > 0 && $models->count() > 0)
-                    <div class="tab-pane fade {{ ($activeModelSlug ?? '') == 'other' ? 'show active' : '' }}" 
-                         id="tab-pane-other" 
-                         role="tabpanel" 
-                         aria-labelledby="tab-btn-other">
-                        <div class="row">
-                            @forelse($category->products->whereNull('product_model_id') as $product)
-                                @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'other_'])
-                            @empty
-                                <div class="col-12 text-center py-5">
-                                    <h5 class="text-muted">No general products found.</h5>
-                                </div>
-                            @endforelse
+                    <!-- NO PRODUCTS FOUND EMPTY STATE (Shown dynamically via JS when filters yield 0 items) -->
+                    <div id="noProductsState" class="col-12 text-center py-5 d-none">
+                        <div class="p-5 bg-light rounded-4 border">
+                            <i class="fa fa-search fa-3x text-muted mb-3 d-block opacity-50"></i>
+                            <h4 class="fw-bold text-dark mb-2">No Matching Products Found</h4>
+                            <p class="text-muted mb-4">No products match the selected categories and subcategories.</p>
+                            <button type="button" class="btn btn-primary px-4 py-2" onclick="resetAllFilters()">
+                                <i class="fa fa-redo me-1"></i> Reset All Filters
+                            </button>
                         </div>
-                    </div>
-                @endif
-
-            @else
-                {{-- Global Listing: Pane ALL --}}
-                <div class="tab-pane fade show active" id="tab-pane-all" role="tabpanel" aria-labelledby="tab-btn-all">
-                    <div class="row">
-                        @php $hasAnyProduct = false; @endphp
-                        @foreach($categories as $cat)
-                            @foreach($cat->products as $product)
-                                @php $hasAnyProduct = true; @endphp
-                                @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'all_c_' . $cat->id . '_'])
-                            @endforeach
-                        @endforeach
-
-                        @if(!$hasAnyProduct)
-                            <div class="col-12 text-center py-5">
-                                <i class="fa fa-box-open fa-3x text-muted mb-3 d-block"></i>
-                                <h5 class="text-muted">No products found.</h5>
-                            </div>
-                        @endif
                     </div>
                 </div>
 
-                {{-- Global Listing: Panes by Category --}}
-                @foreach($categories as $cat)
-                    <div class="tab-pane fade" id="tab-pane-{{ $cat->slug }}" role="tabpanel" aria-labelledby="tab-btn-{{ $cat->slug }}">
-                        <div class="row">
-                            @forelse($cat->products as $product)
-                                @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'cat_' . $cat->id . '_'])
-                            @empty
-                                <div class="col-12 text-center py-5">
-                                    <i class="fa fa-box-open fa-3x text-muted mb-3 d-block"></i>
-                                    <h5 class="text-muted">No products available in {{ $cat->name }}.</h5>
-                                </div>
-                            @endforelse
-                        </div>
-                    </div>
-                @endforeach
-            @endif
+            </div>
+
         </div>
     </div>
 </section>
@@ -320,72 +292,227 @@
 
 @push('scripts')
 <script>
-  // Enquiry Modal setup
-  var buyModal = document.getElementById('buyModal');
-  if (buyModal) {
-    buyModal.addEventListener('show.bs.modal', function (event) {
-      var button = event.relatedTarget;
-      var productId = button.getAttribute('data-product-id');
-      var productName = button.getAttribute('data-product-name');
-      
-      var modalProductId = buyModal.querySelector('#modalProductId');
-      var modalProductName = buyModal.querySelector('#modalProductName');
-      
-      modalProductId.value = productId;
-      modalProductName.textContent = productName;
-    });
-  }
-
-  // Helper function to switch tabs programmatically
-  function switchFilterTab(slug) {
-    var targetBtn = document.querySelector(`button[data-filter-slug="${slug}"]`);
-    if (targetBtn && typeof bootstrap !== 'undefined') {
-      var tabInstance = bootstrap.Tab.getOrCreateInstance(targetBtn);
-      tabInstance.show();
-    }
-  }
-
-  // Hash Navigation Support (#all, #model-slug, etc.)
-  document.addEventListener("DOMContentLoaded", function () {
-    function activateTabFromUrl() {
-      var hash = window.location.hash ? window.location.hash.replace('#', '') : '';
-      
-      if (!hash) {
-        @if(isset($activeModelSlug) && $activeModelSlug !== 'all')
-          hash = '{{ $activeModelSlug }}';
-        @else
-          hash = 'all';
-        @endif
-      }
-
-      var targetBtn = document.querySelector(`button[data-filter-slug="${hash}"]`) ||
-                      document.querySelector(`button[data-bs-target="#tab-pane-${hash}"]`);
-
-      if (targetBtn && typeof bootstrap !== 'undefined') {
-        var tab = bootstrap.Tab.getOrCreateInstance(targetBtn);
-        tab.show();
-      }
+    // Enquiry Modal Setup
+    var buyModal = document.getElementById('buyModal');
+    if (buyModal) {
+        buyModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var productId = button.getAttribute('data-product-id');
+            var productName = button.getAttribute('data-product-name');
+            
+            var modalProductId = buyModal.querySelector('#modalProductId');
+            var modalProductName = buyModal.querySelector('#modalProductName');
+            
+            modalProductId.value = productId;
+            modalProductName.textContent = productName;
+        });
     }
 
-    activateTabFromUrl();
+    // Interactive Filtering Engine
+    function handleFilterChange() {
+        applyFilters();
+    }
 
-    // Listen for hash changes in URL
-    window.addEventListener('hashchange', activateTabFromUrl);
+    function handleSortChange() {
+        applySorting();
+    }
 
-    // Update URL hash when a tab is clicked
-    var filterButtons = document.querySelectorAll('#product-tabs button[data-filter-slug]');
-    filterButtons.forEach(function (btn) {
-      btn.addEventListener('shown.bs.tab', function (e) {
-        var slug = e.target.getAttribute('data-filter-slug');
-        if (slug) {
-          if (history.replaceState) {
-            history.replaceState(null, null, '#' + slug);
-          } else {
-            window.location.hash = slug;
-          }
+    function applyFilters() {
+        // Collect selected categories
+        var selectedCatSlugs = [];
+        var selectedCatNames = {};
+        document.querySelectorAll('.filter-category-checkbox:checked').forEach(function(cb) {
+            var slug = cb.getAttribute('data-slug');
+            selectedCatSlugs.push(slug);
+            selectedCatNames[slug] = cb.getAttribute('data-name');
+        });
+
+        // Collect selected models / subcategories
+        var selectedModelSlugs = [];
+        var selectedModelNames = {};
+        document.querySelectorAll('.filter-model-checkbox:checked').forEach(function(cb) {
+            var slug = cb.getAttribute('data-slug');
+            selectedModelSlugs.push(slug);
+            selectedModelNames[slug] = cb.getAttribute('data-name');
+        });
+
+        var searchQuery = (document.getElementById('productSearchInput').value || '').trim().toLowerCase();
+
+        var productItems = document.querySelectorAll('.product-card-wrapper');
+        var visibleCount = 0;
+
+        productItems.forEach(function(item) {
+            var itemCatSlug = item.getAttribute('data-category-slug');
+            var itemModelSlug = item.getAttribute('data-model-slug');
+            var itemName = (item.getAttribute('data-name') || '').toLowerCase();
+
+            // Match Category: if no category is checked, match all. Else must be in selected categories.
+            var matchCategory = selectedCatSlugs.length === 0 || selectedCatSlugs.includes(itemCatSlug);
+
+            // Match Model: if no model is checked, match all. Else must be in selected models.
+            var matchModel = selectedModelSlugs.length === 0 || (itemModelSlug && selectedModelSlugs.includes(itemModelSlug));
+
+            // Match Search
+            var matchSearch = !searchQuery || itemName.indexOf(searchQuery) !== -1;
+
+            if (matchCategory && matchModel && matchSearch) {
+                item.classList.remove('d-none');
+                item.classList.add('d-flex');
+                visibleCount++;
+            } else {
+                item.classList.add('d-none');
+                item.classList.remove('d-flex');
+            }
+        });
+
+        // Update count display
+        var countEl = document.getElementById('productsCountDisplay');
+        if (countEl) countEl.innerText = visibleCount;
+
+        // Show/hide empty state message
+        var emptyState = document.getElementById('noProductsState');
+        if (emptyState) {
+            if (visibleCount === 0) {
+                emptyState.classList.remove('d-none');
+            } else {
+                emptyState.classList.add('d-none');
+            }
         }
-      });
+
+        // Render Active Filter Chips
+        renderActiveChips(selectedCatSlugs, selectedCatNames, selectedModelSlugs, selectedModelNames, searchQuery);
+
+        // Update browser URL query params without reloading
+        updateUrlParams(selectedCatSlugs, selectedModelSlugs);
+    }
+
+    function renderActiveChips(catSlugs, catNames, modelSlugs, modelNames, searchQuery) {
+        var container = document.getElementById('activeFilterChipsContainer');
+        var list = document.getElementById('activeFilterChipsList');
+        if (!container || !list) return;
+
+        var chipsHtml = '';
+
+        catSlugs.forEach(function(slug) {
+            chipsHtml += `<span class="filter-chip">
+                Category: ${catNames[slug] || slug}
+                <span class="chip-remove" onclick="uncheckCategory('${slug}')">&times;</span>
+            </span>`;
+        });
+
+        modelSlugs.forEach(function(slug) {
+            chipsHtml += `<span class="filter-chip">
+                Model: ${modelNames[slug] || slug}
+                <span class="chip-remove" onclick="uncheckModel('${slug}')">&times;</span>
+            </span>`;
+        });
+
+        if (searchQuery) {
+            chipsHtml += `<span class="filter-chip">
+                Search: "${searchQuery}"
+                <span class="chip-remove" onclick="clearSearch()">&times;</span>
+            </span>`;
+        }
+
+        list.innerHTML = chipsHtml;
+
+        if (catSlugs.length > 0 || modelSlugs.length > 0 || searchQuery) {
+            container.classList.remove('d-none');
+        } else {
+            container.classList.add('d-none');
+        }
+    }
+
+    function uncheckCategory(slug) {
+        var cb = document.querySelector(`.filter-category-checkbox[data-slug="${slug}"]`);
+        if (cb) {
+            cb.checked = false;
+            applyFilters();
+        }
+    }
+
+    function uncheckModel(slug) {
+        var cb = document.querySelector(`.filter-model-checkbox[data-slug="${slug}"]`);
+        if (cb) {
+            cb.checked = false;
+            applyFilters();
+        }
+    }
+
+    function clearSearch() {
+        var input = document.getElementById('productSearchInput');
+        if (input) {
+            input.value = '';
+            applyFilters();
+        }
+    }
+
+    function resetAllFilters() {
+        document.querySelectorAll('.filter-category-checkbox').forEach(function(cb) {
+            cb.checked = false;
+        });
+        document.querySelectorAll('.filter-model-checkbox').forEach(function(cb) {
+            cb.checked = false;
+        });
+        var searchInput = document.getElementById('productSearchInput');
+        if (searchInput) searchInput.value = '';
+
+        var sortSelect = document.getElementById('productSortSelect');
+        if (sortSelect) sortSelect.value = 'default';
+
+        applyFilters();
+    }
+
+    function updateUrlParams(catSlugs, modelSlugs) {
+        if (!history.replaceState) return;
+
+        var url = new URL(window.location.href);
+        if (catSlugs.length > 0) {
+            url.searchParams.set('categories', catSlugs.join(','));
+        } else {
+            url.searchParams.delete('categories');
+        }
+
+        if (modelSlugs.length > 0) {
+            url.searchParams.set('models', modelSlugs.join(','));
+        } else {
+            url.searchParams.delete('models');
+        }
+
+        history.replaceState(null, null, url.toString());
+    }
+
+    function applySorting() {
+        var sortVal = document.getElementById('productSortSelect').value;
+        var container = document.getElementById('productsGridContainer');
+        var items = Array.from(container.querySelectorAll('.product-card-wrapper'));
+
+        items.sort(function(a, b) {
+            var priceA = parseFloat(a.getAttribute('data-price') || 0);
+            var priceB = parseFloat(b.getAttribute('data-price') || 0);
+            var nameA = (a.getAttribute('data-name') || '').toLowerCase();
+            var nameB = (b.getAttribute('data-name') || '').toLowerCase();
+
+            if (sortVal === 'price_asc') {
+                return priceA - priceB;
+            } else if (sortVal === 'price_desc') {
+                return priceB - priceA;
+            } else if (sortVal === 'name_asc') {
+                return nameA.localeCompare(nameB);
+            }
+            return 0;
+        });
+
+        // Re-append sorted items before the empty state container
+        var emptyState = document.getElementById('noProductsState');
+        items.forEach(function(item) {
+            container.insertBefore(item, emptyState);
+        });
+    }
+
+    // Initialize filters on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        applyFilters();
     });
-  });
 </script>
 @endpush

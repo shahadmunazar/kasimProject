@@ -159,62 +159,115 @@ public function testingFrameworks() {
 
     public function products_listing()
     {
-        $categories = \App\Models\Category::with([
-            'products' => function($q) { $q->where('is_active', true)->with('productModel'); },
-            'productModels' => function($q) { $q->where('is_active', true); }
-        ])->where('is_active', true)->get();
+        $allCategories = \App\Models\Category::with(['productModels' => function($q) { 
+            $q->where('is_active', true); 
+        }])->where('is_active', true)->get();
 
-        $isCategoryPage = false;
+        $allModels = \App\Models\ProductModel::with('category')->where('is_active', true)->get();
+
+        $allProducts = \App\Models\Product::with(['category', 'productModel'])
+            ->where('is_active', true)
+            ->latest()
+            ->get();
+
+        $selectedCategorySlugs = request()->has('categories') 
+            ? explode(',', request()->query('categories')) 
+            : [];
+
+        $selectedModelSlugs = request()->has('models') 
+            ? explode(',', request()->query('models')) 
+            : [];
+
         $currentCategory = null;
         $category = null;
-        $models = collect();
-        $activeModelSlug = 'all';
+        $categories = $allCategories;
 
-        return view('frontend.products.index', compact('categories', 'isCategoryPage', 'currentCategory', 'category', 'models', 'activeModelSlug'));
+        return view('frontend.products.index', compact(
+            'allCategories', 
+            'allModels', 
+            'allProducts', 
+            'selectedCategorySlugs', 
+            'selectedModelSlugs', 
+            'currentCategory', 
+            'category', 
+            'categories'
+        ));
     }
 
     public function products_by_category($category_slug)
     {
-        $category = \App\Models\Category::with([
-            'products' => function($q) { $q->where('is_active', true)->with('productModel'); },
-            'productModels' => function($q) { $q->where('is_active', true); }
-        ])->where('slug', $category_slug)->where('is_active', true)->firstOrFail();
+        $currentCategory = \App\Models\Category::where('slug', $category_slug)->where('is_active', true)->firstOrFail();
 
-        $usedModelIds = $category->products->pluck('product_model_id')->filter()->unique();
-        $models = \App\Models\ProductModel::where('is_active', true)
-            ->where(function($q) use ($category, $usedModelIds) {
-                $q->where('category_id', $category->id)
-                  ->orWhereIn('id', $usedModelIds);
-            })->get();
+        $allCategories = \App\Models\Category::with(['productModels' => function($q) { 
+            $q->where('is_active', true); 
+        }])->where('is_active', true)->get();
 
-        $isCategoryPage = true;
-        $currentCategory = $category;
-        $categories = collect([$category]);
-        $activeModelSlug = request()->query('model', 'all');
+        $allModels = \App\Models\ProductModel::with('category')->where('is_active', true)->get();
 
-        return view('frontend.products.index', compact('category', 'currentCategory', 'categories', 'models', 'isCategoryPage', 'activeModelSlug'));
+        $allProducts = \App\Models\Product::with(['category', 'productModel'])
+            ->where('is_active', true)
+            ->latest()
+            ->get();
+
+        $selectedCategorySlugs = request()->has('categories') 
+            ? explode(',', request()->query('categories')) 
+            : [$category_slug];
+
+        $selectedModelSlugs = request()->has('models') 
+            ? explode(',', request()->query('models')) 
+            : [];
+
+        $category = $currentCategory;
+        $categories = $allCategories;
+
+        return view('frontend.products.index', compact(
+            'allCategories', 
+            'allModels', 
+            'allProducts', 
+            'selectedCategorySlugs', 
+            'selectedModelSlugs', 
+            'currentCategory', 
+            'category', 
+            'categories'
+        ));
     }
 
     public function products_by_model($category_slug, $model_slug)
     {
-        $category = \App\Models\Category::with([
-            'products' => function($q) { $q->where('is_active', true)->with('productModel'); },
-            'productModels' => function($q) { $q->where('is_active', true); }
-        ])->where('slug', $category_slug)->where('is_active', true)->firstOrFail();
+        $currentCategory = \App\Models\Category::where('slug', $category_slug)->where('is_active', true)->firstOrFail();
 
-        $usedModelIds = $category->products->pluck('product_model_id')->filter()->unique();
-        $models = \App\Models\ProductModel::where('is_active', true)
-            ->where(function($q) use ($category, $usedModelIds) {
-                $q->where('category_id', $category->id)
-                  ->orWhereIn('id', $usedModelIds);
-            })->get();
+        $allCategories = \App\Models\Category::with(['productModels' => function($q) { 
+            $q->where('is_active', true); 
+        }])->where('is_active', true)->get();
 
-        $isCategoryPage = true;
-        $currentCategory = $category;
-        $categories = collect([$category]);
-        $activeModelSlug = $model_slug;
+        $allModels = \App\Models\ProductModel::with('category')->where('is_active', true)->get();
 
-        return view('frontend.products.index', compact('category', 'currentCategory', 'categories', 'models', 'isCategoryPage', 'activeModelSlug'));
+        $allProducts = \App\Models\Product::with(['category', 'productModel'])
+            ->where('is_active', true)
+            ->latest()
+            ->get();
+
+        $selectedCategorySlugs = request()->has('categories') 
+            ? explode(',', request()->query('categories')) 
+            : [$category_slug];
+
+        $selectedModelSlugs = request()->has('models') 
+            ? explode(',', request()->query('models')) 
+            : [$model_slug];
+
+        $category = $currentCategory;
+        $categories = $allCategories;
+
+        return view('frontend.products.index', compact(
+            'allCategories', 
+            'allModels', 
+            'allProducts', 
+            'selectedCategorySlugs', 
+            'selectedModelSlugs', 
+            'currentCategory', 
+            'category', 
+            'categories'
+        ));
     }
 
     public function product_details($slug)
