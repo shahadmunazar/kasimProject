@@ -135,21 +135,29 @@
         .floating-filter-btn {
             position: fixed;
             bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 20px;
+            left: auto;
+            transform: translateY(100px);
+            opacity: 0;
+            pointer-events: none;
             z-index: 1040;
             box-shadow: 0 8px 24px rgba(13, 110, 253, 0.35);
             border-radius: 50rem;
-            padding: 0.65rem 1.4rem;
+            padding: 0.65rem 1.3rem;
             font-weight: 600;
             letter-spacing: 0.3px;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease, box-shadow 0.2s ease;
+        }
+        .floating-filter-btn.visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
         }
         .floating-filter-btn:active {
-            transform: translateX(-50%) scale(0.96);
+            transform: translateY(0) scale(0.96);
         }
     }
 
@@ -358,7 +366,7 @@
                             </div>
 
                             <!-- Mobile Filter Button in Top Bar -->
-                            <button type="button" class="btn btn-outline-primary btn-sm d-lg-none fw-semibold shadow-sm px-3 py-2" onclick="openMobileFilters()">
+                            <button type="button" id="topMobileFilterBtn" class="btn btn-outline-primary btn-sm d-lg-none fw-semibold shadow-sm px-3 py-2" onclick="openMobileFilters()">
                                 <i class="fa fa-sliders-h me-1"></i> Filters
                                 <span class="badge bg-primary text-white rounded-pill ms-1 mobile-filter-count-badge d-none">0</span>
                             </button>
@@ -417,7 +425,7 @@
 </section>
 
 <!-- FLOATING MOBILE FILTER BUTTON -->
-<button type="button" class="btn btn-primary floating-filter-btn d-lg-none shadow-lg" onclick="openMobileFilters()">
+<button type="button" id="floatingMobileFilterBtn" class="btn btn-primary floating-filter-btn d-lg-none shadow-lg" onclick="openMobileFilters()">
     <i class="fa fa-sliders-h"></i>
     <span>Filters</span>
     <span class="badge bg-white text-primary rounded-pill mobile-filter-count-badge d-none">0</span>
@@ -731,6 +739,36 @@
     // Initialize filters on page load
     document.addEventListener("DOMContentLoaded", function () {
         applyFilters();
+
+        // Show floating filter button on the side ONLY when the top toggle button is scrolled out of view
+        var topFilterBtn = document.getElementById('topMobileFilterBtn');
+        var floatingFilterBtn = document.getElementById('floatingMobileFilterBtn');
+
+        if (topFilterBtn && floatingFilterBtn) {
+            if ('IntersectionObserver' in window) {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            // Top toggle is visible -> hide side floating button
+                            floatingFilterBtn.classList.remove('visible');
+                        } else {
+                            // Top toggle is scrolled past / hidden -> show side floating button
+                            floatingFilterBtn.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0 });
+                observer.observe(topFilterBtn);
+            } else {
+                window.addEventListener('scroll', function() {
+                    var rect = topFilterBtn.getBoundingClientRect();
+                    if (rect.bottom < 0) {
+                        floatingFilterBtn.classList.add('visible');
+                    } else {
+                        floatingFilterBtn.classList.remove('visible');
+                    }
+                }, { passive: true });
+            }
+        }
     });
 </script>
 @endpush
