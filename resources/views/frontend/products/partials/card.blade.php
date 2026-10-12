@@ -2,16 +2,27 @@
     $cardPrefix = $prefix ?? 'prod_';
     $carouselId = 'carousel_' . $cardPrefix . $product->id;
     $productUrl = route('product.details', $product->slug);
+    $wrapperColClass = $colClass ?? 'col-lg-4 col-md-6 col-12 mb-4';
 @endphp
 
-<div class="col-lg-4 col-md-6 col-12 mb-4 d-flex product-card-wrapper"
+<div class="{{ $wrapperColClass }} d-flex product-card-wrapper"
      data-category-id="{{ $product->category_id }}"
      data-category-slug="{{ $product->category->slug ?? '' }}"
      data-model-id="{{ $product->product_model_id ?? '' }}"
      data-model-slug="{{ $product->productModel->slug ?? '' }}"
      data-name="{{ strtolower($product->name) }}"
      data-price="{{ $product->offer_price ?: $product->price ?: 0 }}">
-    <div class="card w-100 shadow-sm border-0 product-item-card d-flex flex-column">
+    <div class="card w-100 shadow-sm border-0 product-item-card d-flex flex-column position-relative">
+        <!-- Floating Wishlist Button -->
+        <button type="button" 
+                class="btn btn-sm btn-white rounded-circle shadow-sm position-absolute wishlist-toggle-btn"
+                style="top: 10px; right: 10px; z-index: 5; width: 34px; height: 34px; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(4px);"
+                onclick="toggleWishlist({{ $product->id }}, this)"
+                data-product-id="{{ $product->id }}"
+                title="Add to Wishlist">
+            <i class="fa fa-heart text-muted" style="font-size: 0.95rem; transition: transform 0.2s ease, color 0.2s ease;"></i>
+        </button>
+
         @if($product->images && count($product->images) > 0)
             @if(count($product->images) > 1)
                 <div id="{{ $carouselId }}" class="carousel slide" data-bs-ride="carousel">
@@ -65,9 +76,9 @@
             <!-- Price -->
             <div class="mb-3" style="min-height: 28px;">
                 @if($product->offer_price)
-                    <span class="card-text fs-5"><del class="text-muted small">${{ $product->price }}</del> <strong class="text-danger">${{ $product->offer_price }}</strong></span>
+                    <span class="card-text fs-5"><del class="text-muted small">₹{{ number_format($product->price, 2) }}</del> <strong class="text-danger">₹{{ number_format($product->offer_price, 2) }}</strong></span>
                 @elseif($product->price)
-                    <span class="card-text fs-5 fw-bold text-dark">${{ $product->price }}</span>
+                    <span class="card-text fs-5 fw-bold text-dark">₹{{ number_format($product->price, 2) }}</span>
                 @else
                     <span class="text-muted small">Price on request</span>
                 @endif
@@ -89,14 +100,17 @@
 
             <!-- Action Buttons (Pinned to bottom for uniform card alignment) -->
             <div class="d-flex justify-content-center flex-wrap gap-1 mt-auto pt-2 border-top">
-                <a href="{{ $productUrl }}" class="btn btn-sm btn-outline-primary px-2" title="View Details">
-                    <i class="fa fa-eye me-1"></i> Details
-                </a>
-                <button type="button" class="btn btn-sm btn-secondary px-2" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
-                    <i class="fa fa-envelope me-1"></i> Enquiry
+                <button type="button" class="btn btn-sm btn-outline-primary px-2" onclick="addToCart({{ $product->id }}, 1, this)" title="Add to Cart">
+                    <i class="fa fa-cart-plus me-1"></i> Cart
                 </button>
-                <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-sm btn-primary px-2">
-                    <i class="fa fa-shopping-cart me-1"></i> Buy Now
+                <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-sm btn-primary px-2" title="Buy Now directly">
+                    <i class="fa fa-bolt me-1"></i> Buy Now
+                </a>
+                <button type="button" class="btn btn-sm btn-light border px-2 text-muted" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}" title="Enquiry">
+                    <i class="fa fa-envelope"></i>
+                </button>
+                <a href="{{ $productUrl }}" class="btn btn-sm btn-light border px-2 text-muted" title="View Details">
+                    <i class="fa fa-eye"></i>
                 </a>
             </div>
         </div>

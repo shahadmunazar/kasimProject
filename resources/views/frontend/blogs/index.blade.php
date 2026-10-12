@@ -71,10 +71,7 @@
                     error: function() {
                         spinner.hide();
                         button.show();
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Something went wrong. Please try again.'
-                        });
+                        showCustomAlert('error', 'Something went wrong. Please try again.', 'Error');
                     }
                 });
             }

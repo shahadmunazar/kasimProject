@@ -247,6 +247,14 @@ public function testingFrameworks() {
         $category = null;
         $categories = $allCategories;
 
+        // Fetch Recently Interested Products from session
+        $recentIds = session()->get('recently_viewed_products', []);
+        $recentlyViewedProducts = !empty($recentIds)
+            ? \App\Models\Product::with(['category', 'productModel'])->whereIn('id', $recentIds)->where('is_active', true)->get()->sortBy(function($model) use ($recentIds) {
+                return array_search($model->id, $recentIds);
+            })
+            : collect();
+
         return view('frontend.products.index', compact(
             'allCategories', 
             'allModels', 
@@ -255,7 +263,8 @@ public function testingFrameworks() {
             'selectedModelSlugs', 
             'currentCategory', 
             'category', 
-            'categories'
+            'categories',
+            'recentlyViewedProducts'
         ));
     }
 
@@ -331,6 +340,13 @@ public function testingFrameworks() {
         $category = $currentCategory;
         $categories = $allCategories;
 
+        $recentIds = session()->get('recently_viewed_products', []);
+        $recentlyViewedProducts = !empty($recentIds)
+            ? \App\Models\Product::with(['category', 'productModel'])->whereIn('id', $recentIds)->where('is_active', true)->get()->sortBy(function($model) use ($recentIds) {
+                return array_search($model->id, $recentIds);
+            })
+            : collect();
+
         return view('frontend.products.index', compact(
             'allCategories', 
             'allModels', 
@@ -339,7 +355,8 @@ public function testingFrameworks() {
             'selectedModelSlugs', 
             'currentCategory', 
             'category', 
-            'categories'
+            'categories',
+            'recentlyViewedProducts'
         ));
     }
 
@@ -415,6 +432,13 @@ public function testingFrameworks() {
         $category = $currentCategory;
         $categories = $allCategories;
 
+        $recentIds = session()->get('recently_viewed_products', []);
+        $recentlyViewedProducts = !empty($recentIds)
+            ? \App\Models\Product::with(['category', 'productModel'])->whereIn('id', $recentIds)->where('is_active', true)->get()->sortBy(function($model) use ($recentIds) {
+                return array_search($model->id, $recentIds);
+            })
+            : collect();
+
         return view('frontend.products.index', compact(
             'allCategories', 
             'allModels', 
@@ -423,7 +447,8 @@ public function testingFrameworks() {
             'selectedModelSlugs', 
             'currentCategory', 
             'category', 
-            'categories'
+            'categories',
+            'recentlyViewedProducts'
         ));
     }
 
@@ -434,8 +459,39 @@ public function testingFrameworks() {
         }])->where('slug', $slug)->where('is_active', true)->firstOrFail();
         
         $hasLiked = session()->has('liked_product_' . $product->id);
+
+        // Track Recently Interested Products in Session (up to 10 products, unique, latest first)
+        $recentlyViewedIds = session()->get('recently_viewed_products', []);
+        $recentlyViewedIds = array_diff($recentlyViewedIds, [$product->id]);
+        array_unshift($recentlyViewedIds, $product->id);
+        $recentlyViewedIds = array_slice($recentlyViewedIds, 0, 10);
+        session()->put('recently_viewed_products', $recentlyViewedIds);
+
+        // Fetch Similar Products (Same Model or Same Category, excluding current product)
+        $similarProducts = \App\Models\Product::with(['category', 'productModel'])
+            ->where('id', '!=', $product->id)
+            ->where('is_active', true)
+            ->where(function($q) use ($product) {
+                if ($product->product_model_id) {
+                    $q->where('product_model_id', $product->product_model_id);
+                }
+                if ($product->category_id) {
+                    $q->orWhere('category_id', $product->category_id);
+                }
+            })
+            ->latest()
+            ->take(4)
+            ->get();
         
-        return view('frontend.products.show', compact('product', 'hasLiked'));
+        // Recently Interested Products (excluding current product)
+        $recentIdsExcludingCurrent = array_values(array_diff($recentlyViewedIds, [$product->id]));
+        $recentlyViewedProducts = !empty($recentIdsExcludingCurrent)
+            ? \App\Models\Product::with(['category', 'productModel'])->whereIn('id', $recentIdsExcludingCurrent)->where('is_active', true)->get()->sortBy(function($model) use ($recentIdsExcludingCurrent) {
+                return array_search($model->id, $recentIdsExcludingCurrent);
+            })
+            : collect();
+
+        return view('frontend.products.show', compact('product', 'hasLiked', 'similarProducts', 'recentlyViewedProducts'));
     }
 
     public function like_product(Request $request, $id)

@@ -404,6 +404,30 @@
 
             <!-- MAIN PRODUCT CATALOG AREA -->
             <div class="col-lg-9 col-12">
+
+                <!-- Recently Interested Products SECTION (Shown first if session has viewed products) -->
+                @if(isset($recentlyViewedProducts) && $recentlyViewedProducts->count() > 0)
+                <div class="card border-0 shadow-sm p-3 mb-4 rounded-3 bg-white" style="border-left: 4px solid var(--bs-primary, #0d6efd) !important;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                                <i class="fa fa-history text-primary"></i> Recently Viewed Products
+                            </h6>
+                            <small class="text-muted">Recently Interested Products you explored</small>
+                        </div>
+                        <span class="badge bg-light text-primary border fw-semibold">{{ $recentlyViewedProducts->count() }} items</span>
+                    </div>
+                    <div class="row g-3">
+                        @foreach($recentlyViewedProducts->take(4) as $recentProd)
+                            @include('frontend.products.partials.card', [
+                                'product' => $recentProd,
+                                'colClass' => 'col-lg-3 col-md-6 col-6 mb-2',
+                                'prefix' => 'recent_' . $recentProd->id . '_'
+                            ])
+                        @endforeach
+                    </div>
+                </div>
+                @endif
                 
                 <!-- TOP CONTROLS & ACTIVE CHIPS BAR -->
                 <div class="card border-0 shadow-sm p-3 mb-4 rounded-3 bg-light">

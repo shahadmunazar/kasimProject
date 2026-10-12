@@ -104,13 +104,19 @@
                     @endforeach
                 </tbody>
                 <tfoot>
+                    @php
+                        $delCharge = (float)($order->delivery_charge ?? 0);
+                        $itemSubtotal = (float)$order->amount - $delCharge;
+                    @endphp
                     <tr>
                         <td colspan="3" class="text-end">Subtotal</td>
-                        <td class="text-end fw-bold">₹{{ number_format($order->amount, 2) }}</td>
+                        <td class="text-end fw-bold">₹{{ number_format($itemSubtotal, 2) }}</td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="text-end text-success">Shipping</td>
-                        <td class="text-end text-success fw-bold">Free</td>
+                        <td colspan="3" class="text-end">Delivery Charge</td>
+                        <td class="text-end fw-bold {{ $delCharge > 0 ? '' : 'text-success' }}">
+                            {{ $delCharge > 0 ? '₹' . number_format($delCharge, 2) : 'Free' }}
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="3" class="text-end fw-bold fs-5">Grand Total</td>

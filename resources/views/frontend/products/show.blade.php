@@ -68,10 +68,10 @@
 
                         <div class="mb-4">
                             @if($product->offer_price)
-                                <h3 class="text-danger mb-0">${{ $product->offer_price }}</h3>
-                                <p class="text-muted mb-0"><del>${{ $product->price }}</del></p>
+                                <h3 class="text-danger mb-0">₹{{ number_format($product->offer_price, 2) }}</h3>
+                                <p class="text-muted mb-0"><del>₹{{ number_format($product->price, 2) }}</del></p>
                             @elseif($product->price)
-                                <h3 class="mb-0">${{ $product->price }}</h3>
+                                <h3 class="mb-0">₹{{ number_format($product->price, 2) }}</h3>
                             @endif
                         </div>
 
@@ -86,13 +86,32 @@
                             </div>
                         </div>
 
-                        <div class="d-flex gap-2 w-100">
-                            <button type="button" class="btn btn-outline-secondary btn-lg w-50" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
+                        <!-- Quantity Selector and Action Buttons -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted">Quantity</label>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="input-group" style="width: 140px;">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="var q=document.getElementById('detailQtyInput'); if(parseInt(q.value)>1) q.value=parseInt(q.value)-1;">-</button>
+                                    <input type="number" id="detailQtyInput" class="form-control text-center fw-bold" value="1" min="1" max="99">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="var q=document.getElementById('detailQtyInput'); q.value=parseInt(q.value)+1;">+</button>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger px-3 py-2 rounded-3 d-flex align-items-center gap-2" onclick="toggleWishlist({{ $product->id }}, this)">
+                                    <i class="fa fa-heart"></i>
+                                    <span>Wishlist</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 w-100">
+                            <button type="button" class="btn btn-outline-primary btn-lg flex-fill" onclick="addToCart({{ $product->id }}, parseInt(document.getElementById('detailQtyInput').value)||1, this)">
+                                <i class="fa fa-cart-plus me-2"></i> Add to Cart
+                            </button>
+                            <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-primary btn-lg flex-fill">
+                                <i class="fa fa-bolt me-1"></i> Buy Now
+                            </a>
+                            <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
                                 Enquiry
                             </button>
-                            <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-primary btn-lg w-50">
-                                Buy Now
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -192,8 +211,54 @@
                         </div>
                     </div>
                 </div>
+        <!-- Similar / Related Products Section -->
+        @if(isset($similarProducts) && $similarProducts->count() > 0)
+        <div class="row mt-5 pt-3">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <div>
+                        <span class="text-primary fw-bold text-uppercase small">Recommended For You</span>
+                        <h3 class="fw-bold mb-0 text-dark">Similar Products</h3>
+                    </div>
+                    @if($product->category)
+                        <a href="{{ route('products.category', $product->category->slug) }}" class="btn btn-outline-primary btn-sm rounded-pill fw-semibold">
+                            View All <i class="fa fa-arrow-right ms-1"></i>
+                        </a>
+                    @endif
+                </div>
+
+                <div class="row g-4">
+                    @foreach($similarProducts as $simProd)
+                        @include('frontend.products.partials.card', ['product' => $simProd, 'prefix' => 'sim_' . $simProd->id . '_'])
+                    @endforeach
+                </div>
             </div>
         </div>
+        @endif
+
+        <!-- Recently Interested Products Section -->
+        @if(isset($recentlyViewedProducts) && $recentlyViewedProducts->count() > 0)
+        <div class="row mt-5 pt-2">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <div>
+                        <span class="text-primary fw-bold text-uppercase small">Recently Interested Products</span>
+                        <h3 class="fw-bold mb-0 text-dark">Recently Viewed Products</h3>
+                    </div>
+                    <a href="{{ route('products.listing') }}" class="btn btn-outline-primary btn-sm rounded-pill fw-semibold">
+                        Browse More <i class="fa fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="row g-4">
+                    @foreach($recentlyViewedProducts->take(4) as $recentProd)
+                        @include('frontend.products.partials.card', ['product' => $recentProd, 'prefix' => 'detail_rec_' . $recentProd->id . '_'])
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        @endif
+
     </div>
 </section>
 
@@ -325,12 +390,10 @@ $(document).ready(function() {
             data: form.serialize(),
             success: function(res) {
                 if(res.success) {
-                    Toast.fire({
-                        icon: 'success',
-                        title: res.message
-                    }).then(() => {
+                    showCustomAlert('success', res.message, 'Review Submitted');
+                    setTimeout(() => {
                         location.reload(); // Reload to show the new review
-                    });
+                    }, 1500);
                 }
             },
             error: function(xhr) {
@@ -338,10 +401,7 @@ $(document).ready(function() {
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMsg = xhr.responseJSON.message;
                 }
-                Toast.fire({
-                    icon: 'error',
-                    title: errorMsg
-                });
+                showCustomAlert('error', errorMsg, 'Review Error');
                 btn.prop('disabled', false).text('Post Review');
             }
         });

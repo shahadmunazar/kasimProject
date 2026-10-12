@@ -30,39 +30,84 @@
                     <thead class="table-light">
                         <tr>
                             <th>Product</th>
-                            <th>Qty</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end">Unit Price</th>
                             <th class="text-end">Total Amount</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @php
-                            $prod = $order->product;
-                            $imageUrl = null;
-                            if ($prod) {
-                                if (!empty($prod->image)) {
-                                    $imageUrl = asset('storage/' . $prod->image);
-                                } elseif (is_array($prod->images) && count($prod->images) > 0) {
-                                    $imageUrl = asset('storage/' . $prod->images[0]);
-                                } else {
-                                    $imageUrl = asset('assets/images/no-image.png');
+                        @if($order->items && $order->items->count() > 0)
+                            @foreach($order->items as $oItem)
+                                @php
+                                    $prod = $oItem->product;
+                                    $imageUrl = null;
+                                    if ($prod) {
+                                        if (!empty($prod->image)) {
+                                            $imageUrl = asset('storage/' . $prod->image);
+                                        } elseif (is_array($prod->images) && count($prod->images) > 0) {
+                                            $imageUrl = asset('storage/' . $prod->images[0]);
+                                        } else {
+                                            $imageUrl = asset('assets/images/no-image.png');
+                                        }
+                                    }
+                                @endphp
+                                <tr>
+                                    <td>
+                                        @if($prod)
+                                            <a href="{{ route('product.details', $prod->slug) }}" target="_blank" class="text-decoration-none text-dark d-flex align-items-center">
+                                                <img src="{{ $imageUrl }}" class="rounded me-3 border" style="width: 50px; height: 50px; object-fit:cover;">
+                                                <span class="fw-bold">{{ $prod->name }}</span>
+                                            </a>
+                                        @else
+                                            <span class="text-muted">Product Removed</span>
+                                        @endif
+                                    </td>
+                                    <td class="align-middle text-center">{{ $oItem->quantity }}</td>
+                                    <td class="align-middle text-end">₹{{ number_format($oItem->price, 2) }}</td>
+                                    <td class="text-end align-middle fw-bold">₹{{ number_format($oItem->price * $oItem->quantity, 2) }}</td>
+                                </tr>
+                            @endforeach
+                        @else
+                            @php
+                                $prod = $order->product;
+                                $imageUrl = null;
+                                if ($prod) {
+                                    if (!empty($prod->image)) {
+                                        $imageUrl = asset('storage/' . $prod->image);
+                                    } elseif (is_array($prod->images) && count($prod->images) > 0) {
+                                        $imageUrl = asset('storage/' . $prod->images[0]);
+                                    } else {
+                                        $imageUrl = asset('assets/images/no-image.png');
+                                    }
                                 }
-                            }
-                        @endphp
-                        <tr>
-                            <td>
-                                @if($prod)
-                                    <a href="{{ route('product.details', $prod->slug) }}" target="_blank" class="text-decoration-none text-dark d-flex align-items-center">
-                                        <img src="{{ $imageUrl }}" class="rounded me-3 border" style="width: 50px; height: 50px; object-fit:cover;">
-                                        <span class="fw-bold">{{ $prod->name }}</span>
-                                    </a>
-                                @else
-                                    <span class="text-muted">Product Removed</span>
-                                @endif
-                            </td>
-                            <td class="align-middle text-center">{{ $order->quantity }}</td>
-                            <td class="text-end align-middle fw-bold">₹{{ number_format($order->amount, 2) }}</td>
-                        </tr>
+                            @endphp
+                            <tr>
+                                <td>
+                                    @if($prod)
+                                        <a href="{{ route('product.details', $prod->slug) }}" target="_blank" class="text-decoration-none text-dark d-flex align-items-center">
+                                            <img src="{{ $imageUrl }}" class="rounded me-3 border" style="width: 50px; height: 50px; object-fit:cover;">
+                                            <span class="fw-bold">{{ $prod->name }}</span>
+                                        </a>
+                                    @else
+                                        <span class="text-muted">Product Removed</span>
+                                    @endif
+                                </td>
+                                <td class="align-middle text-center">{{ $order->quantity }}</td>
+                                <td class="align-middle text-end">₹{{ number_format($order->amount - ($order->delivery_charge ?? 0), 2) }}</td>
+                                <td class="text-end align-middle fw-bold">₹{{ number_format($order->amount, 2) }}</td>
+                            </tr>
+                        @endif
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end fw-semibold">Delivery Charge:</td>
+                            <td class="text-end fw-semibold">{{ ($order->delivery_charge && $order->delivery_charge > 0) ? '₹' . number_format($order->delivery_charge, 2) : 'Free' }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end fw-bold fs-5">Grand Total:</td>
+                            <td class="text-end fw-bold fs-5 text-primary">₹{{ number_format($order->amount, 2) }}</td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

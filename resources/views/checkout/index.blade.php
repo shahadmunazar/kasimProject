@@ -37,22 +37,22 @@
                 <div class="card shadow-sm border-0">
                     <div class="card-body p-4 p-md-5">
                         <h4 class="mb-4 fw-bold">Billing & Order Details</h4>
-                        <form action="{{ route('checkout.store', $product->id) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ $isDirectBuy ? route('checkout.store', $directProduct->id) : route('checkout.store') }}" method="POST" enctype="multipart/form-data" id="checkoutForm">
                             @csrf
                             
                             <h5 class="mt-4 mb-3">1. Personal Information</h5>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                                    <input type="text" name="customer_name" class="form-control" value="{{ old('customer_name') }}" required>
+                                    <input type="text" name="customer_name" class="form-control" value="{{ old('customer_name', Auth::user()->name ?? '') }}" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Mobile Number <span class="text-danger">*</span></label>
-                                    <input type="text" name="mobile" class="form-control" value="{{ old('mobile') }}" required>
+                                    <input type="text" name="mobile" class="form-control" value="{{ old('mobile', Auth::user()->phone ?? '') }}" required>
                                 </div>
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label">Email Address (Optional)</label>
-                                    <input type="email" name="email" class="form-control" value="{{ old('email') }}">
+                                    <input type="email" name="email" class="form-control" value="{{ old('email', Auth::user()->email ?? '') }}">
                                 </div>
                             </div>
 
@@ -60,7 +60,7 @@
                             <div class="row">
                                 <div class="col-md-12 mb-3">
                                     <label class="form-label">Address <span class="text-danger">*</span></label>
-                                    <textarea name="address" class="form-control" rows="2" required>{{ old('address') }}</textarea>
+                                    <textarea name="address" class="form-control" rows="2" required placeholder="House/Flat No., Street, Landmark">{{ old('address') }}</textarea>
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">City <span class="text-danger">*</span></label>
@@ -88,11 +88,11 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Payment Amount Paid (₹) <span class="text-danger">*</span></label>
-                                    <input type="number" step="0.01" name="payment_amount" class="form-control" value="{{ old('payment_amount') }}" required>
+                                    <input type="number" step="0.01" name="payment_amount" id="payment_amount" class="form-control" value="{{ old('payment_amount', number_format($subtotal + $deliveryCharge, 2, '.', '')) }}" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Payment Date <span class="text-danger">*</span></label>
-                                    <input type="date" name="payment_date" class="form-control" value="{{ old('payment_date') }}" required>
+                                    <input type="date" name="payment_date" class="form-control" value="{{ old('payment_date', date('Y-m-d')) }}" required>
                                 </div>
                                 <div class="col-md-12 mb-4">
                                     <label class="form-label">Upload Payment Screenshot <span class="text-danger">*</span></label>
@@ -108,7 +108,7 @@
                                 </label>
                             </div>
 
-                            <button type="submit" class="btn btn-primary btn-lg w-100">Submit Order</button>
+                            <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold" id="btnPlaceOrder">Place Order Now</button>
                         </form>
                     </div>
                 </div>
@@ -116,40 +116,70 @@
 
             <div class="col-lg-4">
                 <!-- Order Summary -->
-                <div class="card shadow-sm border-0 mb-4">
+                <div class="card shadow-sm border-0 mb-4 sticky-top" style="top: 100px;">
                     <div class="card-body">
-                        <h4 class="card-title fw-bold mb-4">Order Summary</h4>
-                        <div class="d-flex mb-3">
-                            @if($product->images && count($product->images) > 0)
-                                <img src="{{ asset('storage/' . $product->images[0]) }}" alt="{{ $product->name }}" class="img-thumbnail me-3" style="width: 80px; height: 80px; object-fit: cover;">
-                            @endif
-                            <div>
-                                <h6 class="mb-1">{{ $product->name }}</h6>
-                                @if($product->offer_price && $product->offer_price > 0)
-                                    <span class="text-muted text-decoration-line-through me-2">₹{{ $product->price }}</span>
-                                    <span class="text-danger fw-bold">₹<span id="priceDisplay">{{ $product->offer_price }}</span></span>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="card-title fw-bold mb-0">Order Summary</h4>
+                            <span class="badge bg-light text-dark border">{{ $items->count() }} {{ Str::plural('Item', $items->count()) }}</span>
+                        </div>
+                        
+                        <!-- List of Products in Checkout -->
+                        <div class="order-items-scroll mb-3 pe-1" style="max-height: 280px; overflow-y: auto;">
+                            @foreach($items as $iIndex => $it)
+                                @php
+                                    $p = $it->product;
+                                    $pImg = ($p->images && count($p->images) > 0) ? $p->images[0] : null;
+                                @endphp
+                                <div class="d-flex align-items-center mb-3 pb-2 border-bottom">
+                                    @if($pImg)
+                                        <img src="{{ asset('storage/' . $pImg) }}" alt="{{ $p->name }}" class="img-thumbnail me-3 flex-shrink-0" style="width: 65px; height: 65px; object-fit: contain;">
+                                    @else
+                                        <div class="rounded border bg-light me-3 d-flex align-items-center justify-content-center text-muted flex-shrink-0" style="width: 65px; height: 65px;">
+                                            <i class="fa fa-box fa-2x"></i>
+                                        </div>
+                                    @endif
+                                    <div class="flex-grow-1 min-w-0">
+                                        <h6 class="mb-1 text-truncate fw-bold" style="font-size: 0.92rem;" title="{{ $p->name }}">{{ $p->name }}</h6>
+                                        <div class="d-flex justify-content-between align-items-center small text-muted">
+                                            <span>₹{{ number_format($it->price, 2) }} &times; {{ $it->quantity }}</span>
+                                            <span class="fw-bold text-dark">₹{{ number_format($it->subtotal, 2) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Direct buy single item quantity adjuster -->
+                        @if($isDirectBuy)
+                        <div class="d-flex justify-content-between align-items-center mb-3 bg-light p-2 rounded">
+                            <span class="small fw-semibold text-muted">Adjust Quantity:</span>
+                            <div class="input-group input-group-sm" style="width: 110px;">
+                                <button class="btn btn-outline-secondary" type="button" id="btnMinus">-</button>
+                                <input type="number" class="form-control text-center" id="qtyInput" value="{{ $totalQuantity }}" min="1" readonly>
+                                <button class="btn btn-outline-secondary" type="button" id="btnPlus">+</button>
+                            </div>
+                        </div>
+                        @endif
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Subtotal ({{ $totalQuantity }} items)</span>
+                            <span class="fw-bold text-dark">₹<span id="subtotalDisplay">{{ number_format($subtotal, 2) }}</span></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
+                            <span class="text-muted">Delivery Charges</span>
+                            <span class="fw-bold delivery-charge-display text-muted">
+                                @if($deliveryCharge > 0)
+                                    ₹{{ number_format($deliveryCharge, 2) }}
                                 @else
-                                    <span class="fw-bold">₹<span id="priceDisplay">{{ $product->price }}</span></span>
+                                    <span id="deliveryChargeText">Calculated on address</span>
                                 @endif
-                            </div>
+                            </span>
                         </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span>Quantity</span>
-                            <div class="input-group" style="width: 120px;">
-                                <button class="btn btn-outline-secondary btn-sm" type="button" id="btnMinus">-</button>
-                                <input type="number" class="form-control text-center form-control-sm" id="qtyInput" value="1" min="1" form="checkoutForm" readonly>
-                                <button class="btn btn-outline-secondary btn-sm" type="button" id="btnPlus">+</button>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3">
-                            <span>Delivery Charge</span>
-                            <span class="text-muted">₹<span id="deliveryChargeDisplay">{{ $deliveryCharge }}</span></span>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between">
-                            <h5 class="fw-bold">Total Amount</h5>
-                            <h5 class="fw-bold text-primary">₹<span id="totalAmount"></span></h5>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold mb-0">Total Amount</h5>
+                            <h4 class="fw-bold text-primary mb-0">₹<span id="totalAmount">{{ number_format($subtotal + $deliveryCharge, 2) }}</span></h4>
                         </div>
                     </div>
                 </div>
@@ -158,11 +188,11 @@
                 <div class="card shadow-sm border-0 bg-light">
                     <div class="card-body text-center p-4">
                         <h5 class="fw-bold mb-3">Scan QR to Pay</h5>
-                        <p class="text-muted small mb-3">Please pay the exact Total Amount shown above using any UPI app (GPay, PhonePe, Paytm).</p>
+                        <p class="text-muted small mb-3">Please scan the UPI QR code below and transfer the exact Total Amount using GPay, PhonePe, or Paytm.</p>
                         @if($qrCode && $qrCode->value)
                             <div class="bg-white p-3 rounded d-inline-block shadow-sm" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#qrModal">
                                 <img src="{{ asset('storage/' . $qrCode->value) }}" alt="Payment QR Code" class="img-fluid" style="max-width: 200px;">
-                                <div class="mt-2 text-primary small"><i class="fas fa-search-plus"></i> Click to enlarge</div>
+                                <div class="mt-2 text-primary small"><i class="fa fa-search-plus"></i> Click to enlarge</div>
                             </div>
 
                             <!-- QR Code Modal -->
@@ -174,19 +204,19 @@
                                         </div>
                                         <div class="modal-body text-center pt-0 pb-4">
                                             <h4 class="fw-bold mb-3">Scan to Pay</h4>
-                                            <img src="{{ asset('storage/' . $qrCode->value) }}" alt="Payment QR Code" class="img-fluid">
-                                            <p class="mt-3 mb-0 fw-bold fs-4 text-primary">Total: ₹<span class="modalTotalAmount"></span></p>
+                                            <img src="{{ asset('storage/' . $qrCode->value) }}" alt="Payment QR Code" class="img-fluid" style="max-width: 320px;">
+                                            <p class="mt-3 mb-0 fw-bold fs-4 text-primary">Total: ₹<span class="modalTotalAmount">{{ number_format($subtotal + $deliveryCharge, 2) }}</span></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         @else
-                            <div class="bg-white p-5 rounded d-inline-block shadow-sm text-muted border">
-                                <i class="fas fa-qrcode fa-3x mb-2"></i>
-                                <p class="mb-0">QR Code not set.</p>
+                            <div class="bg-white p-4 rounded d-inline-block shadow-sm text-muted border">
+                                <i class="fa fa-qrcode fa-3x mb-2 text-muted"></i>
+                                <p class="mb-0 small">Scan UPI on Delivery or Contact Admin</p>
                             </div>
                         @endif
-                        <p class="mt-4 mb-0 fw-bold text-dark fs-5">Total: ₹<span id="qrTotalAmount"></span></p>
+                        <p class="mt-4 mb-0 fw-bold text-dark fs-5">Total to Pay: ₹<span id="qrTotalAmount">{{ number_format($subtotal + $deliveryCharge, 2) }}</span></p>
                     </div>
                 </div>
             </div>
@@ -198,43 +228,61 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const isDirectBuy = {{ $isDirectBuy ? 'true' : 'false' }};
+        let currentSubtotal = {{ (float)$subtotal }};
+        let deliveryCharge = {{ (float)$deliveryCharge }};
+        const singleUnitPrice = {{ $isDirectBuy && $directProduct ? (($directProduct->offer_price && $directProduct->offer_price > 0) ? $directProduct->offer_price : $directProduct->price) : 0 }};
+        
         const qtyInput = document.getElementById('qtyInput');
-        const formQtyInput = document.createElement('input');
-        formQtyInput.type = 'hidden';
-        formQtyInput.name = 'quantity';
-        formQtyInput.value = qtyInput.value;
-        document.querySelector('form').appendChild(formQtyInput);
+        const checkoutForm = document.getElementById('checkoutForm');
+        
+        let formQtyInput = null;
+        if (isDirectBuy && qtyInput) {
+            formQtyInput = document.createElement('input');
+            formQtyInput.type = 'hidden';
+            formQtyInput.name = 'quantity';
+            formQtyInput.value = qtyInput.value;
+            checkoutForm.appendChild(formQtyInput);
+        }
 
-        const price = parseFloat(document.getElementById('priceDisplay').textContent);
-        let deliveryCharge = parseFloat(document.getElementById('deliveryChargeDisplay').textContent);
+        const subtotalDisplay = document.getElementById('subtotalDisplay');
         const totalAmountEls = [document.getElementById('totalAmount'), document.getElementById('qrTotalAmount')];
         const modalTotalEls = document.querySelectorAll('.modalTotalAmount');
+        const paymentAmountInput = document.getElementById('payment_amount');
 
-        function updateTotal() {
-            const qty = parseInt(qtyInput.value);
-            const total = ((price * qty) + deliveryCharge).toFixed(2);
-            totalAmountEls.forEach(el => el.textContent = total);
-            modalTotalEls.forEach(el => el.textContent = total);
-            formQtyInput.value = qty;
-            const paymentAmountInput = document.querySelector('input[name="payment_amount"]');
+        function updateUI() {
+            const total = (currentSubtotal + deliveryCharge).toFixed(2);
+            if (subtotalDisplay) subtotalDisplay.textContent = currentSubtotal.toFixed(2);
+            totalAmountEls.forEach(el => { if(el) el.textContent = total; });
+            modalTotalEls.forEach(el => { if(el) el.textContent = total; });
             if (paymentAmountInput) {
                 paymentAmountInput.value = total;
             }
         }
 
-        document.getElementById('btnMinus').addEventListener('click', function() {
-            if(qtyInput.value > 1) {
-                qtyInput.value = parseInt(qtyInput.value) - 1;
-                updateTotal();
-                calculateDelivery();
-            }
-        });
+        if (isDirectBuy && qtyInput) {
+            document.getElementById('btnMinus').addEventListener('click', function() {
+                let q = parseInt(qtyInput.value) || 1;
+                if (q > 1) {
+                    q--;
+                    qtyInput.value = q;
+                    formQtyInput.value = q;
+                    currentSubtotal = singleUnitPrice * q;
+                    updateUI();
+                    calculateDelivery();
+                }
+            });
 
-        document.getElementById('btnPlus').addEventListener('click', function() {
-            qtyInput.value = parseInt(qtyInput.value) + 1;
-            updateTotal();
-            calculateDelivery();
-        });
+            document.getElementById('btnPlus').addEventListener('click', function() {
+                let q = parseInt(qtyInput.value) || 1;
+                q++;
+                qtyInput.value = q;
+                formQtyInput.value = q;
+                currentSubtotal = singleUnitPrice * q;
+                updateUI();
+                calculateDelivery();
+            });
+        }
 
         let deliveryTimeout = null;
         function debouncedCalculateDelivery() {
@@ -242,7 +290,6 @@
             deliveryTimeout = setTimeout(calculateDelivery, 600);
         }
 
-        // Add AJAX calculation
         const formFields = ['address', 'city', 'state', 'pincode'];
         formFields.forEach(field => {
             const el = document.querySelector(`[name="${field}"]`);
@@ -253,13 +300,26 @@
         });
 
         function calculateDelivery() {
-            const address = document.querySelector('[name="address"]').value;
-            const city = document.querySelector('[name="city"]').value;
-            const state = document.querySelector('[name="state"]').value;
-            const pincode = document.querySelector('[name="pincode"]').value;
-            const qty = parseInt(qtyInput.value);
+            const address = document.querySelector('[name="address"]')?.value || '';
+            const city = document.querySelector('[name="city"]')?.value || '';
+            const state = document.querySelector('[name="state"]')?.value || '';
+            const pincode = document.querySelector('[name="pincode"]')?.value || '';
+            const qty = qtyInput ? (parseInt(qtyInput.value) || 1) : {{ $totalQuantity }};
 
             if (!address || !city || !state || !pincode) return;
+
+            let payload = {
+                address: address,
+                city: city,
+                state: state,
+                pincode: pincode,
+                subtotal: currentSubtotal
+            };
+
+            @if($isDirectBuy && $directProduct)
+                payload.product_id = {{ $directProduct->id }};
+                payload.quantity = qty;
+            @endif
 
             fetch('{{ route('checkout.calculate_delivery') }}', {
                 method: 'POST',
@@ -267,26 +327,32 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({
-                    address, city, state, pincode, qty,
-                    product_id: {{ $product->id }},
-                    quantity: qty
-                })
+                body: JSON.stringify(payload)
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    deliveryCharge = parseFloat(data.charge);
-                    document.getElementById('deliveryChargeDisplay').textContent = deliveryCharge;
-                    updateTotal();
-                } else {
-                    alert(data.error || 'Delivery not available to this location');
+                    deliveryCharge = parseFloat(data.charge) || 0;
+                    const deliveryEls = document.querySelectorAll('.delivery-charge-display');
+                    deliveryEls.forEach(el => {
+                        el.innerHTML = deliveryCharge > 0 ? '₹' + deliveryCharge.toFixed(2) : '<span class="text-success fw-bold">Free</span>';
+                    });
+                    updateUI();
                 }
             })
             .catch(error => console.error('Error calculating delivery:', error));
         }
 
-        updateTotal();
+        // Form submission prevention of double-submits
+        checkoutForm.addEventListener('submit', function() {
+            const btn = document.getElementById('btnPlaceOrder');
+            if (btn && this.checkValidity()) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Placing Order...';
+            }
+        });
+
+        updateUI();
     });
 </script>
 @endpush

@@ -206,8 +206,20 @@
 
                     <a href="{{ route('contact.index') }}" class="nav-item nav-link {{ request()->routeIs('contact.index') ? 'active' : '' }}">Contact</a>
                     
+                    <!-- Mobile Cart & Wishlist Links -->
+                    <div class="d-lg-none px-3 pt-2 pb-1 border-top mt-2 d-flex gap-2">
+                        <a href="{{ route('wishlist.index') }}" class="btn btn-outline-danger flex-fill py-2 small fw-semibold position-relative">
+                            <i class="fa fa-heart me-1"></i> Wishlist
+                            <span class="badge bg-danger rounded-pill wishlist-count-badge ms-1">0</span>
+                        </a>
+                        <button type="button" class="btn btn-outline-primary flex-fill py-2 small fw-semibold position-relative" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart">
+                            <i class="fa fa-shopping-cart me-1"></i> Cart
+                            <span class="badge bg-primary rounded-pill cart-count-badge ms-1">0</span>
+                        </button>
+                    </div>
+
                     <!-- Mobile User Profile & Logout -->
-                    <div class="d-lg-none mt-3 border-top pt-3">
+                    <div class="d-lg-none mt-2 border-top pt-3">
                         @auth
                             @php
                                 $nameParts = explode(' ', trim(Auth::user()->name));
@@ -245,8 +257,25 @@
                     </div>
                 </div>
         
-                        <div class="ms-auto d-none d-lg-block">
-                            <a href="{{ route('appointment.index') }}" class="btn btn-primary py-2 px-3">Get A Quote</a>
+                        <!-- Desktop Header Actions: Wishlist, Cart & Quote -->
+                        <div class="ms-auto d-none d-lg-flex align-items-center gap-2">
+                            <!-- Wishlist Icon Button -->
+                            <a href="{{ route('wishlist.index') }}" class="btn btn-light rounded-circle position-relative p-2 text-danger border shadow-2xs" style="width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center;" title="View Wishlist">
+                                <i class="fa fa-heart fs-6"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger wishlist-count-badge" style="font-size: 0.68rem;">
+                                    0
+                                </span>
+                            </a>
+
+                            <!-- Cart Icon Button (Triggers Offcanvas Drawer) -->
+                            <button type="button" class="btn btn-light rounded-circle position-relative p-2 text-primary border shadow-2xs" style="width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" title="View Cart">
+                                <i class="fa fa-shopping-cart fs-6"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary cart-count-badge" style="font-size: 0.68rem;">
+                                    0
+                                </span>
+                            </button>
+
+                            <a href="{{ route('appointment.index') }}" class="btn btn-primary py-2 px-3 fw-semibold ms-2">Get A Quote</a>
                         </div>
                     </div>
                 </nav>

@@ -1,7 +1,26 @@
 <?php
 
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Frontend\WishlistController;
 use Illuminate\Support\Facades\Route;
+
+// Cart Routes
+Route::prefix('cart')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('cart.index');
+    Route::get('/mini', [CartController::class, 'miniCart'])->name('cart.mini');
+    Route::post('/add', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/update', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/remove', [CartController::class, 'remove'])->name('cart.remove');
+    Route::get('/count', [CartController::class, 'count'])->name('cart.count');
+});
+
+// Wishlist Routes
+Route::prefix('wishlist')->group(function () {
+    Route::get('/', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+    Route::get('/count', [WishlistController::class, 'count'])->name('wishlist.count');
+});
 
 // Static Pages
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
@@ -222,6 +241,6 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 });
 
 // Checkout Routes
-Route::get('/checkout/{product}', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
-Route::post('/checkout/{product}', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/checkout/{product?}', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout/{product?}', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/checkout/success/{order}', [App\Http\Controllers\CheckoutController::class, 'success'])->name('checkout.success');
