@@ -41,12 +41,15 @@
                                     <input type="email" id="loginEmail" class="form-control form-control-lg" required placeholder="name@example.com">
                                 </div>
                             </div>
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="form-label text-secondary fw-semibold small text-uppercase">Password</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-lock text-muted"></i></span>
                                     <input type="password" id="loginPassword" class="form-control form-control-lg" required placeholder="Enter password">
                                 </div>
+                            </div>
+                            <div class="d-flex justify-content-end mb-4">
+                                <a href="#" class="text-primary text-decoration-none small fw-semibold" onclick="switchView('forgotPasswordView')">Forgot Password?</a>
                             </div>
                             <div class="d-grid gap-2 mb-3">
                                 <button type="submit" class="btn btn-primary btn-auth" id="btnLogin">Sign In</button>
@@ -168,6 +171,35 @@
                         </form>
                     </div>
 
+                    <!-- FORGOT PASSWORD FORM -->
+                    <div id="forgotPasswordView" class="d-none">
+                        <div class="text-center mb-4">
+                            <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+                                <i class="fa fa-key fa-2x"></i>
+                            </div>
+                            <h3 class="fw-bold">Forgot Password</h3>
+                            <p class="text-muted">Enter your registered email address and we'll send you a password reset link.</p>
+                        </div>
+
+                        <form id="forgotPasswordForm" onsubmit="handleForgotPassword(event)">
+                            <div class="mb-4">
+                                <label class="form-label text-secondary fw-semibold small text-uppercase">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa fa-envelope text-muted"></i></span>
+                                    <input type="email" id="forgotEmail" class="form-control form-control-lg" required placeholder="name@example.com">
+                                </div>
+                            </div>
+                            <div class="d-grid mb-4">
+                                <button type="submit" class="btn btn-primary btn-auth" id="btnSendResetLink">Send Reset Link</button>
+                            </div>
+                            <div class="text-center pt-3 border-top">
+                                <a href="#" class="text-primary text-decoration-none fw-bold" onclick="switchView('loginView')">
+                                    <i class="fa fa-arrow-left me-1"></i> Back to Sign In
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -180,23 +212,50 @@
     let currentOtpEmail = '';
 
     document.addEventListener("DOMContentLoaded", function() {
-        if (window.location.pathname.includes('/register')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (window.location.pathname.includes('/register') || urlParams.get('action') === 'register') {
             switchView('registerView');
+        } else if (urlParams.get('action') === 'forgot' || urlParams.get('view') === 'forgot') {
+            switchView('forgotPasswordView');
+        } else if (urlParams.get('action') === 'otp' || urlParams.get('view') === 'otp') {
+            switchView('otpRequestView');
         }
+
+        @if(session('error'))
+            showAlert(@json(session('error')), 'danger');
+        @elseif(session('success'))
+            showAlert(@json(session('success')), 'success');
+        @endif
     });
 
     function switchView(viewId) {
-        ['loginView', 'registerView', 'otpRequestView', 'otpVerifyView'].forEach(id => {
-            document.getElementById(id).classList.add('d-none');
+        ['loginView', 'registerView', 'otpRequestView', 'otpVerifyView', 'forgotPasswordView'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('d-none');
         });
-        document.getElementById(viewId).classList.remove('d-none');
+        const target = document.getElementById(viewId);
+        if (target) target.classList.remove('d-none');
         hideAlert();
     }
 
+    $(document).ajaxError(function(event, jqXHR, ajaxSettings, thrownError) {
+        if (jqXHR.status === 419) {
+            showAlert('Your session has expired. Refreshing page...', 'warning');
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);
+        }
+    });
+
     function showAlert(message, type = 'danger') {
+        if (typeof message === 'string' && message.toLowerCase().includes('csrf token mismatch')) {
+            message = 'Your session has expired. Refreshing page...';
+            type = 'warning';
+            setTimeout(() => window.location.reload(), 1200);
+        }
         const box = document.getElementById('alertBox');
-        box.className = `alert alert-${type} rounded-3 px-3 py-2`;
-        box.innerText = message;
+        box.className = `alert alert-${type} rounded-3 px-3 py-2 mb-4`;
+        box.innerHTML = message;
         box.classList.remove('d-none');
     }
 
@@ -211,14 +270,21 @@
         btn.disabled = true;
         btn.innerHTML = 'Signing In...';
 
+        const email = $('#loginEmail').val();
+        const password = $('#loginPassword').val();
+
         $.post("{{ route('frontend.auth.login-password') }}", {
-            email: $('#loginEmail').val(),
-            password: $('#loginPassword').val(),
+            email: email,
+            password: password,
             _token: '{{ csrf_token() }}'
         }).done(res => {
             window.location.href = res.redirect;
         }).fail(err => {
-            showAlert(err.responseJSON?.message || 'Invalid credentials.');
+            let msg = err.responseJSON?.message || 'Invalid credentials.';
+            if (err.responseJSON?.status === 'not_registered') {
+                msg += ` <a href="#" class="alert-link text-decoration-underline ms-1" onclick="switchView('registerView')">Click here to register</a>`;
+            }
+            showAlert(msg, 'danger');
             btn.disabled = false;
             btn.innerHTML = 'Sign In';
         });
@@ -278,7 +344,11 @@
                 showAlert('OTP resent successfully!', 'success');
             }
         }).fail(err => {
-            showAlert(err.responseJSON?.message || 'Failed to send OTP.');
+            let msg = err.responseJSON?.message || 'Failed to send OTP.';
+            if (err.responseJSON?.status === 'not_registered') {
+                msg += ` <a href="#" class="alert-link text-decoration-underline ms-1" onclick="switchView('registerView')">Click here to register</a>`;
+            }
+            showAlert(msg, 'danger');
         }).always(() => {
             btn.disabled = false;
             if(!isResend) btn.innerHTML = 'Send Code';
@@ -302,6 +372,34 @@
             showAlert(err.responseJSON?.message || 'Invalid or expired OTP.');
             btn.disabled = false;
             btn.innerHTML = 'Verify & Login';
+        });
+    }
+
+    function handleForgotPassword(e) {
+        e.preventDefault();
+        hideAlert();
+        const email = $('#forgotEmail').val();
+        if(!email) return;
+
+        const btn = document.getElementById('btnSendResetLink');
+        btn.disabled = true;
+        btn.innerHTML = 'Sending Link...';
+
+        $.post("{{ route('frontend.auth.password.email') }}", {
+            email: email,
+            _token: '{{ csrf_token() }}'
+        }).done(res => {
+            showAlert(res.message || 'Password reset link sent to your email!', 'success');
+            $('#forgotEmail').val('');
+        }).fail(err => {
+            let msg = err.responseJSON?.message || 'Failed to send password reset link.';
+            if (err.responseJSON?.status === 'not_registered') {
+                msg += ` <a href="#" class="alert-link text-decoration-underline ms-1" onclick="switchView('registerView')">Click here to register</a>`;
+            }
+            showAlert(msg, 'danger');
+        }).always(() => {
+            btn.disabled = false;
+            btn.innerHTML = 'Send Reset Link';
         });
     }
 </script>

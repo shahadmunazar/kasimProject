@@ -157,8 +157,16 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'showLogin'])->name('frontend.auth.register-view');
     Route::post('/login/password', [\App\Http\Controllers\Frontend\AuthController::class, 'loginWithPassword'])->name('frontend.auth.login-password');
     Route::post('/register', [\App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('frontend.auth.register');
+
+    // OTP Login Routes
+    Route::get('/login/otp/send', fn() => redirect()->route('frontend.auth.login'));
     Route::post('/login/otp/send', [\App\Http\Controllers\Frontend\AuthController::class, 'sendOtp'])->name('frontend.auth.send-otp');
     Route::post('/login/verify', [\App\Http\Controllers\Frontend\AuthController::class, 'verifyOtp'])->name('frontend.auth.verify-otp');
+
+    // Forgot / Reset Password Routes
+    Route::post('/forgot-password', [\App\Http\Controllers\Frontend\AuthController::class, 'sendResetLinkEmail'])->name('frontend.auth.password.email');
+    Route::get('/reset-password/{token}', [\App\Http\Controllers\Frontend\AuthController::class, 'showResetPassword'])->name('frontend.auth.password.reset');
+    Route::post('/reset-password', [\App\Http\Controllers\Frontend\AuthController::class, 'resetPassword'])->name('frontend.auth.password.update');
 });
 
 Route::post('/logout', [\App\Http\Controllers\Frontend\AuthController::class, 'logout'])->name('frontend.auth.logout');

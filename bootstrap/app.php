@@ -13,6 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(\App\Http\Middleware\TrackVisitors::class);
         $middleware->redirectGuestsTo(fn () => route('frontend.auth.login'));
+        $middleware->validateCsrfTokens(except: [
+            'login/otp/send',
+            'login/verify',
+            'login/password',
+            'forgot-password',
+            'reset-password',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
