@@ -75,10 +75,14 @@
                             @endif
                         </div>
 
-                        <div class="mb-4">
-                            <h5 class="fw-semibold">Description</h5>
-                            <div class="text-muted" style="line-height: 1.6;">
-                                {!! $product->description !!}
+                        <div class="mb-4" id="product-description">
+                            <h5 class="fw-bold mb-3 border-bottom pb-2">Description</h5>
+                            <div class="text-secondary product-full-description" style="line-height: 1.8; font-size: 1rem;">
+                                @if(!empty(trim(strip_tags($product->description ?? ''))))
+                                    {!! $product->description !!}
+                                @else
+                                    <p class="text-muted fst-italic">No description available for this product.</p>
+                                @endif
                             </div>
                         </div>
 

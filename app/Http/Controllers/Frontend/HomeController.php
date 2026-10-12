@@ -159,25 +159,62 @@ public function testingFrameworks() {
 
     public function products_listing()
     {
-        $categories = \App\Models\Category::with('products')->where('is_active', true)->get();
-        return view('frontend.products.index', compact('categories'));
+        $categories = \App\Models\Category::with([
+            'products' => function($q) { $q->where('is_active', true)->with('productModel'); },
+            'productModels' => function($q) { $q->where('is_active', true); }
+        ])->where('is_active', true)->get();
+
+        $isCategoryPage = false;
+        $currentCategory = null;
+        $category = null;
+        $models = collect();
+        $activeModelSlug = 'all';
+
+        return view('frontend.products.index', compact('categories', 'isCategoryPage', 'currentCategory', 'category', 'models', 'activeModelSlug'));
     }
 
     public function products_by_category($category_slug)
     {
-        $category = \App\Models\Category::with(['products' => function($q) { $q->where('is_active', true); }])->where('slug', $category_slug)->where('is_active', true)->firstOrFail();
+        $category = \App\Models\Category::with([
+            'products' => function($q) { $q->where('is_active', true)->with('productModel'); },
+            'productModels' => function($q) { $q->where('is_active', true); }
+        ])->where('slug', $category_slug)->where('is_active', true)->firstOrFail();
+
+        $usedModelIds = $category->products->pluck('product_model_id')->filter()->unique();
+        $models = \App\Models\ProductModel::where('is_active', true)
+            ->where(function($q) use ($category, $usedModelIds) {
+                $q->where('category_id', $category->id)
+                  ->orWhereIn('id', $usedModelIds);
+            })->get();
+
+        $isCategoryPage = true;
+        $currentCategory = $category;
         $categories = collect([$category]);
-        return view('frontend.products.index', compact('categories'));
+        $activeModelSlug = request()->query('model', 'all');
+
+        return view('frontend.products.index', compact('category', 'currentCategory', 'categories', 'models', 'isCategoryPage', 'activeModelSlug'));
     }
 
     public function products_by_model($category_slug, $model_slug)
     {
-        $category = \App\Models\Category::where('slug', $category_slug)->where('is_active', true)->firstOrFail();
-        $model = \App\Models\ProductModel::with(['products' => function($q) { $q->where('is_active', true); }])->where('slug', $model_slug)->where('is_active', true)->firstOrFail();
-        
-        $category->setRelation('products', $model->products);
+        $category = \App\Models\Category::with([
+            'products' => function($q) { $q->where('is_active', true)->with('productModel'); },
+            'productModels' => function($q) { $q->where('is_active', true); }
+        ])->where('slug', $category_slug)->where('is_active', true)->firstOrFail();
+
+        $usedModelIds = $category->products->pluck('product_model_id')->filter()->unique();
+        $models = \App\Models\ProductModel::where('is_active', true)
+            ->where(function($q) use ($category, $usedModelIds) {
+                $q->where('category_id', $category->id)
+                  ->orWhereIn('id', $usedModelIds);
+            })->get();
+
+        $isCategoryPage = true;
+        $currentCategory = $category;
         $categories = collect([$category]);
-        return view('frontend.products.index', compact('categories'));
+        $activeModelSlug = $model_slug;
+
+        return view('frontend.products.index', compact('category', 'currentCategory', 'categories', 'models', 'isCategoryPage', 'activeModelSlug'));
     }
 
     public function product_details($slug)

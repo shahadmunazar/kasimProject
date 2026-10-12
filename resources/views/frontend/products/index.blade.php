@@ -1,212 +1,284 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Products')
+@section('meta_title', isset($category) ? $category->name . ' Products' : 'Products')
 
 @section('content')
+<style>
+    .product-filter-nav {
+        gap: 8px;
+        padding: 6px;
+        background: #f8f9fa;
+        border-radius: 50px;
+        display: inline-flex;
+        max-width: 100%;
+        overflow-x: auto;
+        border: 1px solid #e9ecef;
+    }
+    .product-filter-nav .nav-link {
+        color: #495057;
+        background-color: transparent;
+        border: none;
+        border-radius: 50rem;
+        padding: 0.6rem 1.4rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+    }
+    .product-filter-nav .nav-link:hover {
+        background-color: rgba(13, 110, 253, 0.08);
+        color: #0d6efd;
+    }
+    .product-filter-nav .nav-link.active {
+        background-color: #0d6efd;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+    }
+    .product-filter-nav .nav-link .badge {
+        margin-left: 0.5rem;
+        font-size: 0.75rem;
+        padding: 0.3em 0.6em;
+        border-radius: 50rem;
+        transition: all 0.2s ease;
+    }
+    .product-filter-nav .nav-link.active .badge {
+        background-color: #ffffff !important;
+        color: #0d6efd !important;
+    }
+    .product-item-card {
+        border-radius: 0.85rem;
+        overflow: hidden;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .product-item-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08) !important;
+    }
+</style>
+
 <section class="page-title bg-1">
   <div class="overlay"></div>
   <div class="container">
     <div class="row">
       <div class="col-md-12">
         <div class="block text-center">
-          <span class="text-white">Our Products</span>
-          <h1 class="text-capitalize mb-5 text-lg">Categories & Products</h1>
+          <span class="text-white">{{ isset($category) ? 'Category Catalog' : 'Our Products' }}</span>
+          <h1 class="text-capitalize mb-4 text-lg">{{ isset($category) ? $category->name : 'Categories & Products' }}</h1>
+          @if(isset($category))
+            <p class="text-white-50 mb-0">Browse all products and models under <strong>{{ $category->name }}</strong></p>
+          @endif
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section">
+<section class="section py-5">
     <div class="container">
-        <!-- Tab Navigation -->
-        <ul class="nav nav-pills mb-4 justify-content-center" id="product-tabs" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" id="all-tab" data-toggle="pill" href="#all" role="tab" aria-controls="all" aria-selected="true">All</a>
-            </li>
-            @foreach($categories as $category)
-                <li class="nav-item">
-                    <a class="nav-link" id="cat-{{ $category->id }}-tab" data-toggle="pill" href="#cat-{{ $category->id }}" role="tab" aria-controls="cat-{{ $category->id }}" aria-selected="false">{{ $category->name }}</a>
-                </li>
-            @endforeach
-        </ul>
+        <!-- Tab Navigation Filters -->
+        <div class="text-center mb-5">
+            <ul class="nav nav-pills product-filter-nav justify-content-center" id="product-tabs" role="tablist">
+                @if(isset($isCategoryPage) && $isCategoryPage && isset($category))
+                    {{-- Category Page: Filter by Models --}}
+                    @php
+                        $totalCatProducts = $category->products->count();
+                        $noModelCount = $category->products->whereNull('product_model_id')->count();
+                    @endphp
 
-        <!-- Tab Content -->
-        <div class="tab-content" id="product-tabContent">
-            <!-- All Products Tab -->
-            <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
-                <div class="row">
-                    @foreach($categories as $category)
-                        @foreach($category->products as $product)
-                            <div class="col-lg-4 col-md-6 col-12 mb-4">
-                                <div class="card h-100 shadow-sm border-0">
-                                    @if($product->images && count($product->images) > 0)
-                                        @if(count($product->images) > 1)
-                                            <div id="carouselAll{{ $product->id }}" class="carousel slide" data-bs-ride="carousel">
-                                                <div class="carousel-inner">
-                                                    @foreach($product->images as $index => $img)
-                                                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                                            <img src="{{ asset('storage/' . $img) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: contain; background-color: #f8f9fa; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalAll{{ $product->id }}">
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselAll{{ $product->id }}" data-bs-slide="prev">
-                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                </button>
-                                                <button class="carousel-control-next" type="button" data-bs-target="#carouselAll{{ $product->id }}" data-bs-slide="next">
-                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                </button>
-                                            </div>
-                                        @else
-                                            <img src="{{ asset('storage/' . $product->images[0]) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: contain; background-color: #f8f9fa; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalAll{{ $product->id }}">
-                                        @endif
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link {{ ($activeModelSlug ?? 'all') == 'all' ? 'active' : '' }}" 
+                                id="tab-btn-all" 
+                                data-bs-toggle="pill" 
+                                data-bs-target="#tab-pane-all" 
+                                data-filter-slug="all" 
+                                type="button" 
+                                role="tab" 
+                                aria-controls="tab-pane-all" 
+                                aria-selected="{{ ($activeModelSlug ?? 'all') == 'all' ? 'true' : 'false' }}">
+                            All <span class="badge bg-secondary">{{ $totalCatProducts }}</span>
+                        </button>
+                    </li>
 
-                                        <!-- Image Modal -->
-                                        <div class="modal fade" id="imageModalAll{{ $product->id }}" tabindex="-1" aria-hidden="true">
-                                          <div class="modal-dialog modal-xl modal-dialog-centered">
-                                            <div class="modal-content">
-                                              <div class="modal-header border-0 pb-0">
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                              </div>
-                                              <div class="modal-body text-center pt-0">
-                                                @if(count($product->images) > 1)
-                                                    <div id="modalCarouselAll{{ $product->id }}" class="carousel slide" data-bs-ride="carousel">
-                                                        <div class="carousel-inner">
-                                                            @foreach($product->images as $index => $img)
-                                                                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                                                    <img src="{{ asset('storage/' . $img) }}" class="img-fluid" alt="{{ $product->name }}">
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                        <button class="carousel-control-prev" type="button" data-bs-target="#modalCarouselAll{{ $product->id }}" data-bs-slide="prev">
-                                                            <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1);"></span>
-                                                        </button>
-                                                        <button class="carousel-control-next" type="button" data-bs-target="#modalCarouselAll{{ $product->id }}" data-bs-slide="next">
-                                                            <span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(1);"></span>
-                                                        </button>
-                                                    </div>
-                                                @else
-                                                    <img src="{{ asset('storage/' . $product->images[0]) }}" class="img-fluid" alt="{{ $product->name }}">
-                                                @endif
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                    @endif
-                                    <div class="card-body text-center">
-                                        <h4 class="card-title mt-3">{{ $product->name }}</h4>
-                                        <h6 class="text-muted">{{ $category->name }}</h6>
-                                        @if($product->offer_price)
-                                            <p class="card-text mb-0"><del>${{ $product->price }}</del> <strong class="text-danger">${{ $product->offer_price }}</strong></p>
-                                        @elseif($product->price)
-                                            <p class="card-text mb-0"><strong>${{ $product->price }}</strong></p>
-                                        @endif
-                                        <p class="card-text mt-3">{!! $product->description !!}</p>
-                                        <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
-                                            <a href="{{ route('product.details', $product->slug) }}" class="btn btn-outline-primary">View Details</a>
-                                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">Enquiry</button>
-                                            <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-primary">Buy Now</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+                    @foreach($models as $model)
+                        @php
+                            $modelCount = $category->products->where('product_model_id', $model->id)->count();
+                            $isModelActive = ($activeModelSlug ?? '') == $model->slug;
+                        @endphp
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {{ $isModelActive ? 'active' : '' }}" 
+                                    id="tab-btn-{{ $model->slug }}" 
+                                    data-bs-toggle="pill" 
+                                    data-bs-target="#tab-pane-{{ $model->slug }}" 
+                                    data-filter-slug="{{ $model->slug }}" 
+                                    type="button" 
+                                    role="tab" 
+                                    aria-controls="tab-pane-{{ $model->slug }}" 
+                                    aria-selected="{{ $isModelActive ? 'true' : 'false' }}">
+                                {{ $model->name }} <span class="badge bg-secondary">{{ $modelCount }}</span>
+                            </button>
+                        </li>
                     @endforeach
-                </div>
-            </div>
 
-            <!-- Individual Category Tabs -->
-            @foreach($categories as $category)
-                <div class="tab-pane fade" id="cat-{{ $category->id }}" role="tabpanel" aria-labelledby="cat-{{ $category->id }}-tab">
+                    @if($noModelCount > 0 && $models->count() > 0)
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {{ ($activeModelSlug ?? '') == 'other' ? 'active' : '' }}" 
+                                    id="tab-btn-other" 
+                                    data-bs-toggle="pill" 
+                                    data-bs-target="#tab-pane-other" 
+                                    data-filter-slug="other" 
+                                    type="button" 
+                                    role="tab" 
+                                    aria-controls="tab-pane-other" 
+                                    aria-selected="{{ ($activeModelSlug ?? '') == 'other' ? 'true' : 'false' }}">
+                                General <span class="badge bg-secondary">{{ $noModelCount }}</span>
+                            </button>
+                        </li>
+                    @endif
+
+                @else
+                    {{-- Global Products Page: Filter by Categories --}}
+                    @php
+                        $grandTotal = $categories->pluck('products')->flatten()->count();
+                    @endphp
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" 
+                                id="tab-btn-all" 
+                                data-bs-toggle="pill" 
+                                data-bs-target="#tab-pane-all" 
+                                data-filter-slug="all" 
+                                type="button" 
+                                role="tab" 
+                                aria-controls="tab-pane-all" 
+                                aria-selected="true">
+                            All <span class="badge bg-secondary">{{ $grandTotal }}</span>
+                        </button>
+                    </li>
+
+                    @foreach($categories as $cat)
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" 
+                                    id="tab-btn-{{ $cat->slug }}" 
+                                    data-bs-toggle="pill" 
+                                    data-bs-target="#tab-pane-{{ $cat->slug }}" 
+                                    data-filter-slug="{{ $cat->slug }}" 
+                                    type="button" 
+                                    role="tab" 
+                                    aria-controls="tab-pane-{{ $cat->slug }}" 
+                                    aria-selected="false">
+                                {{ $cat->name }} <span class="badge bg-secondary">{{ $cat->products->count() }}</span>
+                            </button>
+                        </li>
+                    @endforeach
+                @endif
+            </ul>
+        </div>
+
+        <!-- Tab Panes Content -->
+        <div class="tab-content" id="product-tabContent">
+            @if(isset($isCategoryPage) && $isCategoryPage && isset($category))
+                {{-- Pane: ALL Category Products --}}
+                <div class="tab-pane fade {{ ($activeModelSlug ?? 'all') == 'all' ? 'show active' : '' }}" 
+                     id="tab-pane-all" 
+                     role="tabpanel" 
+                     aria-labelledby="tab-btn-all">
                     <div class="row">
-                        @if($category->products->isEmpty())
-                            <div class="col-12 text-center">
-                                <p>No products available in this category.</p>
+                        @forelse($category->products as $product)
+                            @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'all_'])
+                        @empty
+                            <div class="col-12 text-center py-5">
+                                <i class="fa fa-box-open fa-3x text-muted mb-3 d-block"></i>
+                                <h5 class="text-muted">No products available in this category yet.</h5>
                             </div>
-                        @else
-                            @foreach($category->products as $product)
-                                <div class="col-lg-4 col-md-6 col-12 mb-4">
-                                    <div class="card h-100 shadow-sm border-0">
-                                    @if($product->images && count($product->images) > 0)
-                                        @if(count($product->images) > 1)
-                                            <div id="carouselCat{{ $product->id }}" class="carousel slide" data-bs-ride="carousel">
-                                                <div class="carousel-inner">
-                                                    @foreach($product->images as $index => $img)
-                                                        <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                                            <img src="{{ asset('storage/' . $img) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: contain; background-color: #f8f9fa; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalCat{{ $product->id }}">
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselCat{{ $product->id }}" data-bs-slide="prev">
-                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                </button>
-                                                <button class="carousel-control-next" type="button" data-bs-target="#carouselCat{{ $product->id }}" data-bs-slide="next">
-                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                </button>
-                                            </div>
-                                        @else
-                                            <img src="{{ asset('storage/' . $product->images[0]) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: contain; background-color: #f8f9fa; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#imageModalCat{{ $product->id }}">
-                                        @endif
+                        @endforelse
+                    </div>
+                </div>
 
-                                        <!-- Image Modal -->
-                                        <div class="modal fade" id="imageModalCat{{ $product->id }}" tabindex="-1" aria-hidden="true">
-                                          <div class="modal-dialog modal-xl modal-dialog-centered">
-                                            <div class="modal-content">
-                                              <div class="modal-header border-0 pb-0">
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                              </div>
-                                              <div class="modal-body text-center pt-0">
-                                                @if(count($product->images) > 1)
-                                                    <div id="modalCarouselCat{{ $product->id }}" class="carousel slide" data-bs-ride="carousel">
-                                                        <div class="carousel-inner">
-                                                            @foreach($product->images as $index => $img)
-                                                                <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                                                    <img src="{{ asset('storage/' . $img) }}" class="img-fluid" alt="{{ $product->name }}">
-                                                                </div>
-                                                            @endforeach
-                                                        </div>
-                                                        <button class="carousel-control-prev" type="button" data-bs-target="#modalCarouselCat{{ $product->id }}" data-bs-slide="prev">
-                                                            <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: invert(1);"></span>
-                                                        </button>
-                                                        <button class="carousel-control-next" type="button" data-bs-target="#modalCarouselCat{{ $product->id }}" data-bs-slide="next">
-                                                            <span class="carousel-control-next-icon" aria-hidden="true" style="filter: invert(1);"></span>
-                                                        </button>
-                                                    </div>
-                                                @else
-                                                    <img src="{{ asset('storage/' . $product->images[0]) }}" class="img-fluid" alt="{{ $product->name }}">
-                                                @endif
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                    @endif
-                                    <div class="card-body text-center">
-                                        <h4 class="card-title mt-3">{{ $product->name }}</h4>
-                                        @if($product->offer_price)
-                                            <p class="card-text mb-0"><del>${{ $product->price }}</del> <strong class="text-danger">${{ $product->offer_price }}</strong></p>
-                                        @elseif($product->price)
-                                            <p class="card-text mb-0"><strong>${{ $product->price }}</strong></p>
-                                        @endif
-                                        <p class="card-text mt-3">{!! $product->description !!}</p>
-                                        <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
-                                            <a href="{{ route('product.details', $product->slug) }}" class="btn btn-outline-primary">View Details</a>
-                                            <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">Enquiry</button>
-                                            <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-primary">Buy Now</a>
-                                        </div>
-                                    </div>
+                {{-- Panes: For Each Model --}}
+                @foreach($models as $model)
+                    @php
+                        $modelProducts = $category->products->where('product_model_id', $model->id);
+                        $isModelActive = ($activeModelSlug ?? '') == $model->slug;
+                    @endphp
+                    <div class="tab-pane fade {{ $isModelActive ? 'show active' : '' }}" 
+                         id="tab-pane-{{ $model->slug }}" 
+                         role="tabpanel" 
+                         aria-labelledby="tab-btn-{{ $model->slug }}">
+                        <div class="row">
+                            @forelse($modelProducts as $product)
+                                @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'm_' . $model->id . '_'])
+                            @empty
+                                <div class="col-12 text-center py-5">
+                                    <i class="fa fa-box-open fa-3x text-muted mb-3 d-block"></i>
+                                    <h5 class="text-muted">No products currently available under <strong>{{ $model->name }}</strong> model.</h5>
+                                    <button type="button" class="btn btn-sm btn-outline-primary mt-3" onclick="switchFilterTab('all')">View All Products in {{ $category->name }}</button>
                                 </div>
+                            @endforelse
+                        </div>
+                    </div>
+                @endforeach
+
+                {{-- Pane: Products Without Model --}}
+                @if($noModelCount > 0 && $models->count() > 0)
+                    <div class="tab-pane fade {{ ($activeModelSlug ?? '') == 'other' ? 'show active' : '' }}" 
+                         id="tab-pane-other" 
+                         role="tabpanel" 
+                         aria-labelledby="tab-btn-other">
+                        <div class="row">
+                            @forelse($category->products->whereNull('product_model_id') as $product)
+                                @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'other_'])
+                            @empty
+                                <div class="col-12 text-center py-5">
+                                    <h5 class="text-muted">No general products found.</h5>
                                 </div>
+                            @endforelse
+                        </div>
+                    </div>
+                @endif
+
+            @else
+                {{-- Global Listing: Pane ALL --}}
+                <div class="tab-pane fade show active" id="tab-pane-all" role="tabpanel" aria-labelledby="tab-btn-all">
+                    <div class="row">
+                        @php $hasAnyProduct = false; @endphp
+                        @foreach($categories as $cat)
+                            @foreach($cat->products as $product)
+                                @php $hasAnyProduct = true; @endphp
+                                @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'all_c_' . $cat->id . '_'])
                             @endforeach
+                        @endforeach
+
+                        @if(!$hasAnyProduct)
+                            <div class="col-12 text-center py-5">
+                                <i class="fa fa-box-open fa-3x text-muted mb-3 d-block"></i>
+                                <h5 class="text-muted">No products found.</h5>
+                            </div>
                         @endif
                     </div>
                 </div>
-            @endforeach
+
+                {{-- Global Listing: Panes by Category --}}
+                @foreach($categories as $cat)
+                    <div class="tab-pane fade" id="tab-pane-{{ $cat->slug }}" role="tabpanel" aria-labelledby="tab-btn-{{ $cat->slug }}">
+                        <div class="row">
+                            @forelse($cat->products as $product)
+                                @include('frontend.products.partials.card', ['product' => $product, 'prefix' => 'cat_' . $cat->id . '_'])
+                            @empty
+                                <div class="col-12 text-center py-5">
+                                    <i class="fa fa-box-open fa-3x text-muted mb-3 d-block"></i>
+                                    <h5 class="text-muted">No products available in {{ $cat->name }}.</h5>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                @endforeach
+            @endif
         </div>
     </div>
 </section>
-@endsection
 
-<!-- Buy Modal -->
+<!-- Buy / Enquiry Modal -->
 <div class="modal fade" id="buyModal" tabindex="-1" aria-labelledby="buyModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -238,28 +310,82 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Submit Order</button>
+          <button type="submit" class="btn btn-primary">Submit Enquiry</button>
         </div>
       </form>
     </div>
   </div>
 </div>
+@endsection
 
 @push('scripts')
 <script>
-  var buyModal = document.getElementById('buyModal')
+  // Enquiry Modal setup
+  var buyModal = document.getElementById('buyModal');
   if (buyModal) {
     buyModal.addEventListener('show.bs.modal', function (event) {
-      var button = event.relatedTarget
-      var productId = button.getAttribute('data-product-id')
-      var productName = button.getAttribute('data-product-name')
+      var button = event.relatedTarget;
+      var productId = button.getAttribute('data-product-id');
+      var productName = button.getAttribute('data-product-name');
       
-      var modalProductId = buyModal.querySelector('#modalProductId')
-      var modalProductName = buyModal.querySelector('#modalProductName')
+      var modalProductId = buyModal.querySelector('#modalProductId');
+      var modalProductName = buyModal.querySelector('#modalProductName');
       
-      modalProductId.value = productId
-      modalProductName.textContent = productName
-    })
+      modalProductId.value = productId;
+      modalProductName.textContent = productName;
+    });
   }
+
+  // Helper function to switch tabs programmatically
+  function switchFilterTab(slug) {
+    var targetBtn = document.querySelector(`button[data-filter-slug="${slug}"]`);
+    if (targetBtn && typeof bootstrap !== 'undefined') {
+      var tabInstance = bootstrap.Tab.getOrCreateInstance(targetBtn);
+      tabInstance.show();
+    }
+  }
+
+  // Hash Navigation Support (#all, #model-slug, etc.)
+  document.addEventListener("DOMContentLoaded", function () {
+    function activateTabFromUrl() {
+      var hash = window.location.hash ? window.location.hash.replace('#', '') : '';
+      
+      if (!hash) {
+        @if(isset($activeModelSlug) && $activeModelSlug !== 'all')
+          hash = '{{ $activeModelSlug }}';
+        @else
+          hash = 'all';
+        @endif
+      }
+
+      var targetBtn = document.querySelector(`button[data-filter-slug="${hash}"]`) ||
+                      document.querySelector(`button[data-bs-target="#tab-pane-${hash}"]`);
+
+      if (targetBtn && typeof bootstrap !== 'undefined') {
+        var tab = bootstrap.Tab.getOrCreateInstance(targetBtn);
+        tab.show();
+      }
+    }
+
+    activateTabFromUrl();
+
+    // Listen for hash changes in URL
+    window.addEventListener('hashchange', activateTabFromUrl);
+
+    // Update URL hash when a tab is clicked
+    var filterButtons = document.querySelectorAll('#product-tabs button[data-filter-slug]');
+    filterButtons.forEach(function (btn) {
+      btn.addEventListener('shown.bs.tab', function (e) {
+        var slug = e.target.getAttribute('data-filter-slug');
+        if (slug) {
+          if (history.replaceState) {
+            history.replaceState(null, null, '#' + slug);
+          } else {
+            window.location.hash = slug;
+          }
+        }
+      });
+    });
+  });
 </script>
 @endpush
