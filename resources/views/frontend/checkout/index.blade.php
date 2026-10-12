@@ -162,7 +162,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label small">Amount Paid <span class="text-danger">*</span></label>
-                                        <input type="number" step="0.01" name="payment_amount" id="payment_amount" class="form-control" value="{{ ($product->offer_price && $product->offer_price > 0) ? $product->offer_price : $product->price }}" readonly>
+                                        <input type="number" step="0.01" name="payment_amount" id="payment_amount" class="form-control" value="{{ number_format($totalPrice, 2, '.', '') }}" readonly>
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label small">Payment Screenshot (Optional)</label>
@@ -331,6 +331,11 @@
                 
                 const totalEls = document.querySelectorAll('.total-amount-display');
                 totalEls.forEach(el => el.textContent = '₹' + total.toFixed(2));
+
+                const paymentAmountInput = document.getElementById('payment_amount');
+                if (paymentAmountInput) {
+                    paymentAmountInput.value = total.toFixed(2);
+                }
             } else {
                 alert(data.error || 'Delivery is not available to this location.');
             }

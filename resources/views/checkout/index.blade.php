@@ -216,6 +216,10 @@
             totalAmountEls.forEach(el => el.textContent = total);
             modalTotalEls.forEach(el => el.textContent = total);
             formQtyInput.value = qty;
+            const paymentAmountInput = document.querySelector('input[name="payment_amount"]');
+            if (paymentAmountInput) {
+                paymentAmountInput.value = total;
+            }
         }
 
         document.getElementById('btnMinus').addEventListener('click', function() {
