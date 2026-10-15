@@ -70,13 +70,34 @@
 <div class="container-fluid bg-white sticky-top wow fadeIn" data-wow-delay="0.1s">
     <div class="container">
         <nav class="navbar navbar-expand-lg bg-white navbar-light p-lg-0">
-            <a href="{{ route('home.index') }}" class="navbar-brand d-lg-none">
-                <h1 class="m-0 text-primary">TC SMART</h1>
+            <a href="{{ route('home.index') }}" class="navbar-brand d-lg-none py-1">
+                <h1 class="m-0 text-primary fs-3 fw-bold">TC SMART</h1>
             </a>
-            <button type="button" class="navbar-toggler me-0" data-bs-toggle="collapse"
-                data-bs-target="#navbarCollapse">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+
+            <!-- Mobile Action Bar: Wishlist, Cart & Menu Toggler -->
+            <div class="d-flex align-items-center gap-2 d-lg-none ms-auto">
+                <!-- Mobile Wishlist Button -->
+                <a href="{{ route('wishlist.index') }}" class="btn btn-light rounded-circle position-relative p-0 d-inline-flex align-items-center justify-content-center text-danger border shadow-2xs" style="width: 36px; height: 36px;" title="Wishlist">
+                    <i class="fa fa-heart" style="font-size: 0.9rem;"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger wishlist-count-badge" style="font-size: 0.65rem; padding: 0.22em 0.45em;">
+                        0
+                    </span>
+                </a>
+
+                <!-- Mobile Cart Button (Triggers Offcanvas Drawer) -->
+                <button type="button" class="btn btn-light rounded-circle position-relative p-0 d-inline-flex align-items-center justify-content-center text-primary border shadow-2xs" style="width: 36px; height: 36px;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" title="Cart">
+                    <i class="fa fa-shopping-cart" style="font-size: 0.9rem;"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary cart-count-badge" style="font-size: 0.65rem; padding: 0.22em 0.45em;">
+                        0
+                    </span>
+                </button>
+
+                <!-- Hamburger Menu Toggler -->
+                <button type="button" class="navbar-toggler me-0 p-1 border shadow-2xs" data-bs-toggle="collapse"
+                    data-bs-target="#navbarCollapse" aria-label="Toggle navigation" style="width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;">
+                    <span class="navbar-toggler-icon" style="width: 1.2em; height: 1.2em;"></span>
+                </button>
+            </div>
 
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav">

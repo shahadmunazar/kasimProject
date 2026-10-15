@@ -247,6 +247,18 @@
             display: none !important;
         }
     }
+
+    @media (max-width: 575.98px) {
+        .page-title {
+            padding: 2rem 0 !important;
+        }
+        .page-title h1 {
+            font-size: 1.45rem !important;
+        }
+        .page-title p {
+            font-size: 0.8rem !important;
+        }
+    }
 </style>
 
 <section class="page-title bg-1">
@@ -266,7 +278,7 @@
   </div>
 </section>
 
-<section class="section py-5">
+<section class="section py-3 py-lg-5">
     <div class="container">
         <div class="row">
 
@@ -430,36 +442,37 @@
                 @endif
                 
                 <!-- TOP CONTROLS & ACTIVE CHIPS BAR -->
-                <div class="card border-0 shadow-sm p-3 mb-4 rounded-3 bg-light">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-                        <div class="d-flex align-items-center justify-content-between w-100 w-md-auto">
-                            <div>
-                                <span class="text-muted">Showing </span>
-                                <span id="productsCountDisplay" class="fw-bold text-dark fs-5">0</span>
-                                <span class="text-muted"> products</span>
-                            </div>
+                <div class="card border-0 shadow-sm p-2 p-md-3 mb-3 mb-md-4 rounded-3 bg-light">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                        <div class="d-flex align-items-center">
+                            <span class="text-muted small">Showing </span>
+                            <span id="productsCountDisplay" class="fw-bold text-dark fs-6 fs-md-5 mx-1">0</span>
+                            <span class="text-muted small"> products</span>
+                        </div>
 
-                            <!-- Mobile Filter Button in Top Bar -->
-                            <button type="button" id="topMobileFilterBtn" class="btn btn-outline-primary btn-sm d-lg-none fw-semibold shadow-sm px-3 py-2" onclick="openMobileFilters()">
+                        <!-- Mobile Filter Button & Sort Select in Same Responsive Row -->
+                        <div class="d-flex align-items-center gap-2 ms-auto">
+                            <!-- Mobile Filter Button (Visible on screens < 992px) -->
+                            <button type="button" id="topMobileFilterBtn" class="btn btn-outline-primary btn-sm d-lg-none fw-semibold shadow-2xs px-2 px-sm-3 py-1" onclick="openMobileFilters()">
                                 <i class="fa fa-sliders-h me-1"></i> Filters
                                 <span class="badge bg-primary text-white rounded-pill ms-1 mobile-filter-count-badge d-none">0</span>
                             </button>
-                        </div>
 
-                        <!-- SORT DROPDOWN -->
-                        <div class="d-flex align-items-center gap-2">
-                            <label class="small text-muted text-nowrap fw-semibold mb-0">Sort By:</label>
-                            <select id="productSortSelect" class="form-select form-select-sm" style="min-width: 170px;" onchange="handleSortChange()">
-                                <option value="default">Default</option>
-                                <option value="price_asc">Price: Low to High</option>
-                                <option value="price_desc">Price: High to Low</option>
-                                <option value="name_asc">Name: A to Z</option>
-                            </select>
+                            <!-- SORT DROPDOWN -->
+                            <div class="d-flex align-items-center gap-1">
+                                <label class="small text-muted text-nowrap fw-semibold mb-0 d-none d-sm-inline" for="productSortSelect">Sort By:</label>
+                                <select id="productSortSelect" class="form-select form-select-sm py-1 ps-2 pe-4" style="width: auto; min-width: 125px; font-size: 0.82rem;" onchange="handleSortChange()">
+                                    <option value="default">Default</option>
+                                    <option value="price_asc">Price: Low to High</option>
+                                    <option value="price_desc">Price: High to Low</option>
+                                    <option value="name_asc">Name: A to Z</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
                     <!-- ACTIVE FILTER PILLS / CHIPS -->
-                    <div id="activeFilterChipsContainer" class="mt-3 pt-2 border-top d-none">
+                    <div id="activeFilterChipsContainer" class="mt-2 pt-2 border-top d-none">
                         <div class="d-flex align-items-center flex-wrap">
                             <span class="small text-muted me-2 fw-semibold">Active:</span>
                             <div id="activeFilterChipsList" class="d-inline-flex flex-wrap align-items-center"></div>

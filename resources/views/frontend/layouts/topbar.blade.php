@@ -402,23 +402,34 @@
 <!-- ============================================== -->
 <!-- 3. TABLET & MOBILE VIEW (Width < 992px)       -->
 <!-- ============================================== -->
-<div class="topbar-wrapper d-block d-lg-none py-2">
-    <div class="container-fluid px-3">
-        <!-- Row 1: Contact Phone & User Account / Sign In -->
-        <div class="d-flex align-items-center justify-content-between pb-1 mb-1 border-bottom border-white border-opacity-10">
-            <div class="d-flex align-items-center gap-3">
+<div class="topbar-wrapper d-block d-lg-none py-1">
+    <div class="container-fluid px-2 px-sm-3">
+        <!-- Main Mobile Row: Phone on left, Socials + Sign In / Profile on right -->
+        <div class="d-flex align-items-center justify-content-between gap-1">
+            <div class="d-flex align-items-center">
                 <a href="tel:+917065122884" class="topbar-link text-white" title="Call Us">
                     <i class="fa fa-phone-alt small"></i>
-                    <span class="fw-semibold text-nowrap" style="font-size: 0.78rem;">+91-7065122884</span>
-                </a>
-                <a href="mailto:info@tcsmarttechnology.com" class="topbar-link text-white d-none d-sm-inline-flex" title="Email Us">
-                    <i class="fa fa-envelope small"></i>
-                    <span class="text-nowrap" style="font-size: 0.78rem;">info@tcsmarttechnology.com</span>
+                    <span class="fw-semibold text-nowrap" style="font-size: 0.76rem;">+91-7065122884</span>
                 </a>
             </div>
 
-            <!-- Mobile / Tablet User Account or Login -->
-            <div class="d-flex align-items-center gap-2">
+            <div class="d-flex align-items-center gap-1 gap-sm-2">
+                <!-- Social Icons on Mobile -->
+                <div class="d-flex align-items-center gap-1">
+                    <a class="topbar-social-btn" style="width: 22px; height: 22px; font-size: 0.65rem;" href="https://www.facebook.com/share/12L536bcJdV/?mibextid=wwXIfr" target="_blank" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a class="topbar-social-btn" style="width: 22px; height: 22px; font-size: 0.65rem;" href="https://www.instagram.com/tc_smart_technology?igsh=a2s2MWNoNGNvdTU1" target="_blank" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a class="topbar-social-btn" style="width: 22px; height: 22px; font-size: 0.65rem;" href="https://www.linkedin.com/company/tc-smart-technology/" target="_blank" title="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+
+                <div class="topbar-divider" style="height: 16px; margin: 0 1px;"></div>
+
+                <!-- Sign In / User Profile -->
                 @auth
                     @php
                         $nameParts = explode(' ', trim(Auth::user()->name));
@@ -427,24 +438,24 @@
                             $initials .= strtoupper(substr(end($nameParts), 0, 1));
                         }
                     @endphp
-                    <a href="{{ route('frontend.dashboard.profile') }}" title="My Profile" class="topbar-user-pill" style="height: 28px; padding: 1px 8px 1px 2px;">
+                    <a href="{{ route('frontend.dashboard.profile') }}" title="My Profile" class="topbar-user-pill" style="height: 26px; padding: 1px 7px 1px 2px;">
                         @if(Auth::user()->avatar)
-                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+                            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover;">
                         @else
-                            <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--bs-primary, #df9b15); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700;">
+                            <div style="width: 22px; height: 22px; border-radius: 50%; background: var(--bs-primary, #df9b15); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 700;">
                                 {{ $initials }}
                             </div>
                         @endif
-                        <span class="topbar-user-name" style="font-size: 0.76rem; max-width: 80px;">{{ $nameParts[0] }}</span>
+                        <span class="topbar-user-name" style="font-size: 0.74rem; max-width: 65px;">{{ $nameParts[0] }}</span>
                     </a>
                     <form action="{{ route('frontend.auth.logout') }}" method="POST" class="d-inline m-0 p-0">
                         @csrf
-                        <button type="submit" class="topbar-logout-btn" style="height: 28px; width: 28px; font-size: 0.75rem;" title="Sign Out">
+                        <button type="submit" class="topbar-logout-btn" style="height: 26px; width: 26px; font-size: 0.7rem;" title="Sign Out">
                             <i class="fa fa-sign-out-alt"></i>
                         </button>
                     </form>
                 @else
-                    <a href="{{ route('frontend.auth.login') }}" class="topbar-login-pill" style="height: 28px; padding: 0 10px; font-size: 0.74rem;" title="Sign In">
+                    <a href="{{ route('frontend.auth.login') }}" class="topbar-login-pill" style="height: 26px; padding: 0 9px; font-size: 0.72rem;" title="Sign In">
                         <i class="fa fa-user"></i>
                         <span>Sign In</span>
                     </a>
@@ -452,25 +463,16 @@
             </div>
         </div>
 
-        <!-- Row 2: Address & Social Icons -->
-        <div class="d-flex align-items-center justify-content-between pt-1">
+        <!-- Row 2: Address & Email (visible on tablets/wider screens, hidden on phones) -->
+        <div class="d-none d-sm-flex align-items-center justify-content-between pt-1 mt-1 border-top border-white border-opacity-10">
             <div class="d-flex align-items-center text-white text-opacity-90 pe-2" style="font-size: 0.72rem; line-height: 1.2;">
                 <i class="fa fa-map-marker-alt me-1 text-white"></i>
-                <span class="d-none d-sm-inline">D-364, Pocket 11, Jasola Vihar, New Delhi – 110025</span>
-                <span class="d-inline d-sm-none">Jasola Vihar, New Delhi – 110025</span>
+                <span>D-364, Pocket 11, Jasola Vihar, New Delhi – 110025</span>
             </div>
-
-            <div class="d-flex align-items-center gap-1 flex-shrink-0">
-                <a class="topbar-social-btn" style="width: 24px; height: 24px; font-size: 0.7rem;" href="https://www.facebook.com/share/12L536bcJdV/?mibextid=wwXIfr" target="_blank" title="Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a class="topbar-social-btn" style="width: 24px; height: 24px; font-size: 0.7rem;" href="https://www.instagram.com/tc_smart_technology?igsh=a2s2MWNoNGNvdTU1" target="_blank" title="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a class="topbar-social-btn" style="width: 24px; height: 24px; font-size: 0.7rem;" href="https://www.linkedin.com/company/tc-smart-technology/" target="_blank" title="LinkedIn">
-                    <i class="fab fa-linkedin-in"></i>
-                </a>
-            </div>
+            <a href="mailto:info@tcsmarttechnology.com" class="topbar-link text-white" title="Email Us">
+                <i class="fa fa-envelope small"></i>
+                <span class="text-nowrap" style="font-size: 0.74rem;">info@tcsmarttechnology.com</span>
+            </a>
         </div>
     </div>
 </div>
