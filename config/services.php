@@ -39,4 +39,8 @@ return [
         'routes_api_key' => env('GOOGLE_MAPS_ROUTES_API_KEY'),
     ],
 
+    'admin' => [
+        'email' => env('ADMIN_EMAIL', 'tcsmarttechnology@gmail.com'),
+    ],
+
 ];

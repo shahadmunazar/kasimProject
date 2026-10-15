@@ -42,7 +42,7 @@ class HomeController extends Controller
         $contact = \App\Models\Contact::create($validated);
 
         try {
-            $adminEmail = config('mail.admin_address', env('ADMIN_EMAIL', 'tcsmarttechnology@gmail.com'));
+            $adminEmail = config('services.admin.email', config('mail.admin_address', env('ADMIN_EMAIL', 'tcsmarttechnology@gmail.com')));
             \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminLeadMessage($validated));
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Failed to send contact inquiry email: ' . $e->getMessage());
@@ -573,7 +573,7 @@ public function testingFrameworks() {
 
         try {
             $inquiry->load('product');
-            $adminEmail = config('mail.admin_address', env('ADMIN_EMAIL', 'tcsmarttechnology@gmail.com'));
+            $adminEmail = config('services.admin.email', config('mail.admin_address', env('ADMIN_EMAIL', 'tcsmarttechnology@gmail.com')));
             \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\NewProductInquiryAdmin($inquiry));
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Failed to send product inquiry email: ' . $e->getMessage());

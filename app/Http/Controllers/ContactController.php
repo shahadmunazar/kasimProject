@@ -25,11 +25,17 @@ class ContactController extends Controller
         // Save the contact message to the database
         $contact = Contact::create($validated);
 
-        // Send email to the user (confirmation)
-        // Mail::to($contact->email)->send(new ContactFormSubmitted($contact));
+        // Send email notifications safely
+        try {
+            $adminEmail = config('services.admin.email', config('mail.admin_address', 'tcsmarttechnology@gmail.com'));
+            Mail::to($adminEmail)->send(new AdminLeadMessage($contact));
 
-        // // Send email to the admin (lead message)
-        // Mail::to('tcsmarttechnology@gmail.com')->send(new AdminLeadMessage($contact));
+            if (!empty($contact->email)) {
+                Mail::to($contact->email)->send(new ContactFormSubmitted($contact));
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send contact emails: ' . $e->getMessage());
+        }
 
         // Return a JSON response to the frontend
         return response()->json([
