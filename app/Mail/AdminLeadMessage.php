@@ -1,12 +1,13 @@
 <?php
 namespace App\Mail;
 
+use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 class AdminLeadMessage extends Mailable
 {
-    use SerializesModels;
+    use Queueable, SerializesModels;
 
     public $contact;
 
@@ -17,17 +18,18 @@ class AdminLeadMessage extends Mailable
 
     public function build()
     {
-        return $this->view('emails.admin_lead')
-    ->with([
-        'name' => $this->data['name'],
-        'email' => $this->data['email'],
-        'mobile' => $this->data['mobile'],
-        'service_type' => $this->data['service_type'],
-        'address' => $this->data['address'],
-        'subject' => $this->data['subject'],
-        'message_content' => $this->data['message'], // ✅ Use different key name
-    ])
-    ->subject('New Contact Lead');
+        $data = is_array($this->contact) ? $this->contact : $this->contact->toArray();
 
+        return $this->view('emails.admin_lead')
+            ->with([
+                'name' => $data['name'] ?? '',
+                'email' => $data['email'] ?? '',
+                'mobile' => $data['mobile'] ?? '',
+                'service_type' => $data['service_type'] ?? '',
+                'address' => $data['address'] ?? '',
+                'subject' => $data['subject'] ?? '',
+                'message' => $data['message'] ?? '',
+            ])
+            ->subject('New Website Contact Lead: ' . ($data['name'] ?? 'Inquiry'));
     }
 }

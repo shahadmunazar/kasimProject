@@ -154,7 +154,7 @@ class CheckoutController extends Controller
                 \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\OrderPlacedCustomer($order));
             }
             // Send to Admin (assuming a config or fixed email, or all users with 'admin' role)
-            $adminEmail = env('MAIL_FROM_ADDRESS', 'admin@example.com');
+            $adminEmail = config('mail.admin_address', env('ADMIN_EMAIL', 'tcsmarttechnology@gmail.com'));
             \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\OrderPlacedAdmin($order));
         } catch (\Exception $e) {
             // Log error or ignore to not break checkout

@@ -39,7 +39,14 @@ class HomeController extends Controller
             'message' => 'required|string',
         ]);
 
-        \App\Models\Contact::create($validated);
+        $contact = \App\Models\Contact::create($validated);
+
+        try {
+            $adminEmail = config('mail.admin_address', env('ADMIN_EMAIL', 'tcsmarttechnology@gmail.com'));
+            \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminLeadMessage($validated));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send contact inquiry email: ' . $e->getMessage());
+        }
 
         return response()->json(['success' => true, 'message' => 'Your message has been sent successfully!']);
     }
@@ -562,7 +569,16 @@ public function testingFrameworks() {
             'name' => 'required',
             'phone' => 'required',
         ]);
-        \App\Models\ProductInquiry::create($request->all());
+        $inquiry = \App\Models\ProductInquiry::create($request->all());
+
+        try {
+            $inquiry->load('product');
+            $adminEmail = config('mail.admin_address', env('ADMIN_EMAIL', 'tcsmarttechnology@gmail.com'));
+            \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\NewProductInquiryAdmin($inquiry));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send product inquiry email: ' . $e->getMessage());
+        }
+
         return back()->with('success', 'Inquiry sent successfully!');
     }
 

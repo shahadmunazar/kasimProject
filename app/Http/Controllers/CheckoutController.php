@@ -188,7 +188,7 @@ class CheckoutController extends Controller
             if ($order->email) {
                 \Illuminate\Support\Facades\Mail::to($order->email)->send(new \App\Mail\OrderPlacedCustomer($order));
             }
-            $adminEmail = env('MAIL_FROM_ADDRESS', 'admin@tcsmarttechnology.com');
+            $adminEmail = config('mail.admin_address', env('ADMIN_EMAIL', 'tcsmarttechnology@gmail.com'));
             \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\OrderPlacedAdmin($order));
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Order email error: ' . $e->getMessage());
