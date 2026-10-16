@@ -34,6 +34,12 @@ Route::get('/products/{category_slug}', [HomeController::class, 'products_by_cat
 Route::get('/products/{category_slug}/{model_slug}', [HomeController::class, 'products_by_model'])->name('products.model');
 Route::post('/products/inquiry', [HomeController::class, 'store_inquiry'])->name('products.inquiry');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact.index');
+Route::get('/contact-us', [HomeController::class, 'contact'])->name('contact_us.index');
+Route::get('/case-studies', [HomeController::class, 'caseStudies'])->name('case_studies.index');
+Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
+Route::get('/terms-and-conditions', [HomeController::class, 'termsConditions'])->name('terms.conditions');
+Route::get('/accessibility-statement', [HomeController::class, 'accessibilityStatement'])->name('accessibility.statement');
+Route::get('/sitemap', [HomeController::class, 'sitemap'])->name('sitemap.index');
 Route::get('/blogs', [HomeController::class, 'blogs'])->name('blogs.index');
 Route::get('/blog/{slug}', [HomeController::class, 'blog_details'])->name('blogs.details');
 Route::get('/get-current',[HomeController::class,'get_current']);
@@ -67,100 +73,64 @@ Route::prefix('products')->group(function () {
     // Route::get('lighting/panel-light', [HomeController::class, 'panel_light'])->name('products.lighting.panel_light');
 });
 
-// Services
+// Services Architecture (V5 Specification)
 Route::prefix('services')->group(function () {
+    // 4 Parent Categories
+    Route::get('/embedded-design-development', [HomeController::class, 'embeddedDesignDevelopment'])->name('services.embedded_design_development');
+    Route::get('/industrial-iot-solutions', [HomeController::class, 'industrialIotSolutions'])->name('services.industrial_iot_solutions');
+    Route::get('/industrial-automation', [HomeController::class, 'industrialAutomationServices'])->name('services.industrial_automation_services');
+    Route::get('/ai-solutions-custom-ai-agents', [HomeController::class, 'aiSolutionsCustomAiAgents'])->name('services.ai_solutions_custom_ai_agents');
 
-    // Embedded Systems Sub-Routes (with short clean names)
-    Route::get('/embedded-systems-solutions', [HomeController::class, 'embeddedSystems'])->name('services.embedded_systems');
-    Route::get('embedded/hw-firmware', [HomeController::class, 'hwFirmware'])->name('services.embedded.hw_firmware');
-    Route::get('embedded/pcb-power', [HomeController::class, 'pcbPower'])->name('services.embedded.pcb_power');
-    Route::get('embedded/security', [HomeController::class, 'circuitSecurity'])->name('services.embedded.security');
-    Route::get('embedded/iot-cloud', [HomeController::class, 'iotCloud'])->name('services.embedded.iot_cloud');
-    Route::get('embedded/medical-rd', [HomeController::class, 'medicalRD'])->name('services.embedded.medical_rd');
-    Route::get('embedded/testing', [HomeController::class, 'testingFrameworks'])->name('services.embedded.testing');
+    // 301 Permanent Redirects and Named Route Aliases (Brief V5 Section 18)
+    Route::get('/embedded-systems-solutions', fn() => redirect('/services/embedded-design-development', 301))->name('services.embedded_systems');
+    Route::get('/industrial-iot', fn() => redirect('/services/industrial-iot-solutions', 301))->name('services.industrial_iot');
+    Route::get('/industrial-automation-nav', fn() => redirect('/services/industrial-automation', 301))->name('services.industrial_automation');
+    Route::get('/custom-ai-agents', fn() => redirect('/services/ai-solutions-custom-ai-agents', 301))->name('services.custom_ai_agents');
+    Route::get('/hvac-solutions', fn() => redirect('/services/industrial-iot-solutions', 301))->name('services.hvac_solutions');
+    Route::get('/software-development', fn() => redirect('/services/ai-solutions-custom-ai-agents', 301))->name('services.software_development');
+    Route::get('/industrial-standard-machine-nav', fn() => redirect('/services/industrial-automation', 301))->name('services.integration_systems');
 
-    // Embedded Software Development Services
-    Route::get('embedded-software/ux-ui-development-new', [HomeController::class, 'ux_ui_development_new'])->name('services.embedded_software.ux_ui_development_new');
-    Route::get('embedded-software/iotdevice-integration-new', [HomeController::class, 'iotdevice_integration_new'])->name('services.embedded_software.iotdevice_integration_new');
-    Route::get('embedded-software/mental-device-development-new', [HomeController::class, 'mental_device_development_new'])->name('services.embedded_software.mental_device_development_new');
-    Route::get('embedded-software/automated-testing-development-new', [HomeController::class, 'automated_testing_development_new'])->name('services.embedded_software.automated_testing_development_new');
+    // Sub-Category Group Aliases / Anchors
+    Route::get('/embedded-design-development/hardware-pcb', fn() => redirect('/services/embedded-design-development#sub-hardware-pcb', 301));
+    Route::get('/embedded-design-development/software-platforms', fn() => redirect('/services/embedded-design-development#sub-software-platforms', 301));
+    Route::get('/embedded-design-development/iot-interfaces', fn() => redirect('/services/embedded-design-development#sub-iot-interfaces', 301));
+    Route::get('/embedded-design-development/product-lifecycle', fn() => redirect('/services/embedded-design-development#sub-product-lifecycle', 301));
+    Route::get('/industrial-iot-solutions/data-monitoring', fn() => redirect('/services/industrial-iot-solutions#sub-data-monitoring', 301));
+    Route::get('/industrial-iot-solutions/smart-manufacturing-oee', fn() => redirect('/services/industrial-iot-solutions#sub-smart-manufacturing-oee', 301));
+    Route::get('/industrial-iot-solutions/machine-iiot', fn() => redirect('/services/industrial-iot-solutions#sub-machine-iiot', 301));
+    Route::get('/industrial-automation/control-robotics', fn() => redirect('/services/industrial-automation#sub-control-robotics', 301));
+    Route::get('/industrial-automation/test-quality', fn() => redirect('/services/industrial-automation#sub-test-quality', 301));
+    Route::get('/ai-solutions-custom-ai-agents/marketing-search', fn() => redirect('/services/ai-solutions-custom-ai-agents#sub-marketing-search', 301));
+    Route::get('/ai-solutions-custom-ai-agents/knowledge-productivity', fn() => redirect('/services/ai-solutions-custom-ai-agents#sub-knowledge-productivity', 301));
+    Route::get('/ai-solutions-custom-ai-agents/lead-outreach', fn() => redirect('/services/ai-solutions-custom-ai-agents#sub-lead-outreach', 301));
+    Route::get('/ai-solutions-custom-ai-agents/customer-communication', fn() => redirect('/services/ai-solutions-custom-ai-agents#sub-customer-communication', 301));
 
-    // Top-level service category routes
-    Route::get('/services/industrial-standard-machine', [HomeController::class, 'integrationSystems'])->name('services.integration_systems');
-    Route::get('/industrial-automation', [HomeController::class, 'industrialAutomation'])->name('services.industrial_automation');
-    Route::get('/software-development', [HomeController::class, 'softwareDevelopment'])->name('services.software_development');
-    Route::get('/hvac-solutions', [HomeController::class, 'hvacSolutions'])->name('services.hvac_solutions');
+    // Legacy Path 301 Redirects to Closest Relevant V5 Category (Section 1.2 & Section 18)
+    Route::any('/hvac/{any?}', fn() => redirect('/services/industrial-iot-solutions', 301))->where('any', '.*');
+    Route::any('/hvac-solutions/{any?}', fn() => redirect('/services/industrial-iot-solutions', 301))->where('any', '.*');
+    Route::any('/industrial-standard-machine/{any?}', fn() => redirect('/services/industrial-automation', 301))->where('any', '.*');
+    Route::any('/industrial/{any?}', fn() => redirect('/services/industrial-automation', 301))->where('any', '.*');
+    Route::any('/integration/{any?}', fn() => redirect('/services/industrial-automation', 301))->where('any', '.*');
+    Route::any('/software/{any?}', fn() => redirect('/services/ai-solutions-custom-ai-agents', 301))->where('any', '.*');
+    Route::any('/embedded/{any?}', fn() => redirect('/services/embedded-design-development', 301))->where('any', '.*');
+    Route::any('/embedded-software/{any?}', fn() => redirect('/services/embedded-design-development', 301))->where('any', '.*');
+    Route::any('/embedded_software/{any?}', fn() => redirect('/services/embedded-design-development', 301))->where('any', '.*');
+    Route::any('/embedded-hardware/{any?}', fn() => redirect('/services/embedded-design-development', 301))->where('any', '.*');
+    Route::any('/embedded_hardware/{any?}', fn() => redirect('/services/embedded-design-development', 301))->where('any', '.*');
+    Route::any('/biomedical/{any?}', fn() => redirect('/services/embedded-design-development', 301))->where('any', '.*');
+    Route::any('/lighting/{any?}', fn() => redirect('/services/embedded-design-development', 301))->where('any', '.*');
 
-
-
-    // Industrial Automation, Robotics & Switchgear Testing Services
-    Route::get('embedded-hardware/plc-scada-hmi-programming', [HomeController::class, 'plcScadaHmiProgramming'])->name('services.embedded_hardware.plc_scada_hmi_programming');
-    Route::get('embedded-hardware/robotics-integration', [HomeController::class, 'roboticsIntegration'])->name('services.embedded_hardware.robotics_integration');
-    Route::get('embedded-hardware/machine-vision', [HomeController::class, 'machineVision'])->name('services.embedded_hardware.machine_vision');
-    Route::get('embedded-hardware/motion-control', [HomeController::class, 'motionControl'])->name('services.embedded_hardware.motion_control');
-    Route::get('embedded-hardware/iiot-industry4', [HomeController::class, 'iiotIndustry4'])->name('services.embedded_hardware.iiot_industry4');
-    Route::get('embedded-hardware/switchgear-panel-design', [HomeController::class, 'switchgearPanelDesign'])->name('services.embedded_hardware.switchgear_panel_design');
-    Route::get('embedded-hardware/high-voltage-testing', [HomeController::class, 'highVoltageTesting'])->name('services.embedded_hardware.high_voltage_testing');
-    Route::get('embedded-hardware/test-bench-design', [HomeController::class, 'testBenchDesign'])->name('services.embedded_hardware.test_bench_design');
-
-  //industrial standard machine_vision
-
-
-
-Route::prefix('industrial-standard-machine')->group(function () {
-    Route::get('/', [HomeController::class, 'industrialStandardMachine'])->name('services.industrial_standard_machine');
-    Route::get('cnc-vmc-machining-centers', [HomeController::class, 'cncVmc'])->name('services.industrial.cnc_vmc');
-    Route::get('injection-molding-plastic-processing', [HomeController::class, 'injectionMolding'])->name('services.industrial.injection_molding');
-    Route::get('laser-cutting-engraving-marking', [HomeController::class, 'laserCutting'])->name('services.industrial.laser_cutting');
-    Route::get('robotic-welding-automation-cells', [HomeController::class, 'roboticWelding'])->name('services.industrial.robotic_welding');
-    Route::get('hydraulic-servo-power-press', [HomeController::class, 'hydraulicServoPress'])->name('services.industrial.hydraulic_servo_press');
-    Route::get('lathe-turning-machines', [HomeController::class, 'latheTurning'])->name('services.industrial.lathe_turning');
-    Route::get('smart-packaging-labeling', [HomeController::class, 'smartPackaging'])->name('services.industrial.smart_packaging');
-    Route::get('sheet-metal-bending-shearing', [HomeController::class, 'sheetMetal'])->name('services.industrial.sheet_metal');
-    Route::get('battery-ev-energy-sector', [HomeController::class, 'batteryEv'])->name('services.industrial.battery_ev');
+    // Dynamic Nested Individual Service Route
+    Route::get('/{category_slug}/{service_slug}', [HomeController::class, 'serviceDetail'])->name('services.detail');
 });
 
-
-
-    // Embedded Hardware Development Services
-    Route::get('embedded-hardware/circuit-designing', [HomeController::class, 'circuit_designing'])->name('services.embedded_hardware.circuit_designing');
-    Route::get('embedded-hardware/pcb-designing', [HomeController::class, 'pcb_designing'])->name('services.embedded_hardware.pcb_designing');
-    Route::get('embedded-hardware/mounting-pcb', [HomeController::class, 'mounting_pcb'])->name('services.embedded_hardware.mounting_pcb');
-
-    // Datchik Biomedical Services
-    Route::get('biomedical/orthopaedic-heat-pad', [HomeController::class, 'biomedical_orthopaedic_heat_pad'])->name('services.biomedical.orthopaedic_heat_pad');
-    Route::get('biomedical/electric-body-massager', [HomeController::class, 'biomedical_electric_body_massager'])->name('services.biomedical.electric_body_massager');
-
-    // Datchik Lighting Services
-    Route::prefix('hvac')->group(function () {
-        Route::get('/centralized-hvac', [HomeController::class, 'centralized_hvac'])->name('services.hvac.centralized_hvac');
-        Route::get('/split-ac', [HomeController::class, 'split_ac'])->name('services.hvac.split_ac');
-        Route::get('/smart-climate', [HomeController::class, 'smart_climate'])->name('services.hvac.smart_climate');
-        Route::get('/iaq-enhancement', [HomeController::class, 'iaq_enhancement'])->name('services.hvac.iaq_enhancement');
-        Route::get('/system-optimization', [HomeController::class, 'system_optimization'])->name('services.hvac.system_optimization');
-        Route::get('/installation', [HomeController::class, 'installation'])->name('services.hvac.installation');
-        Route::get('/maintenance', [HomeController::class, 'maintenance'])->name('services.hvac.maintenance');
-        Route::get('/repair', [HomeController::class, 'repair'])->name('services.hvac.repair');
-        Route::get('/heating-cooling', [HomeController::class, 'heatingCooling'])->name('services.hvac.heating_cooling');
-        Route::get('/ventilation', [HomeController::class, 'ventilation'])->name('services.hvac.ventilation');
-        Route::get('/energy', [HomeController::class, 'energy'])->name('services.hvac.energy');
-        });
-
-    Route::prefix('software')->group(function () {
-        Route::get('/', [HomeController::class, 'software'])->name('services.software');
-        Route::get('ai-machinelearning-solutions', [HomeController::class, 'aiMachineLearningSolutions'])->name('services.software.ai_machinelearning_solutions');
-        Route::get('smart-automation', [HomeController::class, 'smartAutomation'])->name('services.software.smart_automation');
-        Route::get('blockchain-platforms', [HomeController::class, 'blockchainPlatforms'])->name('services.software.blockchain_platforms');
-        Route::get('mobile-application-development', [HomeController::class, 'mobileApplicationDevelopment'])->name('services.software.mobile_application_development');
-        Route::get('domain-based-solutions', [HomeController::class, 'domainBasedSolutions'])->name('services.software.domain_based_solutions');
-        Route::get('manpower-providing-services', [HomeController::class, 'manpowerProvidingServices'])->name('services.software.manpower_providing_services');
-        Route::get('custom-erp-development', [HomeController::class, 'customErpDevelopment'])->name('services.software.custom_erp_development');
-        Route::get('mlm-network-software', [HomeController::class, 'mlmNetworkSoftware'])->name('services.software.mlm_network_software');
-    });
-    
-    
-    
-    });
+// Legacy root path 301 redirects
+Route::any('/hvac/{any?}', fn() => redirect('/services/industrial-iot-solutions', 301))->where('any', '.*');
+Route::any('/cnc/{any?}', fn() => redirect('/services/industrial-automation', 301))->where('any', '.*');
+Route::any('/vmc/{any?}', fn() => redirect('/services/industrial-automation', 301))->where('any', '.*');
+Route::any('/hmc/{any?}', fn() => redirect('/services/industrial-automation', 301))->where('any', '.*');
+Route::any('/spm/{any?}', fn() => redirect('/services/industrial-automation', 301))->where('any', '.*');
+Route::any('/industrial-standard-machine/{any?}', fn() => redirect('/services/industrial-automation', 301))->where('any', '.*');
     
     // 404 & Appointments
     Route::get('/404', function () {

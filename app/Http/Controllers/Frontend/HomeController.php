@@ -625,7 +625,7 @@ public function testingFrameworks() {
     }
     public function services()
     {
-        return view('frontend.home.services');
+        return view('frontend.services.index');
     }
     public function features()
     {
@@ -882,6 +882,85 @@ public function testingFrameworks() {
     public function testBenchDesign()
     {
         return view('services.embedded_hardware.test_bench_design');
+    }
+
+    public function industrialIot()
+    {
+        return $this->serviceCategory('industrial-iot-solutions');
+    }
+
+    public function customAiAgents()
+    {
+        return $this->serviceCategory('ai-solutions-custom-ai-agents');
+    }
+
+    public function embeddedDesignDevelopment()
+    {
+        return $this->serviceCategory('embedded-design-development');
+    }
+
+    public function industrialIotSolutions()
+    {
+        return $this->serviceCategory('industrial-iot-solutions');
+    }
+
+    public function industrialAutomationServices()
+    {
+        return $this->serviceCategory('industrial-automation');
+    }
+
+    public function aiSolutionsCustomAiAgents()
+    {
+        return $this->serviceCategory('ai-solutions-custom-ai-agents');
+    }
+
+    public function serviceCategory($category_slug)
+    {
+        $category = \App\Services\ServiceCatalog::getCategory($category_slug);
+        if (!$category) {
+            abort(404);
+        }
+        return view('frontend.services.category', compact('category'));
+    }
+
+    public function serviceDetail($category_slug, $service_slug)
+    {
+        $category = \App\Services\ServiceCatalog::getCategory($category_slug);
+        $service = \App\Services\ServiceCatalog::getService($service_slug);
+        if (!$category || !$service || $service['category_slug'] !== $category_slug) {
+            abort(404);
+        }
+        return view('frontend.services.detail', [
+            'category' => $category,
+            'service' => $service,
+            'serviceSlug' => $service_slug,
+            'service_slug' => $service_slug
+        ]);
+    }
+
+    public function caseStudies()
+    {
+        return view('frontend.case_studies.index');
+    }
+
+    public function privacyPolicy()
+    {
+        return view('frontend.pages.privacy');
+    }
+
+    public function termsConditions()
+    {
+        return view('frontend.pages.terms');
+    }
+
+    public function accessibilityStatement()
+    {
+        return view('frontend.pages.accessibility');
+    }
+
+    public function sitemap()
+    {
+        return view('frontend.pages.sitemap');
     }
     
     
