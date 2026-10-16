@@ -2,11 +2,26 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>@yield('meta_title', 'TC Smart Technology - Leading Innovation in Automation & Embedded Systems')</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="@yield('meta_keywords', 'Industrial Automation, Embedded Systems, TC Smart Technology')" name="keywords">
-    <meta content="@yield('meta_description', 'TC Smart Technology provides cutting-edge solutions in Embedded Systems, Industrial Automation, and Software Development.')" name="description">
+    <title>@yield('meta_title', 'Embedded & Industrial IoT Solutions | TC Smart Technology')</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="@yield('meta_description', 'Embedded engineering plus an approved Industrial IoT monitoring product, data logging, dashboards, OEE and machine-IIoT services for connected manufacturing.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'embedded systems, industrial automation, Industrial IoT monitoring product, smart manufacturing dashboard, OEE monitoring, machine IIoT, custom AI Agents')">
+    <link rel="canonical" href="@yield('canonical_url', url()->current())">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="@yield('canonical_url', url()->current())">
+    <meta property="og:title" content="@yield('meta_title', 'Embedded & Industrial IoT Solutions | TC Smart Technology')">
+    <meta property="og:description" content="@yield('meta_description', 'Embedded engineering plus an approved Industrial IoT monitoring product, data logging, dashboards, OEE and machine-IIoT services for connected manufacturing.')">
+    <meta property="og:site_name" content="TC Smart Technology">
+    <meta property="og:image" content="{{ asset('favicon.png') }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="@yield('canonical_url', url()->current())">
+    <meta name="twitter:title" content="@yield('meta_title', 'Embedded & Industrial IoT Solutions | TC Smart Technology')">
+    <meta name="twitter:description" content="@yield('meta_description', 'Embedded engineering plus an approved Industrial IoT monitoring product, data logging, dashboards, OEE and machine-IIoT services for connected manufacturing.')">
+    <meta name="twitter:image" content="{{ asset('favicon.png') }}">
     
     <!-- Google Indexing -->
     <meta name="robots" content="index, follow">
