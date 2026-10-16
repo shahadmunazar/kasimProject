@@ -1,2 +1,7 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /checkout/
+Disallow: /cart
+Disallow: /wishlist
+
+Sitemap: https://tcsmarttechnology.com/sitemap.xml
