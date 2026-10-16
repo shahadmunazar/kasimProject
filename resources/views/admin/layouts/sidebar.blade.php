@@ -45,7 +45,7 @@
                 <span>
                   <i class="ti ti-list"></i>
                 </span>
-                <span class="hide-menu">Models</span>
+                <span class="hide-menu">Sub-Categories (Models)</span>
               </a>
             </li>
             <li class="sidebar-item">
