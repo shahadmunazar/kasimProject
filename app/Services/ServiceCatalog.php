@@ -138,10 +138,10 @@ class ServiceCatalog
     public static function getServices(): array
     {
         return array_merge(
-            Catalog\EmbeddedServices::all(),
-            Catalog\IiotServices::all(),
-            Catalog\AutomationServices::all(),
-            Catalog\AiAgentServices::all()
+            EmbeddedServices::all(),
+            IiotServices::all(),
+            AutomationServices::all(),
+            AiAgentServices::all()
         );
     }
 
