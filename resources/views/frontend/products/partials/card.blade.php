@@ -115,12 +115,18 @@
 
             <!-- Action Buttons (Pinned to bottom for uniform card alignment) -->
             <div class="d-flex justify-content-center flex-wrap gap-1 mt-auto pt-2 border-top">
-                <button type="button" class="btn btn-sm btn-outline-primary px-2" onclick="addToCart({{ $product->id }}, 1, this)" title="Add to Cart">
-                    <i class="fa fa-cart-plus me-1"></i> Cart
-                </button>
-                <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-sm btn-primary px-2" title="Buy Now directly">
-                    <i class="fa fa-bolt me-1"></i> Buy Now
-                </a>
+                @if(!$product->isOutOfStock())
+                    <button type="button" class="btn btn-sm btn-outline-primary px-2" onclick="addToCart({{ $product->id }}, 1, this)" title="Add to Cart">
+                        <i class="fa fa-cart-plus me-1"></i> Cart
+                    </button>
+                    <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-sm btn-primary px-2" title="Buy Now directly">
+                        <i class="fa fa-bolt me-1"></i> Buy Now
+                    </a>
+                @else
+                    <button type="button" class="btn btn-sm btn-outline-secondary px-2 disabled" disabled title="Out of Stock">
+                        <i class="fa fa-ban me-1"></i> Out of Stock
+                    </button>
+                @endif
                 <button type="button" class="btn btn-sm btn-light border px-2 text-muted" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}" title="Enquiry">
                     <i class="fa fa-envelope"></i>
                 </button>

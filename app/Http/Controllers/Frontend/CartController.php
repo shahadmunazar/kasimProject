@@ -49,8 +49,17 @@ class CartController extends Controller
             'quantity' => 'nullable|integer|min:1',
         ]);
 
-        $quantity = $request->input('quantity', 1);
+        $quantity = max(1, (int)$request->input('quantity', 1));
         $result = CartService::add($request->product_id, $quantity);
+
+        if (!$result['success']) {
+            return response()->json([
+                'success' => false,
+                'error' => $result['error'] ?? 'stock_error',
+                'message' => $result['message'],
+                'available_stock' => $result['available_stock'] ?? 0,
+            ], 422);
+        }
 
         $totalCount = CartService::getCount();
         $subtotal = CartService::getSubtotal();
@@ -59,7 +68,7 @@ class CartController extends Controller
 
         $alreadyInCart = $result['already_in_cart'];
         $message = $alreadyInCart
-            ? $productName . ' is already in your cart (quantity updated)!'
+            ? $productName . ' quantity updated in your cart!'
             : $productName . ' added to your cart!';
 
         return response()->json([
@@ -68,6 +77,7 @@ class CartController extends Controller
             'message' => $message,
             'count' => $totalCount,
             'subtotal' => number_format($subtotal, 2),
+            'available_stock' => $result['available_stock'],
         ]);
     }
 
@@ -81,7 +91,7 @@ class CartController extends Controller
             'quantity' => 'required|integer|min:0',
         ]);
 
-        $success = CartService::updateQuantity($request->item_id, $request->quantity);
+        $result = CartService::updateQuantity($request->item_id, (int)$request->quantity);
 
         $cartItems = CartService::getItems();
         $subtotal = CartService::getSubtotal();
@@ -89,11 +99,23 @@ class CartController extends Controller
 
         $html = view('frontend.cart.partials.drawer_content', compact('cartItems', 'subtotal', 'totalCount'))->render();
 
+        if (!$result['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => $result['message'],
+                'available_stock' => $result['available_stock'] ?? null,
+                'html' => $html,
+                'count' => $totalCount,
+                'subtotal' => number_format($subtotal, 2),
+            ], 422);
+        }
+
         return response()->json([
-            'success' => $success,
+            'success' => true,
             'html' => $html,
             'count' => $totalCount,
             'subtotal' => number_format($subtotal, 2),
+            'message' => $result['message'],
         ]);
     }
 

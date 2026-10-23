@@ -82,6 +82,8 @@
                                         @foreach($cartItems as $item)
                                             @php
                                                 $prod = $item->product;
+                                                $availableStock = $prod ? $prod->availableStock() : 999999;
+                                                $isMaxReached = $prod && $prod->track_inventory && ($item->quantity >= $availableStock);
                                                 $itemPrice = $item->price ?? $prod->offer_price ?? $prod->price ?? 0;
                                                 $itemSubtotal = $itemPrice * $item->quantity;
                                                 $itemImg = ($prod && $prod->images && count($prod->images) > 0) ? $prod->images[0] : null;
@@ -110,6 +112,22 @@
                                                             @if($prod->productModel)
                                                                 <span class="badge bg-secondary bg-opacity-10 text-secondary small">{{ $prod->productModel->name }}</span>
                                                             @endif
+
+                                                            @if($prod && $prod->track_inventory)
+                                                                <div class="mt-1">
+                                                                    @if($availableStock <= 0)
+                                                                        <span class="badge bg-danger small" style="font-size: 0.72rem;"><i class="fa fa-times-circle me-1"></i>Out of Stock</span>
+                                                                    @elseif($availableStock < 10)
+                                                                        <span class="badge bg-warning bg-opacity-25 text-dark border border-warning small" style="font-size: 0.72rem;">
+                                                                            <i class="fa fa-fire text-danger me-1"></i>Only {{ $availableStock }} available
+                                                                        </span>
+                                                                    @else
+                                                                        <span class="badge bg-light text-muted border small" style="font-size: 0.72rem;">
+                                                                            <i class="fa fa-boxes me-1"></i>Available: {{ $availableStock }} in stock
+                                                                        </span>
+                                                                    @endif
+                                                                </div>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </td>
@@ -118,14 +136,22 @@
                                                 </td>
                                                 <td>
                                                     <div class="d-inline-flex align-items-center border rounded p-1 bg-white">
-                                                        <button type="button" class="btn btn-sm btn-link text-dark p-0 px-2 text-decoration-none" onclick="updatePageCartQty({{ $item->id }}, {{ $item->quantity - 1 }})">
+                                                        <button type="button" class="btn btn-sm btn-link text-dark p-0 px-2 text-decoration-none" onclick="updatePageCartQty({{ $item->id }}, {{ $item->quantity - 1 }})" title="Decrease quantity">
                                                             <i class="fa fa-minus small"></i>
                                                         </button>
                                                         <span class="px-2 fw-bold small text-center" style="min-width: 32px;" id="item_qty_{{ $item->id }}">{{ $item->quantity }}</span>
-                                                        <button type="button" class="btn btn-sm btn-link text-dark p-0 px-2 text-decoration-none" onclick="updatePageCartQty({{ $item->id }}, {{ $item->quantity + 1 }})">
-                                                            <i class="fa fa-plus small"></i>
+                                                        <button type="button" 
+                                                                class="btn btn-sm btn-link text-dark p-0 px-2 text-decoration-none {{ $isMaxReached ? 'disabled text-muted' : '' }}" 
+                                                                onclick="{{ $isMaxReached ? 'showCustomAlert(\'warning\', \'Cannot add more. Maximum available stock (' . $availableStock . ') reached.\', \'Stock Limit\')' : 'updatePageCartQty(' . $item->id . ', ' . ($item->quantity + 1) . ')' }}" 
+                                                                title="{{ $isMaxReached ? 'Maximum available stock reached (' . $availableStock . ')' : 'Increase quantity' }}">
+                                                            <i class="fa fa-plus small {{ $isMaxReached ? 'text-muted' : '' }}"></i>
                                                         </button>
                                                     </div>
+                                                    @if($isMaxReached)
+                                                        <div class="text-danger small mt-1" style="font-size: 0.72rem;">
+                                                            <i class="fa fa-info-circle me-1"></i>Max stock reached
+                                                        </div>
+                                                    @endif
                                                 </td>
                                                 <td class="fw-bold text-primary fs-6" id="item_subtotal_{{ $item->id }}">
                                                     ₹{{ number_format($itemSubtotal, 2) }}
@@ -211,6 +237,10 @@
                 if (res.success) {
                     location.reload();
                 }
+            },
+            error: function(err) {
+                var msg = (err.responseJSON && err.responseJSON.message) ? err.responseJSON.message : 'Cannot add more. Maximum available stock reached.';
+                showCustomAlert('warning', msg, 'Stock Limit Reached');
             }
         });
     }

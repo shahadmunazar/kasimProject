@@ -172,10 +172,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/addresses', [\App\Http\Controllers\Frontend\DashboardController::class, 'storeAddress'])->name('frontend.dashboard.addresses.store');
     Route::post('/dashboard/addresses/{id}', [\App\Http\Controllers\Frontend\DashboardController::class, 'updateAddress'])->name('frontend.dashboard.addresses.update');
     Route::delete('/dashboard/addresses/{id}', [\App\Http\Controllers\Frontend\DashboardController::class, 'deleteAddress'])->name('frontend.dashboard.addresses.delete');
-
-    // Checkout Routes
-    Route::get('/checkout/{product_id}', [\App\Http\Controllers\Frontend\CheckoutController::class, 'index'])->name('frontend.checkout');
-    Route::post('/checkout/{product_id}', [\App\Http\Controllers\Frontend\CheckoutController::class, 'process'])->name('frontend.checkout.process');
 });
 
 // Public & Customer Tracking Routes

@@ -70,24 +70,53 @@ class CartService
     }
 
     /**
-     * Add product to cart or increment quantity.
-     * Returns array ['item' => CartItem, 'already_in_cart' => bool]
+     * Add product to cart or increment quantity with available stock validation.
+     * Returns array ['success' => bool, 'item' => CartItem|null, 'already_in_cart' => bool, 'message' => string, 'available_stock' => int]
      */
     public static function add(int $productId, int $quantity = 1): array
     {
         $product = Product::findOrFail($productId);
-        $unitPrice = $product->offer_price ?: $product->price ?: 0;
+        $availableStock = $product->availableStock();
+
+        // Check if product is completely out of stock
+        if ($product->track_inventory && $availableStock <= 0) {
+            return [
+                'success' => false,
+                'error' => 'out_of_stock',
+                'message' => "Sorry, '{$product->name}' is currently out of stock.",
+                'available_stock' => 0,
+            ];
+        }
 
         $itemQuery = Auth::check()
             ? CartItem::where('user_id', Auth::id())->where('product_id', $productId)
             : CartItem::where('session_id', self::getSessionId())->where('product_id', $productId);
 
         $item = $itemQuery->first();
+        $currentCartQty = $item ? (int)$item->quantity : 0;
+        $newTotalQty = $currentCartQty + $quantity;
+
+        // Check if total requested quantity exceeds available stock
+        if ($product->track_inventory && $newTotalQty > $availableStock) {
+            $allowedToAdd = max(0, $availableStock - $currentCartQty);
+            return [
+                'success' => false,
+                'error' => 'stock_limit_exceeded',
+                'message' => $currentCartQty > 0
+                    ? "Only {$availableStock} items are available in stock. You already have {$currentCartQty} in your cart."
+                    : "Sorry, only {$availableStock} items are available in stock.",
+                'available_stock' => $availableStock,
+                'current_in_cart' => $currentCartQty,
+                'max_allowed' => $allowedToAdd,
+            ];
+        }
+
+        $unitPrice = $product->offer_price ?: $product->price ?: 0;
         $alreadyInCart = false;
 
         if ($item) {
             $alreadyInCart = true;
-            $item->quantity += $quantity;
+            $item->quantity = $newTotalQty;
             $item->price = $unitPrice;
             $item->save();
         } else {
@@ -101,30 +130,59 @@ class CartService
         }
 
         return [
+            'success' => true,
             'item' => $item,
             'already_in_cart' => $alreadyInCart,
             'product_name' => $product->name,
+            'available_stock' => $availableStock,
         ];
     }
 
     /**
-     * Update quantity of an item in cart.
+     * Update quantity of an item in cart with stock restriction check.
      */
-    public static function updateQuantity(int $itemId, int $quantity): bool
+    public static function updateQuantity(int $itemId, int $quantity): array
     {
-        $item = self::query()->where('id', $itemId)->first();
+        $item = self::query()->with('product')->where('id', $itemId)->first();
         if (!$item) {
-            return false;
+            return [
+                'success' => false,
+                'message' => 'Cart item not found.',
+            ];
         }
 
         if ($quantity <= 0) {
             $item->delete();
-            return true;
+            return [
+                'success' => true,
+                'message' => 'Item removed from cart.',
+                'item_deleted' => true,
+            ];
+        }
+
+        $product = $item->product;
+        if ($product && $product->track_inventory) {
+            $availableStock = $product->availableStock();
+            if ($quantity > $availableStock) {
+                return [
+                    'success' => false,
+                    'error' => 'stock_limit_exceeded',
+                    'message' => "Cannot set quantity to {$quantity}. Only {$availableStock} items available in stock.",
+                    'available_stock' => $availableStock,
+                    'current_quantity' => $item->quantity,
+                ];
+            }
         }
 
         $item->quantity = $quantity;
         $item->save();
-        return true;
+
+        return [
+            'success' => true,
+            'message' => 'Cart quantity updated.',
+            'item' => $item,
+            'available_stock' => $product ? $product->availableStock() : null,
+        ];
     }
 
     /**

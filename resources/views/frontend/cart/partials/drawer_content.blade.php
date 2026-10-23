@@ -3,6 +3,8 @@
         @foreach($cartItems as $item)
             @php
                 $itemProduct = $item->product;
+                $availStock = $itemProduct ? $itemProduct->availableStock() : 999999;
+                $isMaxStock = $itemProduct && $itemProduct->track_inventory && ($item->quantity >= $availStock);
                 $itemPrice = $item->price ?? $itemProduct->offer_price ?? $itemProduct->price ?? 0;
                 $itemSubtotal = $itemPrice * $item->quantity;
                 $itemImg = ($itemProduct && $itemProduct->images && count($itemProduct->images) > 0) ? $itemProduct->images[0] : null;
@@ -26,12 +28,28 @@
                             {{ $itemProduct->name }}
                         </a>
                     </h6>
-                    <div class="d-flex align-items-center text-muted small mb-2">
+                    <div class="d-flex align-items-center text-muted small mb-1">
                         <span class="fw-bold text-primary">₹{{ number_format($itemPrice, 2) }}</span>
                         <span class="mx-1">&times;</span>
                         <span class="fw-semibold">{{ $item->quantity }}</span>
                         <span class="ms-auto fw-bold text-dark fs-6">₹{{ number_format($itemSubtotal, 2) }}</span>
                     </div>
+
+                    @if($itemProduct && $itemProduct->track_inventory)
+                        <div class="mb-2">
+                            @if($availStock <= 0)
+                                <span class="badge bg-danger small" style="font-size:0.7rem;"><i class="fa fa-times-circle me-1"></i>Out of Stock</span>
+                            @elseif($availStock < 10)
+                                <span class="badge bg-warning bg-opacity-25 text-dark border border-warning small" style="font-size:0.7rem;">
+                                    <i class="fa fa-fire text-danger me-1"></i>Only {{ $availStock }} left
+                                </span>
+                            @else
+                                <span class="badge bg-white text-muted border small" style="font-size:0.7rem;">
+                                    <i class="fa fa-boxes me-1"></i>Available: {{ $availStock }}
+                                </span>
+                            @endif
+                        </div>
+                    @endif
 
                     <!-- Quantity Controls -->
                     <div class="d-flex align-items-center justify-content-between">
@@ -40,8 +58,11 @@
                                 <i class="fa fa-minus small"></i>
                             </button>
                             <span class="px-2 py-1 fw-bold small text-center" style="min-width: 28px;">{{ $item->quantity }}</span>
-                            <button type="button" class="btn btn-sm btn-link text-dark px-2 text-decoration-none" onclick="updateCartItemQty({{ $item->id }}, {{ $item->quantity + 1 }})" title="Increase">
-                                <i class="fa fa-plus small"></i>
+                            <button type="button" 
+                                    class="btn btn-sm btn-link text-dark px-2 text-decoration-none {{ $isMaxStock ? 'disabled text-muted' : '' }}" 
+                                    onclick="{{ $isMaxStock ? 'showCustomAlert(\'warning\', \'Cannot add more. Only ' . $availStock . ' items available in stock.\', \'Stock Limit\')' : 'updateCartItemQty(' . $item->id . ', ' . ($item->quantity + 1) . ')' }}" 
+                                    title="{{ $isMaxStock ? 'Maximum available stock reached (' . $availStock . ')' : 'Increase' }}">
+                                <i class="fa fa-plus small {{ $isMaxStock ? 'text-muted' : '' }}"></i>
                             </button>
                         </div>
 

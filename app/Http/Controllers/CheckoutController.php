@@ -60,12 +60,43 @@ class CheckoutController extends Controller
 
         $isDirectBuy = ($directProduct !== null);
         $totalQuantity = $items->sum('quantity');
+        $userAddresses = Auth::check() ? Auth::user()->addresses()->latest()->get() : collect();
+        $defaultAddress = $userAddresses->firstWhere('is_default', true) ?? $userAddresses->first();
 
-        return view('checkout.index', compact('directProduct', 'items', 'subtotal', 'totalQuantity', 'isDirectBuy', 'qrCode', 'deliveryCharge'));
+        return view('checkout.index', compact(
+            'directProduct', 'items', 'subtotal', 'totalQuantity', 
+            'isDirectBuy', 'qrCode', 'deliveryCharge', 'userAddresses', 'defaultAddress'
+        ));
     }
 
     public function store(Request $request, $product = null)
     {
+        // If customer selected a saved address, merge address fields if missing
+        if (Auth::check() && $request->filled('address_id') && $request->address_id !== 'new') {
+            $savedAddr = Auth::user()->addresses()->find($request->address_id);
+            if ($savedAddr) {
+                if (!$request->filled('customer_name')) {
+                    $request->merge(['customer_name' => $savedAddr->name ?: (Auth::user()->name ?? '')]);
+                }
+                if (!$request->filled('mobile')) {
+                    $request->merge(['mobile' => $savedAddr->phone ?: (Auth::user()->phone ?? '')]);
+                }
+                if (!$request->filled('address')) {
+                    $fullAddr = trim($savedAddr->address_line_1 . ($savedAddr->address_line_2 ? ', ' . $savedAddr->address_line_2 : ''));
+                    $request->merge(['address' => $fullAddr]);
+                }
+                if (!$request->filled('city')) {
+                    $request->merge(['city' => $savedAddr->city]);
+                }
+                if (!$request->filled('state')) {
+                    $request->merge(['state' => $savedAddr->state]);
+                }
+                if (!$request->filled('pincode')) {
+                    $request->merge(['pincode' => $savedAddr->zip]);
+                }
+            }
+        }
+
         $request->validate([
             'customer_name' => 'required|string|max:255',
             'mobile' => 'required|string|max:20',
@@ -204,6 +235,25 @@ class CheckoutController extends Controller
             CartService::clear();
         }
 
+        // Optionally save new address to customer account for future orders
+        if (Auth::check() && $request->boolean('save_new_address') && ($request->input('address_id') === 'new' || !$request->filled('address_id'))) {
+            try {
+                $isFirst = Auth::user()->addresses()->count() === 0;
+                \App\Models\UserAddress::create([
+                    'user_id' => Auth::id(),
+                    'name' => $request->customer_name,
+                    'phone' => $request->mobile,
+                    'address_line_1' => $request->address,
+                    'city' => $request->city,
+                    'state' => $request->state,
+                    'zip' => $request->pincode,
+                    'is_default' => $isFirst,
+                ]);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Could not save new address for user: ' . $e->getMessage());
+            }
+        }
+
         // Send order notification emails safely
         try {
             if ($order->email) {
@@ -227,7 +277,7 @@ class CheckoutController extends Controller
     public function calculateDelivery(Request $request)
     {
         $request->validate([
-            'address_id' => 'nullable|exists:user_addresses,id',
+            'address_id' => 'nullable',
             'address' => 'required_without:address_id|string|nullable',
             'city' => 'required_without:address_id|string|nullable',
             'state' => 'required_without:address_id|string|nullable',
@@ -249,8 +299,12 @@ class CheckoutController extends Controller
         }
 
         if ($request->filled('address_id') && $request->address_id !== 'new') {
-            $address = \App\Models\UserAddress::findOrFail($request->address_id);
-            $destination = $address->address_line_1 . ', ' . $address->city . ', ' . $address->state . ' ' . $address->zip;
+            $address = \App\Models\UserAddress::find($request->address_id);
+            if ($address) {
+                $destination = $address->address_line_1 . ', ' . $address->city . ', ' . $address->state . ' ' . $address->zip;
+            } else {
+                $destination = $request->address . ', ' . $request->city . ', ' . $request->state . ' ' . $request->pincode;
+            }
         } else {
             $destination = $request->address . ', ' . $request->city . ', ' . $request->state . ' ' . $request->pincode;
         }

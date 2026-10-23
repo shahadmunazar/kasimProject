@@ -404,6 +404,14 @@
                         $('#offcanvasCartBody').html(res.html);
                         refreshCartBadge(res.count);
                     }
+                },
+                error: function(err) {
+                    var msg = (err.responseJSON && err.responseJSON.message) ? err.responseJSON.message : 'Cannot add more. Stock limit reached.';
+                    showCustomAlert('warning', msg, 'Stock Limit');
+                    if (err.responseJSON && err.responseJSON.html) {
+                        $('#offcanvasCartBody').html(err.responseJSON.html);
+                        refreshCartBadge(err.responseJSON.count);
+                    }
                 }
             });
         }

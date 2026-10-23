@@ -2,6 +2,34 @@
 
 @section('meta_title', 'Checkout')
 
+@push('styles')
+<style>
+    .saved-addr-card {
+        border-radius: 10px;
+        transition: all 0.2s ease-in-out;
+        background: #ffffff;
+    }
+    .saved-addr-card:hover {
+        border-color: #0d6efd !important;
+        box-shadow: 0 4px 14px rgba(13, 110, 253, 0.12);
+        transform: translateY(-2px);
+    }
+    .saved-addr-card.active-addr {
+        border-color: #0d6efd !important;
+        background-color: #f0f7ff !important;
+        box-shadow: 0 2px 10px rgba(13, 110, 253, 0.15);
+    }
+    .saved-addr-card .form-check-input {
+        cursor: pointer;
+        width: 1.15em;
+        height: 1.15em;
+    }
+    .border-dashed {
+        border-style: dashed !important;
+    }
+</style>
+@endpush
+
 @section('content')
 <section class="page-title bg-1">
   <div class="overlay"></div>
@@ -56,24 +84,132 @@
                                 </div>
                             </div>
 
-                            <h5 class="mt-4 mb-3">2. Shipping Address</h5>
-                            <div class="row">
-                                <div class="col-md-12 mb-3">
-                                    <label class="form-label">Address <span class="text-danger">*</span></label>
-                                    <textarea name="address" class="form-control" rows="2" required placeholder="House/Flat No., Street, Landmark">{{ old('address') }}</textarea>
+                            @auth
+                                @if(isset($userAddresses) && $userAddresses->isNotEmpty())
+                                    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+                                        <h5 class="mb-0 fw-bold"><i class="fa fa-map-marker-alt text-primary me-2"></i>2. Shipping Address</h5>
+                                        <span class="badge bg-light text-primary border border-primary-subtle px-2 py-1">
+                                            <i class="fa fa-address-book me-1"></i> {{ $userAddresses->count() }} Saved {{ Str::plural('Address', $userAddresses->count()) }}
+                                        </span>
+                                    </div>
+                                    <p class="text-muted small mb-3">Choose a saved delivery address or enter a new location below.</p>
+
+                                    <div class="row g-3 mb-3" id="savedAddressesGrid">
+                                        @foreach($userAddresses as $addr)
+                                            @php
+                                                $isAddrChecked = old('address_id', $defaultAddress->id ?? null) == $addr->id;
+                                                $fullStreet = trim($addr->address_line_1 . ($addr->address_line_2 ? ', ' . $addr->address_line_2 : ''));
+                                            @endphp
+                                            <div class="col-md-6">
+                                                <div class="card h-100 saved-addr-card border {{ $isAddrChecked ? 'border-primary active-addr' : 'border-secondary-subtle' }}"
+                                                     style="cursor: pointer;"
+                                                     onclick="selectSavedAddress('{{ $addr->id }}')">
+                                                    <div class="card-body p-3">
+                                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                                            <div class="form-check mb-0">
+                                                                <input class="form-check-input addr-radio" type="radio" name="address_id" id="addr_{{ $addr->id }}" value="{{ $addr->id }}"
+                                                                       {{ $isAddrChecked ? 'checked' : '' }}
+                                                                       data-name="{{ e($addr->name ?: (Auth::user()->name ?? '')) }}"
+                                                                       data-phone="{{ e($addr->phone ?: (Auth::user()->phone ?? '')) }}"
+                                                                       data-address="{{ e($fullStreet) }}"
+                                                                       data-city="{{ e($addr->city) }}"
+                                                                       data-state="{{ e($addr->state) }}"
+                                                                       data-pincode="{{ e($addr->zip) }}"
+                                                                       onchange="handleAddressRadioChange(this)">
+                                                                <label class="form-check-label fw-bold text-dark ps-1" for="addr_{{ $addr->id }}" style="cursor: pointer;">
+                                                                    {{ $addr->name ?: (Auth::user()->name ?? 'Primary Contact') }}
+                                                                </label>
+                                                            </div>
+                                                            @if($addr->is_default)
+                                                                <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size: 0.72rem;">Default</span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="text-muted small ps-4 mb-1">
+                                                            <i class="fa fa-phone-alt me-1 text-muted" style="font-size: 0.75rem;"></i> {{ $addr->phone ?: (Auth::user()->phone ?? 'N/A') }}
+                                                        </div>
+                                                        <div class="text-secondary small ps-4" style="line-height: 1.35;">
+                                                            <i class="fa fa-map-pin me-1 text-muted" style="font-size: 0.75rem;"></i>
+                                                            {{ $fullStreet }}<br>
+                                                            {{ $addr->city }}, {{ $addr->state }} - <span class="fw-semibold text-dark">{{ $addr->zip }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+
+                                        <!-- Option to use new / custom address -->
+                                        <div class="col-md-6">
+                                            <div class="card h-100 saved-addr-card border {{ old('address_id') === 'new' ? 'border-primary active-addr' : 'border-dashed' }}"
+                                                 style="cursor: pointer; border-style: dashed !important; border-width: 2px;"
+                                                 onclick="selectSavedAddress('new')">
+                                                <div class="card-body p-3 d-flex flex-column justify-content-center align-items-center text-center">
+                                                    <div class="form-check mb-1">
+                                                        <input class="form-check-input addr-radio" type="radio" name="address_id" id="addr_new" value="new"
+                                                               {{ old('address_id') === 'new' ? 'checked' : '' }}
+                                                               onchange="handleAddressRadioChange(this)">
+                                                        <label class="form-check-label fw-bold text-primary ps-1" for="addr_new" style="cursor: pointer;">
+                                                            + Deliver to a Different Address
+                                                        </label>
+                                                    </div>
+                                                    <small class="text-muted">Enter a custom or new delivery address below</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="alert alert-light border py-2 px-3 small d-flex justify-content-between align-items-center mb-3" id="savedAddressNotice" style="display: none;">
+                                        <div class="text-muted">
+                                            <i class="fa fa-check-circle text-success me-1"></i> Delivery address details loaded. You can verify or edit the fields below.
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+                                        <h5 class="mb-0 fw-bold"><i class="fa fa-map-marker-alt text-primary me-2"></i>2. Shipping Address</h5>
+                                        <span class="badge bg-light text-secondary border px-2 py-1">New Address</span>
+                                    </div>
+                                    <input type="hidden" name="address_id" value="new">
+                                @endif
+                            @else
+                                <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+                                    <h5 class="mb-0 fw-bold"><i class="fa fa-map-marker-alt text-primary me-2"></i>2. Shipping Address</h5>
                                 </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">City <span class="text-danger">*</span></label>
-                                    <input type="text" name="city" class="form-control" value="{{ old('city') }}" required>
+                                <div class="alert alert-light border py-2 px-3 small d-flex justify-content-between align-items-center mb-3">
+                                    <div>
+                                        <i class="fa fa-user-circle text-primary me-2"></i> Already have saved addresses?
+                                        <a href="{{ Route::has('login') ? route('login') : (Route::has('frontend.auth.login') ? route('frontend.auth.login') : url('/login')) }}?redirect={{ urlencode(url()->current()) }}" class="text-primary fw-bold text-decoration-underline ms-1">Sign in</a> to auto-fill your delivery details.
+                                    </div>
                                 </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">State <span class="text-danger">*</span></label>
-                                    <input type="text" name="state" class="form-control" value="{{ old('state') }}" required>
+                                <input type="hidden" name="address_id" value="new">
+                            @endauth
+
+                            <div id="manualAddressFields">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label">Address (House / Flat, Street, Area) <span class="text-danger">*</span></label>
+                                        <textarea name="address" id="shippingAddress" class="form-control" rows="2" required placeholder="House/Flat No., Street, Landmark">{{ old('address') }}</textarea>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">City <span class="text-danger">*</span></label>
+                                        <input type="text" name="city" id="shippingCity" class="form-control" value="{{ old('city') }}" required>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">State <span class="text-danger">*</span></label>
+                                        <input type="text" name="state" id="shippingState" class="form-control" value="{{ old('state') }}" required>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Pincode <span class="text-danger">*</span></label>
+                                        <input type="text" name="pincode" id="shippingPincode" class="form-control" value="{{ old('pincode') }}" required>
+                                    </div>
                                 </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Pincode <span class="text-danger">*</span></label>
-                                    <input type="text" name="pincode" class="form-control" value="{{ old('pincode') }}" required>
-                                </div>
+
+                                @auth
+                                    <div class="form-check mb-3" id="saveNewAddressWrapper" style="{{ (isset($userAddresses) && $userAddresses->isNotEmpty() && old('address_id', $defaultAddress->id ?? null) !== 'new') ? 'display: none;' : '' }}">
+                                        <input class="form-check-input" type="checkbox" name="save_new_address" id="saveNewAddressCheck" value="1" {{ old('save_new_address') ? 'checked' : '' }}>
+                                        <label class="form-check-label text-muted small" for="saveNewAddressCheck">
+                                            <i class="fa fa-bookmark text-primary me-1"></i> Save this address to my account for future orders
+                                        </label>
+                                    </div>
+                                @endauth
                             </div>
 
                             <h5 class="mt-4 mb-3">3. Payment Verification</h5>
@@ -150,13 +286,24 @@
                         </div>
 
                         <!-- Direct buy single item quantity adjuster -->
-                        @if($isDirectBuy)
+                        @if($isDirectBuy && $directProduct)
+                        @php
+                            $directAvailStock = $directProduct->availableStock();
+                            $isDirectTrack = $directProduct->track_inventory;
+                        @endphp
                         <div class="d-flex justify-content-between align-items-center mb-3 bg-light p-2 rounded">
-                            <span class="small fw-semibold text-muted">Adjust Quantity:</span>
+                            <div>
+                                <span class="small fw-semibold text-muted d-block">Adjust Quantity:</span>
+                                @if($isDirectTrack)
+                                    <small class="text-muted" style="font-size: 0.72rem;">
+                                        <i class="fa fa-boxes me-1"></i>Available: <span class="fw-bold text-dark">{{ $directAvailStock }}</span>
+                                    </small>
+                                @endif
+                            </div>
                             <div class="input-group input-group-sm" style="width: 110px;">
                                 <button class="btn btn-outline-secondary" type="button" id="btnMinus">-</button>
-                                <input type="number" class="form-control text-center" id="qtyInput" value="{{ $totalQuantity }}" min="1" readonly>
-                                <button class="btn btn-outline-secondary" type="button" id="btnPlus">+</button>
+                                <input type="number" class="form-control text-center" id="qtyInput" value="{{ $totalQuantity }}" min="1" max="{{ $directAvailStock }}" readonly>
+                                <button class="btn btn-outline-secondary" type="button" id="btnPlus" {{ ($isDirectTrack && $totalQuantity >= $directAvailStock) ? 'disabled' : '' }}>+</button>
                             </div>
                         </div>
                         @endif
@@ -261,28 +408,146 @@
         }
 
         if (isDirectBuy && qtyInput) {
-            document.getElementById('btnMinus').addEventListener('click', function() {
-                let q = parseInt(qtyInput.value) || 1;
-                if (q > 1) {
-                    q--;
-                    qtyInput.value = q;
-                    formQtyInput.value = q;
-                    currentSubtotal = singleUnitPrice * q;
-                    updateUI();
-                    calculateDelivery();
+            const maxDirectStock = {{ ($isDirectBuy && $directProduct && $directProduct->track_inventory) ? $directProduct->availableStock() : 999999 }};
+            const btnPlus = document.getElementById('btnPlus');
+            const btnMinus = document.getElementById('btnMinus');
+
+            if (btnMinus) {
+                btnMinus.addEventListener('click', function() {
+                    let q = parseInt(qtyInput.value) || 1;
+                    if (q > 1) {
+                        q--;
+                        qtyInput.value = q;
+                        formQtyInput.value = q;
+                        currentSubtotal = singleUnitPrice * q;
+                        if (btnPlus) btnPlus.disabled = (q >= maxDirectStock);
+                        updateUI();
+                        calculateDelivery();
+                    }
+                });
+            }
+
+            if (btnPlus) {
+                btnPlus.addEventListener('click', function() {
+                    let q = parseInt(qtyInput.value) || 1;
+                    if (q < maxDirectStock) {
+                        q++;
+                        qtyInput.value = q;
+                        formQtyInput.value = q;
+                        currentSubtotal = singleUnitPrice * q;
+                        if (q >= maxDirectStock) {
+                            btnPlus.disabled = true;
+                        }
+                        updateUI();
+                        calculateDelivery();
+                    } else {
+                        btnPlus.disabled = true;
+                        if (typeof showCustomAlert === 'function') {
+                            showCustomAlert('warning', 'Cannot add more. Only ' + maxDirectStock + ' items available in stock.', 'Stock Limit');
+                        } else {
+                            alert('Cannot add more. Only ' + maxDirectStock + ' items available in stock.');
+                        }
+                    }
+                });
+            }
+        }
+
+        // Saved address handlers
+        window.selectSavedAddress = function(addrId) {
+            const radio = document.getElementById('addr_' + addrId);
+            if (radio) {
+                radio.checked = true;
+                handleAddressRadioChange(radio);
+            }
+        };
+
+        window.handleAddressRadioChange = function(radio) {
+            document.querySelectorAll('.saved-addr-card').forEach(card => {
+                card.classList.remove('border-primary', 'active-addr');
+                if (card.style.borderStyle === 'dashed') {
+                    card.classList.add('border-dashed');
+                } else {
+                    card.classList.add('border-secondary-subtle');
                 }
             });
 
-            document.getElementById('btnPlus').addEventListener('click', function() {
-                let q = parseInt(qtyInput.value) || 1;
-                q++;
-                qtyInput.value = q;
-                formQtyInput.value = q;
-                currentSubtotal = singleUnitPrice * q;
+            const parentCard = radio.closest('.saved-addr-card');
+            if (parentCard) {
+                parentCard.classList.remove('border-secondary-subtle', 'border-dashed');
+                parentCard.classList.add('border-primary', 'active-addr');
+            }
+
+            const saveNewWrapper = document.getElementById('saveNewAddressWrapper');
+            const noticeEl = document.getElementById('savedAddressNotice');
+            const nameInput = document.querySelector('input[name="customer_name"]');
+            const phoneInput = document.querySelector('input[name="mobile"]');
+            const addrInput = document.getElementById('shippingAddress');
+            const cityInput = document.getElementById('shippingCity');
+            const stateInput = document.getElementById('shippingState');
+            const pinInput = document.getElementById('shippingPincode');
+
+            if (radio.value === 'new') {
+                if (saveNewWrapper) saveNewWrapper.style.display = 'block';
+                if (noticeEl) noticeEl.style.display = 'none';
+
+                if (addrInput) addrInput.value = '';
+                if (cityInput) cityInput.value = '';
+                if (stateInput) stateInput.value = '';
+                if (pinInput) pinInput.value = '';
+                if (addrInput) addrInput.focus();
+
+                const deliveryEls = document.querySelectorAll('.delivery-charge-display');
+                deliveryEls.forEach(el => {
+                    el.innerHTML = '<span id="deliveryChargeText">Enter address to calculate</span>';
+                });
+                deliveryCharge = 0;
                 updateUI();
+            } else {
+                if (saveNewWrapper) saveNewWrapper.style.display = 'none';
+                if (noticeEl) noticeEl.style.display = 'flex';
+
+                if (radio.dataset.name && nameInput) nameInput.value = radio.dataset.name;
+                if (radio.dataset.phone && phoneInput) phoneInput.value = radio.dataset.phone;
+                if (radio.dataset.address && addrInput) addrInput.value = radio.dataset.address;
+                if (radio.dataset.city && cityInput) cityInput.value = radio.dataset.city;
+                if (radio.dataset.state && stateInput) stateInput.value = radio.dataset.state;
+                if (radio.dataset.pincode && pinInput) pinInput.value = radio.dataset.pincode;
+
                 calculateDelivery();
-            });
-        }
+            }
+        };
+
+        // If user manually types into address fields while a saved address card was active, switch to "new" mode
+        const addrInput = document.getElementById('shippingAddress');
+        const cityInput = document.getElementById('shippingCity');
+        const stateInput = document.getElementById('shippingState');
+        const pinInput = document.getElementById('shippingPincode');
+        const saveNewWrapper = document.getElementById('saveNewAddressWrapper');
+        const noticeEl = document.getElementById('savedAddressNotice');
+
+        [addrInput, cityInput, stateInput, pinInput].forEach(inp => {
+            if (inp) {
+                inp.addEventListener('input', function() {
+                    const newRadio = document.getElementById('addr_new');
+                    const currentChecked = document.querySelector('input[name="address_id"]:checked');
+                    if (newRadio && currentChecked && currentChecked.value !== 'new') {
+                        newRadio.checked = true;
+                        document.querySelectorAll('.saved-addr-card').forEach(card => {
+                            card.classList.remove('border-primary', 'active-addr');
+                            if (card.style.borderStyle === 'dashed') card.classList.add('border-dashed');
+                            else card.classList.add('border-secondary-subtle');
+                        });
+                        const newCard = newRadio.closest('.saved-addr-card');
+                        if (newCard) {
+                            newCard.classList.remove('border-dashed');
+                            newCard.classList.add('border-primary', 'active-addr');
+                        }
+                        if (saveNewWrapper) saveNewWrapper.style.display = 'block';
+                        if (noticeEl) noticeEl.style.display = 'none';
+                    }
+                });
+            }
+        });
 
         let deliveryTimeout = null;
         function debouncedCalculateDelivery() {
@@ -300,15 +565,20 @@
         });
 
         function calculateDelivery() {
+            const checkedRadio = document.querySelector('input[name="address_id"]:checked');
+            const addressId = (checkedRadio && checkedRadio.value !== 'new') ? checkedRadio.value : null;
             const address = document.querySelector('[name="address"]')?.value || '';
             const city = document.querySelector('[name="city"]')?.value || '';
             const state = document.querySelector('[name="state"]')?.value || '';
             const pincode = document.querySelector('[name="pincode"]')?.value || '';
             const qty = qtyInput ? (parseInt(qtyInput.value) || 1) : {{ $totalQuantity }};
 
-            if (!address || !city || !state || !pincode) return;
+            if (!addressId) {
+                if (!address || !city || !state || !pincode) return;
+            }
 
             let payload = {
+                address_id: addressId,
                 address: address,
                 city: city,
                 state: state,
@@ -351,6 +621,14 @@
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Placing Order...';
             }
         });
+
+        // Auto-select initial address if present and calculate delivery upfront
+        const initialRadio = document.querySelector('input[name="address_id"]:checked');
+        if (initialRadio) {
+            handleAddressRadioChange(initialRadio);
+        } else {
+            calculateDelivery();
+        }
 
         updateUI();
     });
