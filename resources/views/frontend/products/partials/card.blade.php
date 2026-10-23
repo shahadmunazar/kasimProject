@@ -13,6 +13,21 @@
      data-name="{{ strtolower($product->name) }}"
      data-price="{{ $product->offer_price ?: $product->price ?: 0 }}">
     <div class="card w-100 shadow-sm border-0 product-item-card d-flex flex-column position-relative">
+        @php
+            $cardStock = $product->availableStock();
+        @endphp
+
+        <!-- Floating Stock Urgency Badge -->
+        @if($product->isOutOfStock())
+            <span class="badge bg-danger position-absolute shadow-sm" style="top: 10px; left: 10px; z-index: 5; font-size: 0.72rem; padding: 5px 9px; border-radius: 6px;">
+                <i class="fa fa-times-circle me-1"></i>Out of Stock
+            </span>
+        @elseif($cardStock <= 10)
+            <span class="badge bg-warning text-dark position-absolute shadow-sm border border-warning-subtle" style="top: 10px; left: 10px; z-index: 5; font-size: 0.72rem; padding: 5px 9px; border-radius: 6px; font-weight: 700;">
+                <i class="fa fa-fire text-danger me-1"></i>Only {{ $cardStock }} left
+            </span>
+        @endif
+
         <!-- Floating Wishlist Button -->
         <button type="button" 
                 class="btn btn-sm btn-white rounded-circle shadow-sm position-absolute wishlist-toggle-btn"

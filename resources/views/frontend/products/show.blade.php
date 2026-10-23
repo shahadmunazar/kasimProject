@@ -75,6 +75,70 @@
                             @endif
                         </div>
 
+                        <!-- Real-Time Stock Status & Availability -->
+                        <div class="mb-4 p-3 rounded-3 border bg-light">
+                            @if($product->sku)
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted font-monospace">SKU: <strong class="text-dark">{{ $product->sku }}</strong></small>
+                                    @if($product->barcode)
+                                        <small class="text-muted font-monospace">BARCODE: <strong class="text-dark">{{ $product->barcode }}</strong></small>
+                                    @endif
+                                </div>
+                            @endif
+
+                            @php
+                                $stockAvailable = $product->availableStock();
+                            @endphp
+
+                            @if($product->isOutOfStock())
+                                <div>
+                                    <span class="badge bg-danger fs-6 px-3 py-2 rounded-pill">
+                                        <i class="fa fa-times-circle me-1"></i> Out of Stock
+                                    </span>
+                                    <small class="text-danger d-block mt-2 fw-semibold">
+                                        <i class="fa fa-info-circle me-1"></i> Currently unavailable. Please send an enquiry to be notified when re-stocked.
+                                    </small>
+                                </div>
+                            @elseif($stockAvailable <= 10)
+                                <div>
+                                    <div class="d-inline-flex align-items-center gap-2 flex-wrap mb-2">
+                                        <span class="badge bg-warning text-dark fs-6 px-3 py-2 rounded-pill shadow-xs border border-warning-subtle">
+                                            <i class="fa fa-fire text-danger me-1"></i> Only {{ $stockAvailable }} {{ $stockAvailable === 1 ? 'item' : 'items' }} left in stock — order soon!
+                                        </span>
+                                        <span class="badge bg-white text-muted border small">
+                                            <i class="fa fa-bolt text-warning me-1"></i> Fast Dispatch
+                                        </span>
+                                    </div>
+                                    <div class="mt-2" style="max-width: 320px;">
+                                        <div class="d-flex justify-content-between text-muted mb-1" style="font-size: 11.5px;">
+                                            <span class="text-danger fw-bold"><i class="fa fa-exclamation-circle me-1"></i>Limited Inventory</span>
+                                            <span class="fw-bold font-monospace text-dark">{{ $stockAvailable }} left</span>
+                                        </div>
+                                        <div class="progress" style="height: 7px; border-radius: 6px; background: #e2e8f0;">
+                                            <div class="progress-bar bg-warning bg-gradient progress-bar-striped progress-bar-animated" 
+                                                 role="progressbar" 
+                                                 style="width: {{ min(100, max(12, ($stockAvailable / 10) * 100)) }}%;" 
+                                                 aria-valuenow="{{ $stockAvailable }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="10"></div>
+                                        </div>
+                                        <small class="text-muted d-block mt-1" style="font-size: 11px;">
+                                            Hurry, items in high demand sell out quickly!
+                                        </small>
+                                    </div>
+                                </div>
+                            @else
+                                <div>
+                                    <span class="badge bg-success fs-6 px-3 py-2 rounded-pill">
+                                        <i class="fa fa-check-circle me-1"></i> In Stock ({{ $stockAvailable }} available)
+                                    </span>
+                                    <small class="text-success d-block mt-1">
+                                        <i class="fa fa-truck me-1"></i> Verified warehouse stock, ready to dispatch.
+                                    </small>
+                                </div>
+                            @endif
+                        </div>
+
                         <div class="mb-4" id="product-description">
                             <h5 class="fw-bold mb-3 border-bottom pb-2">Description</h5>
                             <div class="text-secondary product-full-description" style="line-height: 1.8; font-size: 1rem;">
@@ -91,9 +155,9 @@
                             <label class="form-label small fw-bold text-muted">Quantity</label>
                             <div class="d-flex align-items-center gap-3">
                                 <div class="input-group" style="width: 140px;">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="var q=document.getElementById('detailQtyInput'); if(parseInt(q.value)>1) q.value=parseInt(q.value)-1;">-</button>
-                                    <input type="number" id="detailQtyInput" class="form-control text-center fw-bold" value="1" min="1" max="99">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="var q=document.getElementById('detailQtyInput'); q.value=parseInt(q.value)+1;">+</button>
+                                    <button class="btn btn-outline-secondary" type="button" {{ $product->isOutOfStock() ? 'disabled' : '' }} onclick="var q=document.getElementById('detailQtyInput'); if(parseInt(q.value)>1) q.value=parseInt(q.value)-1;">-</button>
+                                    <input type="number" id="detailQtyInput" class="form-control text-center fw-bold" value="1" min="1" max="{{ $product->availableStock() }}" {{ $product->isOutOfStock() ? 'disabled' : '' }}>
+                                    <button class="btn btn-outline-secondary" type="button" {{ $product->isOutOfStock() ? 'disabled' : '' }} onclick="var q=document.getElementById('detailQtyInput'); if(parseInt(q.value) < {{ $product->availableStock() }}) q.value=parseInt(q.value)+1;">+</button>
                                 </div>
                                 <button type="button" class="btn btn-outline-danger px-3 py-2 rounded-3 d-flex align-items-center gap-2" onclick="toggleWishlist({{ $product->id }}, this)">
                                     <i class="fa fa-heart"></i>
@@ -103,12 +167,18 @@
                         </div>
 
                         <div class="d-flex flex-wrap gap-2 w-100">
-                            <button type="button" class="btn btn-outline-primary btn-lg flex-fill" onclick="addToCart({{ $product->id }}, parseInt(document.getElementById('detailQtyInput').value)||1, this)">
-                                <i class="fa fa-cart-plus me-2"></i> Add to Cart
-                            </button>
-                            <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-primary btn-lg flex-fill">
-                                <i class="fa fa-bolt me-1"></i> Buy Now
-                            </a>
+                            @if(!$product->isOutOfStock())
+                                <button type="button" class="btn btn-outline-primary btn-lg flex-fill" onclick="addToCart({{ $product->id }}, parseInt(document.getElementById('detailQtyInput').value)||1, this)">
+                                    <i class="fa fa-cart-plus me-2"></i> Add to Cart
+                                </button>
+                                <a href="{{ route('checkout.index', $product->id) }}" class="btn btn-primary btn-lg flex-fill">
+                                    <i class="fa fa-bolt me-1"></i> Buy Now
+                                </a>
+                            @else
+                                <button type="button" class="btn btn-secondary btn-lg flex-fill" disabled>
+                                    <i class="fa fa-ban me-1"></i> Currently Out of Stock
+                                </button>
+                            @endif
                             <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
                                 Enquiry
                             </button>

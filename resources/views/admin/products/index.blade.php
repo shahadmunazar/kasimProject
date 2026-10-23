@@ -12,11 +12,11 @@
                 <thead class="text-dark fs-4">
                     <tr>
                         <th>Image</th>
-                        <th>Name</th>
+                        <th>Name & SKU</th>
                         <th>Category</th>
                         <th>Model</th>
+                        <th>Stock</th>
                         <th>Price</th>
-                        <th>Offer</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -69,15 +69,35 @@
                     </select>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label>Price</label>
+                    <label>SKU (Stock Keeping Unit)</label>
+                    <input type="text" name="sku" id="productSku" class="form-control" placeholder="Leave empty to auto-generate">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label>Barcode / EAN</label>
+                    <input type="text" name="barcode" id="productBarcode" class="form-control">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Selling Price (₹)</label>
                     <input type="number" step="0.01" name="price" id="productPrice" class="form-control">
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label>Offer Price</label>
+                <div class="col-md-4 mb-3">
+                    <label>Offer Price (₹)</label>
                     <input type="number" step="0.01" name="offer_price" id="productOfferPrice" class="form-control">
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label>Delivery Charge</label>
+                <div class="col-md-4 mb-3">
+                    <label>Cost Price (₹)</label>
+                    <input type="number" step="0.01" name="cost_price" id="productCostPrice" class="form-control" placeholder="Purchase cost">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Initial Stock Quantity</label>
+                    <input type="number" min="0" name="stock_quantity" id="productStock" class="form-control" value="0">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Low Stock Alert Level</label>
+                    <input type="number" min="0" name="low_stock_threshold" id="productLowStock" class="form-control" value="5">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label>Delivery Charge (₹)</label>
                     <input type="number" step="0.01" name="delivery_charge" id="productDeliveryCharge" class="form-control" value="0">
                 </div>
                 <div class="col-md-12 mb-3">
@@ -97,7 +117,11 @@
                     <label>Meta Description</label>
                     <textarea name="meta_description" id="productMetaDesc" class="form-control" rows="2"></textarea>
                 </div>
-                <div class="col-md-12 mb-3 form-check ms-3">
+                <div class="col-md-6 mb-3 form-check ms-3">
+                    <input type="checkbox" name="track_inventory" id="productTrackInventory" class="form-check-input" value="1" checked>
+                    <label class="form-check-label">Track Real-Time Inventory</label>
+                </div>
+                <div class="col-md-5 mb-3 form-check ms-3">
                     <input type="checkbox" name="is_active" id="productActive" class="form-check-input" value="1" checked>
                     <label class="form-check-label">Is Active</label>
                 </div>
@@ -139,20 +163,28 @@
                     var status = prod.is_active ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-danger">Inactive</span>';
                     var categoryName = prod.category ? prod.category.name : 'None';
                     var modelName = prod.product_model ? prod.product_model.name : 'None';
-                    var imageHtml = (prod.images && prod.images.length > 0) ? '<img src="{{ asset("storage") }}/' + prod.images[0] + '" height="50">' : 'No Image';
+                    var imageHtml = (prod.images && prod.images.length > 0) ? '<img src="{{ asset("storage") }}/' + prod.images[0] + '" height="50" class="rounded border" style="object-fit:cover; width:50px;">' : 'No Image';
+                    var skuHtml = prod.sku ? '<br><small class="badge bg-light text-dark border font-monospace">' + prod.sku + '</small>' : '';
                     
+                    var stockBadge = '<span class="badge bg-success">' + (prod.stock_quantity || 0) + ' In Stock</span>';
+                    if (prod.stock_quantity <= 0) {
+                        stockBadge = '<span class="badge bg-danger">Out of Stock</span>';
+                    } else if (prod.stock_quantity <= (prod.low_stock_threshold || 5)) {
+                        stockBadge = '<span class="badge bg-warning text-dark">' + prod.stock_quantity + ' (Low)</span>';
+                    }
+
                     var tr = $('<tr>');
                     tr.append('<td>' + imageHtml + '</td>');
-                    tr.append('<td>' + prod.name + '<br><small>' + prod.slug + '</small></td>');
+                    tr.append('<td><strong>' + prod.name + '</strong>' + skuHtml + '</td>');
                     tr.append('<td>' + categoryName + '</td>');
                     tr.append('<td>' + modelName + '</td>');
-                    tr.append('<td>₹' + (prod.price || '0.00') + '</td>');
-                    tr.append('<td>₹' + (prod.offer_price || '0.00') + '</td>');
+                    tr.append('<td>' + stockBadge + '</td>');
+                    tr.append('<td>₹' + (prod.offer_price || prod.price || '0.00') + '</td>');
                     tr.append('<td>' + status + '</td>');
                     tr.append(`
                         <td>
-                            <button class="btn btn-sm btn-info" onclick="editProduct(${prod.id})">Edit</button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${prod.id})">Delete</button>
+                            <button class="btn btn-sm btn-info me-1" onclick="editProduct(${prod.id})"><i class="ti ti-edit"></i></button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${prod.id})"><i class="ti ti-trash"></i></button>
                         </td>
                     `);
                     tbody.append(tr);
@@ -165,9 +197,15 @@
         $('#productForm')[0].reset();
         $('#productId').val('');
         $('#productSlug').val('');
+        $('#productSku').val('');
+        $('#productBarcode').val('');
         $('#productPrice').val('');
         $('#productOfferPrice').val('');
+        $('#productCostPrice').val('');
+        $('#productStock').val('0');
+        $('#productLowStock').val('5');
         $('#productDeliveryCharge').val('0');
+        $('#productTrackInventory').prop('checked', true);
         $('#productMetaTitle').val('');
         $('#productMetaDesc').val('');
         $('#formMethod').val('POST');
@@ -182,10 +220,16 @@
             $('#productId').val(data.id);
             $('#productName').val(data.name);
             $('#productSlug').val(data.slug);
+            $('#productSku').val(data.sku);
+            $('#productBarcode').val(data.barcode);
             $('#productCategory').val(data.category_id);
             loadModels(data.category_id, data.product_model_id);
             $('#productPrice').val(data.price);
             $('#productOfferPrice').val(data.offer_price);
+            $('#productCostPrice').val(data.cost_price);
+            $('#productStock').val(data.stock_quantity);
+            $('#productLowStock').val(data.low_stock_threshold);
+            $('#productTrackInventory').prop('checked', data.track_inventory);
             $('#productDeliveryCharge').val(data.delivery_charge);
             $('#productMetaTitle').val(data.meta_title);
             $('#productMetaDesc').val(data.meta_description);
@@ -193,7 +237,7 @@
             $('#formMethod').val('PUT');
             if(myEditor) myEditor.setData(data.description || '');
             
-            $('#productModalLabel').text('Edit Product');
+            $('#productModalLabel').text('Edit Product: ' + data.name);
             productModal.show();
         });
     }

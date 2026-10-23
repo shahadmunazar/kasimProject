@@ -43,4 +43,22 @@ return [
         'email' => env('ADMIN_EMAIL', 'tcsmarttechnology@gmail.com'),
     ],
 
+    'courier' => [
+        'default' => env('COURIER_DEFAULT_PROVIDER', 'manual'),
+    ],
+
+    'shiprocket' => [
+        'api_base' => env('SHIPROCKET_API_BASE', 'https://apiv2.shiprocket.in/v1/external'),
+        'email' => env('SHIPROCKET_EMAIL'),
+        'password' => env('SHIPROCKET_PASSWORD'),
+        'pickup_pincode' => env('SHIPROCKET_PICKUP_PINCODE', '110025'),
+        'pickup_location' => env('SHIPROCKET_PICKUP_LOCATION', 'Primary'),
+    ],
+
+    'delhivery' => [
+        'api_key' => env('DELHIVERY_API_KEY'),
+        'client_name' => env('DELHIVERY_CLIENT_NAME'),
+        'api_base' => env('DELHIVERY_API_BASE', 'https://track.delhivery.com/api'),
+    ],
+
 ];

@@ -13,6 +13,14 @@ class OrderItem extends Model
         'price',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'quantity' => 'integer',
+            'price' => 'decimal:2',
+        ];
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class);
@@ -21,5 +29,10 @@ class OrderItem extends Model
     public function order()
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function shipmentItems()
+    {
+        return $this->hasMany(ShipmentItem::class);
     }
 }

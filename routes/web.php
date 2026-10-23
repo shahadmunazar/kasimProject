@@ -166,6 +166,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/profile', [\App\Http\Controllers\Frontend\DashboardController::class, 'updateProfile'])->name('frontend.dashboard.profile.update');
     Route::get('/dashboard/orders', [\App\Http\Controllers\Frontend\DashboardController::class, 'orders'])->name('frontend.dashboard.orders');
     Route::get('/dashboard/orders/{id}', [\App\Http\Controllers\Frontend\DashboardController::class, 'showOrder'])->name('frontend.dashboard.order.show');
+    Route::get('/dashboard/orders/{id}/invoice', [\App\Http\Controllers\Frontend\InvoiceController::class, 'show'])->name('frontend.dashboard.order.invoice');
+    Route::get('/dashboard/orders/{id}/invoice/pdf', [\App\Http\Controllers\Frontend\InvoiceController::class, 'downloadPdf'])->name('frontend.dashboard.order.invoice.pdf');
     Route::get('/dashboard/addresses', [\App\Http\Controllers\Frontend\DashboardController::class, 'addresses'])->name('frontend.dashboard.addresses');
     Route::post('/dashboard/addresses', [\App\Http\Controllers\Frontend\DashboardController::class, 'storeAddress'])->name('frontend.dashboard.addresses.store');
     Route::post('/dashboard/addresses/{id}', [\App\Http\Controllers\Frontend\DashboardController::class, 'updateAddress'])->name('frontend.dashboard.addresses.update');
@@ -176,6 +178,21 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/{product_id}', [\App\Http\Controllers\Frontend\CheckoutController::class, 'process'])->name('frontend.checkout.process');
 });
 
+// Public & Customer Tracking Routes
+Route::get('/track/{token?}', [\App\Http\Controllers\TrackingController::class, 'show'])->name('tracking.public');
+Route::post('/track', [\App\Http\Controllers\TrackingController::class, 'show'])->name('tracking.search');
+
+// Courier Webhook Endpoint (CSRF-exempted in bootstrap/app.php)
+Route::post('/api/webhooks/courier/{provider}', [\App\Http\Controllers\Api\CourierWebhookController::class, 'handle'])->name('api.courier.webhook');
+
+// Delivery Personnel Portal
+Route::prefix('delivery')->middleware(['auth', 'role:delivery,admin'])->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Delivery\DeliveryDashboardController::class, 'index'])->name('delivery.dashboard');
+    Route::get('/shipments/{id}', [\App\Http\Controllers\Delivery\DeliveryDashboardController::class, 'show'])->name('delivery.shipments.show');
+    Route::post('/shipments/{id}/progress', [\App\Http\Controllers\Delivery\DeliveryDashboardController::class, 'updateProgress'])->name('delivery.shipments.progress');
+    Route::post('/shipments/{id}/attempt', [\App\Http\Controllers\Delivery\DeliveryDashboardController::class, 'submitAttempt'])->name('delivery.shipments.attempt');
+});
+
 // Admin Routes
 use App\Http\Controllers\Admin\AdminController;
 
@@ -184,7 +201,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/login', [AdminController::class, 'authenticate'])->name('admin.authenticate');
     Route::post('/logout', [AdminController::class, 'logout'])->name('admin.logout');
     
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::resource('blogs', App\Http\Controllers\Admin\BlogController::class)->names('admin.blogs');
         Route::resource('contacts', App\Http\Controllers\Admin\ContactController::class)->only(['index', 'destroy'])->names('admin.contacts');
@@ -198,16 +215,46 @@ Route::prefix('admin')->group(function () {
         Route::get('product_reviews', [\App\Http\Controllers\Admin\ProductReviewController::class, 'index'])->name('admin.product_reviews.index');
         Route::post('product_reviews/{id}/toggle-status', [\App\Http\Controllers\Admin\ProductReviewController::class, 'toggle_status']);
         Route::delete('product_reviews/{id}', [\App\Http\Controllers\Admin\ProductReviewController::class, 'destroy']);
-    });
-});
 
-// Payment and Orders Admin Routes
-Route::prefix('admin')->middleware(['auth'])->group(function () {
-    Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
-    Route::post('/settings/qr-code', [App\Http\Controllers\Admin\SettingController::class, 'updateQrCode'])->name('admin.settings.qr_code');
-    Route::post('/settings/delivery-charge', [App\Http\Controllers\Admin\SettingController::class, 'updateDeliveryCharge'])->name('admin.settings.delivery_charge');
-    
-    Route::resource('orders', App\Http\Controllers\Admin\OrderController::class)->names('admin.orders');
+        // Settings & Payment QR
+        Route::get('/settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
+        Route::post('/settings/qr-code', [App\Http\Controllers\Admin\SettingController::class, 'updateQrCode'])->name('admin.settings.qr_code');
+        Route::post('/settings/delivery-charge', [App\Http\Controllers\Admin\SettingController::class, 'updateDeliveryCharge'])->name('admin.settings.delivery_charge');
+        Route::post('/settings/shiprocket', [App\Http\Controllers\Admin\SettingController::class, 'updateShiprocket'])->name('admin.settings.shiprocket');
+        Route::post('/settings/invoice', [App\Http\Controllers\Admin\SettingController::class, 'updateInvoiceSettings'])->name('admin.settings.invoice');
+
+        // Orders Management
+        Route::resource('orders', App\Http\Controllers\Admin\OrderController::class)->names('admin.orders');
+        Route::get('/orders/{order}/invoice', [\App\Http\Controllers\Admin\InvoiceController::class, 'show'])->name('admin.orders.invoice');
+        Route::get('/orders/{order}/invoice/pdf', [\App\Http\Controllers\Admin\InvoiceController::class, 'downloadPdf'])->name('admin.orders.invoice.pdf');
+        Route::post('/orders/{order}/shipment', [App\Http\Controllers\Admin\OrderController::class, 'createShipment'])->name('admin.orders.shipment');
+        Route::post('/orders/{order}/manage-shipment', [App\Http\Controllers\Admin\OrderController::class, 'updateShipment'])->name('admin.orders.update_shipment');
+        Route::post('/orders/{order}/mark-delivered', [App\Http\Controllers\Admin\OrderController::class, 'markDelivered'])->name('admin.orders.mark_delivered');
+
+        // Inventory Management
+        Route::get('/inventory', [\App\Http\Controllers\Admin\InventoryController::class, 'index'])->name('admin.inventory.index');
+        Route::post('/inventory/adjust', [\App\Http\Controllers\Admin\InventoryController::class, 'adjust'])->name('admin.inventory.adjust');
+        Route::get('/inventory/movements', [\App\Http\Controllers\Admin\InventoryController::class, 'movements'])->name('admin.inventory.movements');
+        Route::get('/inventory/export', [\App\Http\Controllers\Admin\InventoryController::class, 'exportCsv'])->name('admin.inventory.export');
+        Route::post('/inventory/import', [\App\Http\Controllers\Admin\InventoryController::class, 'importCsv'])->name('admin.inventory.import');
+
+        // Warehouses
+        Route::resource('warehouses', \App\Http\Controllers\Admin\WarehouseController::class)->names('admin.warehouses');
+
+        // Suppliers & Purchase Orders
+        Route::resource('suppliers', \App\Http\Controllers\Admin\SupplierController::class)->names('admin.suppliers');
+        Route::resource('purchase_orders', \App\Http\Controllers\Admin\PurchaseOrderController::class)->names('admin.purchase_orders');
+        Route::post('/purchase_orders/{purchase_order}/receive', [\App\Http\Controllers\Admin\PurchaseOrderController::class, 'receive'])->name('admin.purchase_orders.receive');
+
+        // Shipments & Courier Dispatch
+        Route::resource('shipments', \App\Http\Controllers\Admin\ShipmentController::class)->only(['index', 'show'])->names('admin.shipments');
+        Route::post('/shipments/{shipment}/status', [\App\Http\Controllers\Admin\ShipmentController::class, 'updateStatus'])->name('admin.shipments.status');
+        Route::post('/shipments/{shipment}/attempt', [\App\Http\Controllers\Admin\ShipmentController::class, 'logAttempt'])->name('admin.shipments.attempt');
+
+        // Delivery Personnel Management
+        Route::resource('delivery_personnel', \App\Http\Controllers\Admin\DeliveryPersonnelController::class)->names('admin.delivery_personnel');
+        Route::post('/delivery_personnel/{personnel}/toggle', [\App\Http\Controllers\Admin\DeliveryPersonnelController::class, 'toggleAvailability'])->name('admin.delivery_personnel.toggle');
+    });
 });
 
 // Checkout Routes

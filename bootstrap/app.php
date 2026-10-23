@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->alias([
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
+        ]);
         $middleware->append(\App\Http\Middleware\TrackVisitors::class);
         $middleware->redirectGuestsTo(fn () => route('frontend.auth.login'));
         $middleware->validateCsrfTokens(except: [
@@ -19,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'login/password',
             'forgot-password',
             'reset-password',
+            'api/webhooks/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

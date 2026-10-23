@@ -64,6 +64,72 @@
                 <span class="hide-menu">Orders</span>
               </a>
             </li>
+
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Inventory & Warehouses</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{{ route('admin.inventory.index') }}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-box"></i>
+                </span>
+                <span class="hide-menu">Inventory Overview</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{{ route('admin.inventory.movements') }}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-history"></i>
+                </span>
+                <span class="hide-menu">Stock Movements</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{{ route('admin.warehouses.index') }}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-building-warehouse"></i>
+                </span>
+                <span class="hide-menu">Warehouses</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{{ route('admin.suppliers.index') }}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-users"></i>
+                </span>
+                <span class="hide-menu">Suppliers</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{{ route('admin.purchase_orders.index') }}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-file-invoice"></i>
+                </span>
+                <span class="hide-menu">Purchase Orders</span>
+              </a>
+            </li>
+
+            <li class="nav-small-cap">
+              <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+              <span class="hide-menu">Logistics & Delivery</span>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{{ route('admin.shipments.index') }}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-truck"></i>
+                </span>
+                <span class="hide-menu">Shipments & Tracking</span>
+              </a>
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="{{ route('admin.delivery_personnel.index') }}" aria-expanded="false">
+                <span>
+                  <i class="ti ti-moped"></i>
+                </span>
+                <span class="hide-menu">Delivery Personnel</span>
+              </a>
+            </li>
             <li class="sidebar-item">
               <a class="sidebar-link" href="{{ route('admin.settings.index') }}" aria-expanded="false">
                 <span>

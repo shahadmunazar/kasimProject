@@ -6,12 +6,41 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['category_id', 'product_model_id', 'name', 'slug', 'image', 'images', 'description', 'price', 'offer_price', 'delivery_charge', 'is_active', 'meta_title', 'meta_description'];
+    protected $fillable = [
+        'category_id',
+        'product_model_id',
+        'name',
+        'slug',
+        'sku',
+        'barcode',
+        'image',
+        'images',
+        'description',
+        'price',
+        'offer_price',
+        'cost_price',
+        'delivery_charge',
+        'stock_quantity',
+        'low_stock_threshold',
+        'track_inventory',
+        'stock_status',
+        'is_active',
+        'meta_title',
+        'meta_description',
+    ];
 
     protected function casts(): array
     {
         return [
             'images' => 'array',
+            'track_inventory' => 'boolean',
+            'is_active' => 'boolean',
+            'stock_quantity' => 'integer',
+            'low_stock_threshold' => 'integer',
+            'price' => 'decimal:2',
+            'offer_price' => 'decimal:2',
+            'cost_price' => 'decimal:2',
+            'delivery_charge' => 'decimal:2',
         ];
     }
 
@@ -28,5 +57,64 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(ProductReview::class);
+    }
+
+    public function warehouseStocks()
+    {
+        return $this->hasMany(WarehouseStock::class);
+    }
+
+    public function stockMovements()
+    {
+        return $this->hasMany(StockMovement::class)->latest();
+    }
+
+    public function stockReservations()
+    {
+        return $this->hasMany(StockReservation::class);
+    }
+
+    public function purchaseOrderItems()
+    {
+        return $this->hasMany(PurchaseOrderItem::class);
+    }
+
+    public function shipmentItems()
+    {
+        return $this->hasMany(ShipmentItem::class);
+    }
+
+    public function isLowStock(?int $threshold = null): bool
+    {
+        $limit = $threshold ?? max((int)($this->low_stock_threshold ?: 5), 10);
+        $avail = $this->availableStock();
+        return $this->track_inventory && $avail <= $limit && $avail > 0;
+    }
+
+    public function isOutOfStock(): bool
+    {
+        return $this->track_inventory && $this->availableStock() <= 0;
+    }
+
+    public function availableStock(): int
+    {
+        if (!$this->track_inventory) {
+            return 999999;
+        }
+
+        $activeReservations = $this->stockReservations()
+            ->where('status', 'reserved')
+            ->where('expires_at', '>', now())
+            ->sum('quantity');
+
+        return max(0, (int)$this->stock_quantity - (int)$activeReservations);
+    }
+
+    public function effectivePrice(): float
+    {
+        if ($this->offer_price && (float)$this->offer_price > 0) {
+            return (float)$this->offer_price;
+        }
+        return (float)($this->price ?? 0);
     }
 }

@@ -120,6 +120,16 @@ class CheckoutController extends Controller
             }
         }
 
+        // Validate stock availability before processing order
+        foreach ($items as $item) {
+            $prod = Product::find($item->product_id);
+            if ($prod && $prod->track_inventory && $prod->availableStock() < $item->quantity) {
+                return redirect()->back()->withErrors([
+                    'stock' => "Sorry, '{$prod->name}' does not have enough stock available (Available: {$prod->availableStock()}, Requested: {$item->quantity})."
+                ])->withInput();
+            }
+        }
+
         // Calculate delivery
         $destination = $request->address . ', ' . $request->city . ', ' . $request->state . ' ' . $request->pincode;
         $routesService = new GoogleRoutesService();
@@ -138,6 +148,7 @@ class CheckoutController extends Controller
         // Create Order
         $order = new Order();
         $order->order_number = 'ORD-' . strtoupper(uniqid());
+        $order->tracking_token = \Illuminate\Support\Str::random(32);
         $order->user_id = Auth::id() ?: null;
         $order->customer_name = $request->customer_name;
         $order->mobile = $request->mobile;
@@ -150,6 +161,8 @@ class CheckoutController extends Controller
         $order->quantity = $items->sum('quantity');
         $order->amount = $grandTotal;
         $order->payment_method = 'QR';
+        $order->payment_status = 'pending';
+        $order->delivery_type = 'manual';
         $order->delivery_distance_km = $pricingResult['distance_km'];
         $order->delivery_charge = $pricingResult['charge'];
         $order->base_delivery_charge = $pricingResult['base_charge'];
@@ -176,6 +189,14 @@ class CheckoutController extends Controller
                 'quantity' => $item->quantity,
                 'price' => $item->price,
             ]);
+        }
+
+        // Commit stock deduction and record movement log
+        try {
+            $inventoryService = new \App\Services\InventoryService();
+            $inventoryService->commitOrderSale($order);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Stock deduction error: ' . $e->getMessage());
         }
 
         // If this order was checked out from the cart, clear the cart on confirmed successful placement

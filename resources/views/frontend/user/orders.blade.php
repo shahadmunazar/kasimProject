@@ -38,9 +38,16 @@
                             <td>{{ $order->created_at->format('M d, Y') }}</td>
                             <td>₹{{ number_format($order->amount, 2) }}</td>
                             <td>
-                                @if($order->status == 'pending')
+                                @if($order->hasShipmentTracking())
+                                    <span class="badge bg-{{ $order->delivery_status_badge }} small">
+                                        {{ $order->delivery_status_label }}
+                                    </span>
+                                    <div class="small text-muted font-monospace mt-1">
+                                        <i class="fa fa-truck me-1"></i>{{ $order->effective_courier_name }}: {{ $order->effective_tracking_id }}
+                                    </div>
+                                @elseif($order->status == 'pending')
                                     <span class="badge bg-warning text-dark">Pending</span>
-                                @elseif($order->status == 'completed')
+                                @elseif($order->status == 'completed' || $order->status == 'delivered')
                                     <span class="badge bg-success">Completed</span>
                                 @elseif($order->status == 'cancelled')
                                     <span class="badge bg-danger">Cancelled</span>
@@ -49,7 +56,19 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('frontend.dashboard.order.show', $order->id) }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                                <div class="d-flex align-items-center gap-1 flex-wrap">
+                                    <a href="{{ route('frontend.dashboard.order.show', $order->id) }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                                    @if($order->isDelivered())
+                                        <a href="{{ route('frontend.dashboard.order.invoice.pdf', $order->id) }}" class="btn btn-sm btn-success" title="Download Tax Invoice PDF">
+                                            <i class="fa fa-file-pdf"></i> Invoice
+                                        </a>
+                                    @endif
+                                    @if($order->effective_tracking_url)
+                                        <a href="{{ $order->effective_tracking_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary" title="Track on {{ $order->effective_courier_name }}">
+                                            <i class="fa fa-external-link-alt"></i> Track
+                                        </a>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                         @endforeach
