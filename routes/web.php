@@ -46,6 +46,10 @@ Route::get('/get-current',[HomeController::class,'get_current']);
 Route::post('/save-location', [HomeController::class, 'store'])->name('saved.location');
 Route::post('/contact-submit', [HomeController::class, 'save_contact'])->name('contact.submit');
 Route::get('/sitemap.xml', [App\Http\Controllers\SitemapController::class, 'index']);
+Route::get('/google593c6f0cacafc57c.html', function () {
+    return response("google-site-verification: google593c6f0cacafc57c.html", 200)
+        ->header('Content-Type', 'text/html; charset=UTF-8');
+});
 Route::post('/save-location', [HomeController::class, 'save_purpose_location'])->name('saved.location');
 
 Route::get('/sameer-roozy', [HomeController::class, 'sameer_day'])->name('sameer');

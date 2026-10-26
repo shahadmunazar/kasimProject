@@ -24,8 +24,9 @@
     <meta name="twitter:description" content="@yield('meta_description', 'TC Smart Technology provides cutting-edge solutions in Embedded Systems, Industrial Automation, and Software Development.')">
     <meta name="twitter:image" content="{{ asset('favicon.png') }}">
     
-    <!-- Google Indexing -->
+    <!-- Google Indexing & Verification -->
     <meta name="robots" content="index, follow">
+    <meta name="google-site-verification" content="google593c6f0cacafc57c">
 
     <!-- Schema.org Organization Structured Data -->
     <script type="application/ld+json">

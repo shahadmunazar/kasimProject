@@ -46,6 +46,22 @@ class SitemapTest extends TestCase
         $response->assertSee('sitemap.xml');
         $response->assertSee('Website Structure');
     }
+
+    public function test_google_site_verification_endpoint_and_meta_tag()
+    {
+        // 1. Test HTML verification file endpoint
+        $response = $this->get('/google593c6f0cacafc57c.html');
+        $response->assertStatus(200);
+        $response->assertSee('google-site-verification: google593c6f0cacafc57c.html');
+
+        // 2. Test physical file existence
+        $this->assertFileExists(public_path('google593c6f0cacafc57c.html'));
+
+        // 3. Test meta tag in header
+        $homeResponse = $this->get('/');
+        $homeResponse->assertStatus(200);
+        $homeResponse->assertSee('<meta name="google-site-verification" content="google593c6f0cacafc57c">', false);
+    }
 }
 
 
