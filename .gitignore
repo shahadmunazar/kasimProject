@@ -24,4 +24,5 @@ yarn-error.log
 vendor/
 node_modules/
 /storage/logs
+/storage/app/backups
 config/database.php
