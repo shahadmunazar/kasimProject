@@ -4,7 +4,7 @@
         <div class="row justify-content-center">
             <div class="col-lg-7">
                 <div class="bg-white p-5">
-                    <div class="h2 display-6 text-uppercase mb-3 animated slideInDown fw-bold text-dark">{{ $title }}</div>
+                    <h1 class="display-6 text-uppercase mb-3 animated slideInDown">{{ $title }}</h1>
                     <nav aria-label="breadcrumb animated slideInDown">
                         <ol class="breadcrumb justify-content-center mb-0">
                             <li class="breadcrumb-item"><a href="{{ route('home.index') }}">Home</a></li>
