@@ -47,3 +47,5 @@ class SitemapTest extends TestCase
         $response->assertSee('Website Structure');
     }
 }
+
+
