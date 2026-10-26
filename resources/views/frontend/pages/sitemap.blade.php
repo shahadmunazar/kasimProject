@@ -13,6 +13,18 @@
 
     <section class="py-5 bg-light">
         <div class="container py-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                <div>
+                    <h3 class="fw-bold text-dark mb-1">Website Structure & Directory</h3>
+                    <p class="text-muted small mb-0">Browse all major services, product catalogs, engineering blogs, and company pages.</p>
+                </div>
+                <div class="mt-3 mt-md-0">
+                    <a href="{{ url('/sitemap.xml') }}" target="_blank" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-semibold shadow-sm">
+                        <i class="fa fa-file-code me-2"></i>View XML Sitemap (<span class="small">sitemap.xml</span>)
+                    </a>
+                </div>
+            </div>
+
             <div class="row g-4">
                 <!-- Col 1: Main Pages & Products -->
                 <div class="col-lg-4 col-md-6">
