@@ -1,8 +1,33 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', $blog->meta_title ?? $blog->title)
-@section('meta_keywords', $blog->meta_keywords ?? '')
+@section('meta_title', ($blog->meta_title ?? $blog->title) . ' | TC Smart Technology')
+@section('meta_keywords', $blog->meta_keywords ?? ($blog->title . ', TC Smart Technology Blog'))
 @section('meta_description', $blog->meta_description ?? Str::limit(strip_tags($blog->content), 160))
+
+@push('schema')
+<script type="application/ld+json">
+{!! json_encode(array_filter([
+    '@' . 'context' => 'https://schema.org',
+    '@' . 'type' => 'BlogPosting',
+    'headline' => $blog->title,
+    'description' => Str::limit(strip_tags($blog->meta_description ?? $blog->content), 200),
+    'image' => $blog->image ? asset($blog->image) : asset('favicon.png'),
+    'datePublished' => $blog->created_at ? $blog->created_at->toIso8601String() : date('c'),
+    'author' => [
+        '@' . 'type' => 'Organization',
+        'name' => 'TC Smart Technology'
+    ],
+    'publisher' => [
+        '@' . 'type' => 'Organization',
+        'name' => 'TC Smart Technology',
+        'logo' => [
+            '@' . 'type' => 'ImageObject',
+            'url' => asset('favicon.png')
+        ]
+    ]
+]), JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+@endpush
 
 @section('content')
 <!-- Page Header Start -->

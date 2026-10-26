@@ -1,5 +1,33 @@
 @extends('frontend.layouts.main')
 
+@section('meta_title', $product->name . ' | TC Smart Technology')
+@section('meta_description', Str::limit(strip_tags($product->meta_description ?? $product->description ?? $product->short_description ?? ('Buy ' . $product->name . ' online at best prices from TC Smart Technology with fast delivery.')), 160))
+@section('meta_keywords', $product->meta_keywords ?? ($product->name . ', ' . ($product->category->name ?? 'Industrial Electronics') . ', TC Smart Technology, Buy Online'))
+
+@push('schema')
+<script type="application/ld+json">
+{!! json_encode(array_filter([
+    '@' . 'context' => 'https://schema.org/',
+    '@' . 'type' => 'Product',
+    'name' => $product->name,
+    'image' => ($product->images && count($product->images) > 0) ? [asset($product->images[0])] : [asset('favicon.png')],
+    'description' => Str::limit(strip_tags($product->description ?? $product->short_description ?? $product->name), 200),
+    'sku' => $product->sku ?: null,
+    'brand' => [
+        '@' . 'type' => 'Brand',
+        'name' => 'TC Smart Technology',
+    ],
+    'offers' => [
+        '@' . 'type' => 'Offer',
+        'url' => url()->current(),
+        'priceCurrency' => 'INR',
+        'price' => (string)($product->offer_price ?: $product->price ?: 0),
+        'availability' => $product->isOutOfStock() ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+    ]
+]), JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+@endpush
+
 @section('content')
 <section class="py-5 bg-light">
     <div class="container mt-5 pt-5">

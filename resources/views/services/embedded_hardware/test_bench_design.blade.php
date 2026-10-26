@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Automated Test Bench Design for Electrical Testing | TC Smart Technology')
+@section('meta_description', 'Turnkey automated electrical test benches, endurance rigs, functional testers, and custom DAQ hardware solutions by TC Smart Technology.')
+@section('meta_keywords', 'Automated Test Bench, Electrical Testing, Test Bench Design, Functional Testing, DAQ Systems, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

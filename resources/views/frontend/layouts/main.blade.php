@@ -26,7 +26,34 @@
     
     <!-- Google Indexing -->
     <meta name="robots" content="index, follow">
-    <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE" /> -->
+
+    <!-- Schema.org Organization Structured Data -->
+    <script type="application/ld+json">
+    {!! json_encode([
+        '@' . 'context' => 'https://schema.org',
+        '@' . 'type' => 'Organization',
+        'name' => 'TC Smart Technology',
+        'url' => url('/'),
+        'logo' => asset('favicon.png'),
+        'description' => 'Leading provider of Embedded Systems, Industrial Automation, HVAC Solutions, and Software Development.',
+        'telephone' => '+91-7065122884',
+        'email' => 'info@tcsmarttechnology.com',
+        'address' => [
+            '@' . 'type' => 'PostalAddress',
+            'streetAddress' => 'D-364, Pocket 11, DDA Janta Flat, Jasola Vihar',
+            'addressLocality' => 'New Delhi',
+            'postalCode' => '110025',
+            'addressCountry' => 'IN'
+        ],
+        'sameAs' => [
+            'https://www.facebook.com/share/12L536bcJdV/?mibextid=wwXIfr',
+            'https://www.instagram.com/tc_smart_technology?igsh=a2s2MWNoNGNvdTU1',
+            'https://www.linkedin.com/company/tc-smart-technology/',
+            'https://youtube.com/@tcsmarttechnology?si=_YxgASgXOfdBwFgY'
+        ]
+    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+    </script>
+    @stack('schema')
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 

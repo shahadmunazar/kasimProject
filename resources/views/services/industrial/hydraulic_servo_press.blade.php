@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Premier Hydraulic & Servo Power Press Machines | TC Smart Technology')
+@section('meta_description', 'High-tonnage hydraulic and servo power press machinery engineered for metal stamping, deep drawing, and precision molding by TC Smart Technology.')
+@section('meta_keywords', 'Hydraulic Press, Servo Power Press, Metal Stamping Press, Deep Drawing Press, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

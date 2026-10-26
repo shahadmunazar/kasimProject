@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Advanced 3D Printing & Additive Manufacturing Machines | TC Smart Technology')
+@section('meta_description', 'Industrial 3D printing, additive manufacturing equipment, and robotic automation cells engineered for high-precision manufacturing by TC Smart Technology.')
+@section('meta_keywords', 'Additive Manufacturing, Industrial 3D Printing, Robotic Welding, Automation Cells, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

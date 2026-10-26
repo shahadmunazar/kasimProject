@@ -1,7 +1,9 @@
 
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Medical Device R&D and Regulatory Compliance | AI Coin Innovation')
+@section('meta_title', 'Medical Device R&D & Regulatory Compliance | TC Smart Technology')
+@section('meta_description', 'Certified medical equipment R&D, biomedical electronics, firmware validation, and ISO regulatory compliance support by TC Smart Technology.')
+@section('meta_keywords', 'Medical Device RD, Biomedical Electronics, Regulatory Compliance, Medical Equipment Testing, ISO 13485, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

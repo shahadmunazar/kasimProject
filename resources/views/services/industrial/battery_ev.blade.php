@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Premier Battery Assembly, EV & Energy Sector Machines | TC Smart Technology')
+@section('meta_description', 'Turnkey battery pack assembly lines, EV motor testing benches, cell sorting, spot welding, and renewable energy machinery by TC Smart Technology.')
+@section('meta_keywords', 'Battery Assembly Machines, EV Manufacturing Equipment, Energy Sector Automation, Cell Spot Welding, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'IoT and Smart Automation Software | TC Smart Technology')
+@section('meta_description', 'Industrial IoT software platforms, smart building automation, real-time sensor dashboards, and edge device orchestration by TC Smart Technology.')
+@section('meta_keywords', 'Smart Automation Software, IoT Software Platform, Building Automation, Sensor Dashboard, Edge Computing, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

@@ -1,7 +1,9 @@
 
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Secure Circuit Design & Embedded Cybersecurity | AI Coin Innovation')
+@section('meta_title', 'Secure Circuit Design & Embedded Cybersecurity | TC Smart Technology')
+@section('meta_description', 'Hardware-level cryptography, tamper resistance, secure boot mechanisms, and embedded cybersecurity architecture by TC Smart Technology.')
+@section('meta_keywords', 'Secure Circuit Design, Embedded Cybersecurity, Hardware Cryptography, Secure Boot, Tamper Detection, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

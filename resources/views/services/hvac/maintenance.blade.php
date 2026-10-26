@@ -1,7 +1,9 @@
 
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Responsive HVAC Repair & Emergency Services | TC Smart Technology')
+@section('meta_title', 'HVAC Maintenance & Annual AMC Contracts | TC Smart Technology')
+@section('meta_description', 'Preventive HVAC maintenance, routine chiller servicing, filter replacement, and comprehensive annual maintenance contracts (AMC) by TC Smart Technology.')
+@section('meta_keywords', 'HVAC Maintenance, HVAC AMC, Preventive Maintenance, Chiller Servicing, Air Conditioner Maintenance, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

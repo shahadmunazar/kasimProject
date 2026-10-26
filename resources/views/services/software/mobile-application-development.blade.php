@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Mobile and Web Application Development | TC Smart Technology')
+@section('meta_description', 'Native iOS, Android, and cross-platform mobile app development alongside high-speed web apps and cloud backends by TC Smart Technology.')
+@section('meta_keywords', 'Mobile App Development, Android App Development, iOS Apps, Flutter, React Native, Web Application, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

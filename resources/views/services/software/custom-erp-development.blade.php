@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Custom ERP, CRM, FinTech, and Digital Wallet Solutions | TC Smart Technology')
+@section('meta_description', 'Bespoke ERP systems, CRM platforms, supply chain management, and FinTech digital wallet software solutions by TC Smart Technology.')
+@section('meta_keywords', 'Custom ERP Development, CRM Software, FinTech Solutions, Digital Wallet Development, Enterprise Software, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

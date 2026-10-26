@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Comprehensive Heating & Cooling Solutions | TC Smart Technology')
+@section('meta_description', 'Energy-efficient commercial heat pumps, VRF/VRV systems, industrial chillers, and precision climate control systems by TC Smart Technology.')
+@section('meta_keywords', 'Heating and Cooling Solutions, VRF Systems, Heat Pumps, Industrial Chillers, Precision Air Conditioning, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

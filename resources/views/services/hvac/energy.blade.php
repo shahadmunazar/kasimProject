@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Intelligent Energy Optimization & HVAC System Design | TC Smart Technology')
+@section('meta_description', 'Building energy audits, heat load calculation, VFD inverter integration, and green HVAC system design by TC Smart Technology.')
+@section('meta_keywords', 'Energy Optimization, HVAC System Design, VFD Inverter HVAC, Green HVAC, Energy Audits, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

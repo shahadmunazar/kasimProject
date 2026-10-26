@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Machine Vision & Quality Inspection Systems | TC Smart Technology')
+@section('meta_description', 'High-speed automated machine vision, AI surface defect detection, OCR inspection, and dimensional verification systems by TC Smart Technology.')
+@section('meta_keywords', 'Machine Vision Systems, Quality Inspection, Defect Detection, Industrial Cameras, OCR Inspection, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

@@ -1,7 +1,9 @@
 
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'IoT Device Integration & Cloud Connectivity | AI Coin Innovation')
+@section('meta_title', 'IoT Device Integration & Cloud Connectivity | TC Smart Technology')
+@section('meta_description', 'Seamless IoT hardware-to-cloud integration with secure MQTT, REST APIs, telemetry dashboards, and real-time analytics by TC Smart Technology.')
+@section('meta_keywords', 'IoT Device Integration, Cloud Connectivity, MQTT, Telemetry Dashboard, AWS IoT, Azure IoT, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

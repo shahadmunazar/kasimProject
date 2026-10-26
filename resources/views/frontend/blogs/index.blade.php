@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Latest Insights & Industry Updates | TC Smart Technology Blog')
+@section('meta_description', 'Discover engineering articles, technological trends, automation breakthroughs, and software innovation insights on the TC Smart Technology blog.')
+@section('meta_keywords', 'TC Smart Technology Blog, Technology Articles, Embedded Systems News, Industrial Automation Insights, Tech Updates')
 
 @section('content')
 <!-- Page Header Start -->

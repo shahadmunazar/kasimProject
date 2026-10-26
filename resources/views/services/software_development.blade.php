@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Software Development Solutions')
+@section('meta_title', 'Custom Software & Mobile App Development | TC Smart Technology')
+@section('meta_description', 'High-performance web, mobile, CRM, ERP, and IoT cloud dashboard development by TC Smart Technology. Tailored digital solutions for scalable business operations.')
+@section('meta_keywords', 'Software Development Solutions, Custom ERP, Mobile App Development, IoT Cloud Software, CRM Solutions, Web App Development, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

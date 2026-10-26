@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'PLC, SCADA & HMI Programming Services | TC Smart Technology')
+@section('meta_description', 'Industrial PLC, SCADA, and HMI programming for Siemens, Allen-Bradley, Mitsubishi, and Delta systems. Real-time control and factory automation by TC Smart Technology.')
+@section('meta_keywords', 'PLC Programming, SCADA Systems, HMI Design, Siemens PLC, Allen Bradley, Industrial Automation, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

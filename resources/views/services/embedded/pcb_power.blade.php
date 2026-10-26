@@ -1,7 +1,9 @@
 
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Advanced PCB Layout & Power Electronics Engineering | AI Coin Innovation')
+@section('meta_title', 'Advanced PCB Layout & Power Electronics Engineering | TC Smart Technology')
+@section('meta_description', 'High-density multi-layer PCB design, EMI/EMC compliance, thermal simulation, and power electronics engineering by TC Smart Technology.')
+@section('meta_keywords', 'PCB Layout, Power Electronics Engineering, Multi-layer PCB, EMI EMC Compliance, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

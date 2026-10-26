@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Motion Control Solutions | TC Smart Technology')
+@section('meta_description', 'Multi-axis servo drives, stepper systems, CNC motion controllers, and precision kinematics automation solutions engineered by TC Smart Technology.')
+@section('meta_keywords', 'Motion Control Solutions, Servo Drives, Stepper Motor Control, Multi-Axis Motion, Precision Kinematics, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

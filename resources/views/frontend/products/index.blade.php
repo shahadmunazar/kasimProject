@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', isset($currentCategory) ? $currentCategory->name . ' Products' : 'Products Catalog')
+@section('meta_title', isset($currentCategory) ? $currentCategory->name . ' Products | TC Smart Technology' : 'Products Catalog | TC Smart Technology - Industrial & Embedded Devices')
+@section('meta_description', isset($currentCategory) ? 'Browse ' . $currentCategory->name . ' products from TC Smart Technology with real-time stock availability, detailed specs, and online ordering.' : 'Browse the complete product catalog at TC Smart Technology. Find high-grade embedded systems, industrial automation components, IoT sensors, and tools.')
+@section('meta_keywords', (isset($currentCategory) ? $currentCategory->name . ', ' : '') . 'TC Smart Technology Products, Industrial Automation Products, Embedded Systems, Buy IoT Devices Online')
 
 @section('content')
 <style>

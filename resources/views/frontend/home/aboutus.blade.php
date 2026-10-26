@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'About TC Smart Technology | Innovations in Embedded & Automation')
+@section('meta_title', 'About Us | TC Smart Technology - Innovations in Embedded & Automation')
+@section('meta_description', 'Learn about TC Smart Technology: our mission, skilled engineering team, and our full-cycle expertise across embedded systems, industrial robotics, HVAC solutions, and software engineering.')
+@section('meta_keywords', 'About TC Smart Technology, Embedded Engineering Company, Industrial Automation Experts, Robotics Integration, Delhi NCR, Custom Software Development')
 
 @section('content')
 <div class="container-fluid page-header pt-5 mb-6 wow fadeIn" data-wow-delay="0.1s">

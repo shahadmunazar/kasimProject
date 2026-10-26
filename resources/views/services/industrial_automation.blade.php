@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Industrial Robotics Integration Services | TC Smart Technology')
+@section('meta_title', 'Industrial Automation & Robotics Solutions | TC Smart Technology')
+@section('meta_description', 'Boost productivity and precision with TC Smart Technology. We provide welding robots, pick-and-place robotics, conveyor systems, custom SPM, PLC/SCADA programming, and machine vision.')
+@section('meta_keywords', 'Industrial Automation, Robotics Integration, PLC Programming, SCADA Systems, Machine Vision, Industrial SPM, Factory Automation, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

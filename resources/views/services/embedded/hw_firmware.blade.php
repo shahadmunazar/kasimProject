@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Precision | Performance | Scalability | AI Coin Innovation')
+@section('meta_title', 'Embedded Hardware & Firmware Design | TC Smart Technology')
+@section('meta_description', 'High-performance embedded hardware and intelligent firmware engineering by TC Smart Technology. Tailored for precision, real-time performance, and commercial scalability.')
+@section('meta_keywords', 'Hardware Design, Firmware Engineering, Embedded Systems, Microcontroller Programming, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [
@@ -45,7 +47,7 @@
                 <div class="col-lg-6 text-center text-lg-start mb-4 mb-lg-0 wow fadeInUp" data-wow-delay="0.1s">
                     <h1 class="display-4 mb-4">Precision | Performance | Scalability</h1>
                     <p class="lead text-muted mb-4">
-                        Every successful smart product begins with an embedded system that harmonizes cutting-edge hardware with intelligent firmware. At AI Coin Innovation, we specialize in building high-performance embedded solutions that are reliable, scalable, and cost-effective — engineered to meet today’s complex market demands while paving the way for tomorrow’s innovation.
+                        Every successful smart product begins with an embedded system that harmonizes cutting-edge hardware with intelligent firmware. At TC Smart Technology, we specialize in building high-performance embedded solutions that are reliable, scalable, and cost-effective — engineered to meet today’s complex market demands while paving the way for tomorrow’s innovation.
                     </p>
                     <a href="#contact" class="btn btn-primary py-3 px-5">Contact Us Now</a>
                 </div>

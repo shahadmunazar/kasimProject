@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'HVAC System Solutions')
+@section('meta_title', 'Centralized HVAC & Climate Control Solutions | TC Smart Technology')
+@section('meta_description', 'Full-service HVAC solutions for residential, commercial, and industrial facilities. Centralized HVAC design, AMC contracts, smart climate control, and indoor air quality.')
+@section('meta_keywords', 'HVAC System Solutions, Centralized HVAC, Split AC AMC, Climate Control Systems, Indoor Air Quality, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

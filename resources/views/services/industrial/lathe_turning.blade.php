@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Premier Lathe & Turning Machines (Manual & CNC) | TC Smart Technology')
+@section('meta_description', 'High-accuracy CNC and manual lathe turning machines with multi-axis tooling, heavy-duty spindles, and turnkey automation by TC Smart Technology.')
+@section('meta_keywords', 'CNC Lathe, Lathe Turning Machines, Manual Lathe, CNC Turning Centers, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

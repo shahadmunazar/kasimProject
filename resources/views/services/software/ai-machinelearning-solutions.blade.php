@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Advanced AI & Machine Learning Solutions | TC Smart Technology')
+@section('meta_description', 'Enterprise AI development, predictive algorithms, NLP models, computer vision, and machine learning pipelines engineered by TC Smart Technology.')
+@section('meta_keywords', 'AI Machine Learning, Predictive Models, Computer Vision, Natural Language Processing, Enterprise AI, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

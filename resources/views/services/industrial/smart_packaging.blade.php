@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Premier Smart Packaging & Labeling Machines | TC Smart Technology')
+@section('meta_description', 'Automated packaging lines, high-speed labeling systems, cartoning, and intelligent barcode tracking solutions by TC Smart Technology.')
+@section('meta_keywords', 'Smart Packaging Machines, Automated Labeling Systems, Industrial Packaging, End-of-Line Packaging, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

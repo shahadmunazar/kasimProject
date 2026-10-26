@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Switchgear Components & Top Brands | TC Smart Technology')
+@section('meta_title', 'High Voltage & Type Testing Services | TC Smart Technology')
+@section('meta_description', 'Certified high voltage testing, dielectric strength analysis, insulation resistance, and switchgear type testing services by TC Smart Technology.')
+@section('meta_keywords', 'High Voltage Testing, Switchgear Type Testing, Dielectric Testing, Insulation Resistance, Electrical Testing, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Manpower Providing Services | TC Smart Technology')
+@section('meta_title', 'Technical Manpower Providing Services | TC Smart Technology')
+@section('meta_description', 'On-demand technical staffing, skilled embedded engineers, automation specialists, developers, and HVAC technicians provided by TC Smart Technology.')
+@section('meta_keywords', 'Technical Manpower Services, IT Staffing, Engineering Staffing, Automation Engineers, Embedded Developers, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

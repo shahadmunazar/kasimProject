@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Responsive HVAC Repair & Emergency Services | TC Smart Technology')
+@section('meta_description', '24/7 emergency HVAC repair, compressor troubleshooting, refrigerant leak detection, and rapid commercial cooling restoration by TC Smart Technology.')
+@section('meta_keywords', 'HVAC Repair, Emergency HVAC Services, Compressor Repair, Commercial Cooling Repair, AC Repair Delhi NCR, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

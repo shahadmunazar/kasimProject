@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Premier Automated Sheet Metal Bending & Shearing Machines | TC Smart Technology')
+@section('meta_description', 'High-speed CNC sheet metal press brakes, hydraulic shearing, robotic bending cells, and precision fabrication machines by TC Smart Technology.')
+@section('meta_keywords', 'Sheet Metal Bending, CNC Press Brake, Hydraulic Shearing Machines, Metal Fabrication, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

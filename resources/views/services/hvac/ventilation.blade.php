@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Advanced Indoor Air Quality & Ventilation Solutions | TC Smart Technology')
+@section('meta_description', 'Commercial ventilation design, HEPA filtration, exhaust fans, and energy recovery ventilation (ERV/HRV) systems by TC Smart Technology.')
+@section('meta_keywords', 'Indoor Air Quality, Ventilation Solutions, HEPA Filtration, ERV HRV Systems, Clean Air Industrial, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

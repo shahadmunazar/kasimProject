@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'MLM and Network Marketing Software | TC Smart Technology')
+@section('meta_title', 'MLM and Network Marketing Software Solutions | TC Smart Technology')
+@section('meta_description', 'Feature-rich MLM network marketing software supporting binary, matrix, unilevel commission calculation, automated payouts, and member genealogy trees.')
+@section('meta_keywords', 'MLM Software, Network Marketing Platform, Binary Plan MLM, E-Wallet Payouts, Genealogy Tree Software, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

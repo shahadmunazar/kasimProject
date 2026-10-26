@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Switchgear Panel Design, Wiring & Fabrication | TC Smart Technology')
+@section('meta_description', 'Custom LT/HT control panels, MCC, PCC, PLC automation enclosures, and industrial switchgear panel fabrication by TC Smart Technology.')
+@section('meta_keywords', 'Switchgear Panel Design, LT HT Panels, MCC Panel, PCC Panel, Industrial Enclosures, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

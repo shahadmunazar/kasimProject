@@ -1,7 +1,9 @@
 
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Embedded Hardware and Firmware Design | AI Coin Innovation')
+@section('meta_title', 'Embedded Hardware & Firmware Design Services | TC Smart Technology')
+@section('meta_description', 'TC Smart Technology offers end-to-end embedded hardware, firmware development, PCB layout, power electronics, and IoT device integration in Delhi NCR.')
+@section('meta_keywords', 'Embedded Systems Solutions, Hardware Design, Firmware Engineering, PCB Layout, IoT Devices, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [
@@ -82,7 +84,7 @@
                 <div class="col-lg-6 text-center text-lg-start mb-4 mb-lg-0 wow fadeInUp" data-wow-delay="0.1s">
                     <h1 class="display-4 mb-4">Precision | Performance | Scalability</h1>
                     <p class="lead text-muted mb-4">
-                        Every successful smart product begins with an embedded system that harmonizes cutting-edge hardware with intelligent firmware. At AI Coin Innovation, we specialize in building high-performance embedded solutions that are reliable, scalable, and cost-effective — engineered to meet today’s complex market demands while paving the way for tomorrow’s innovation.
+                        Every successful smart product begins with an embedded system that harmonizes cutting-edge hardware with intelligent firmware. At TC Smart Technology, we specialize in building high-performance embedded solutions that are reliable, scalable, and cost-effective — engineered to meet today’s complex market demands while paving the way for tomorrow’s innovation.
                     </p>
                 </div>
                 <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
@@ -182,7 +184,7 @@
     <!-- Call to Action Section -->
     <div class="container-fluid py-5">
         <div class="container text-center">
-            <h2 class="display-5 mb-4 wow fadeInUp" data-wow-delay="0.1s">Partner with AI Coin Innovation</h2>
+            <h2 class="display-5 mb-4 wow fadeInUp" data-wow-delay="0.1s">Partner with TC Smart Technology</h2>
             <p class="lead text-muted mb-4 wow fadeInUp" data-wow-delay="0.3s">
                 Contact us to explore how our embedded hardware and firmware design services can drive innovation in your smart products.
             </p>

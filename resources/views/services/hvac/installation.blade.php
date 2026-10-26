@@ -1,7 +1,9 @@
 
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Intelligent BMS for HVAC & Expert HVAC Installation Services | TC Smart Technology')
+@section('meta_title', 'Intelligent BMS & Commercial HVAC Installation Services | TC Smart Technology')
+@section('meta_description', 'Professional commercial HVAC installation, ductwork design, chiller systems, and intelligent building management systems (BMS) by TC Smart Technology.')
+@section('meta_keywords', 'HVAC Installation, BMS HVAC Systems, Commercial Air Conditioning, Chiller Plant Installation, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

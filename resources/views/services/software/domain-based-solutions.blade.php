@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Domain-Based Standard Solutions | TC Smart Technology')
+@section('meta_description', 'Turnkey management software for schools, colleges, hospitals, retail inventory, and billing platforms developed by TC Smart Technology.')
+@section('meta_keywords', 'Hospital Management System, School Management Software, LMS Portals, Retail Billing POS, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

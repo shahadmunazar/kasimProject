@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Premier Injection Molding & Plastic Processing Machines | TC Smart Technology')
+@section('meta_description', 'High-performance injection molding and plastic processing machinery with automated cycle controls, energy efficiency, and industrial quality by TC Smart Technology.')
+@section('meta_keywords', 'Injection Molding Machines, Plastic Processing Machinery, Hydraulic Injection Molding, All-Electric Molding, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Industrial Robotics Integration Services | TC Smart Technology')
+@section('meta_description', 'Industrial articulated robots, cobots, pick-and-place, welding, and palletizing automation integration services by TC Smart Technology.')
+@section('meta_keywords', 'Industrial Robotics Integration, Cobots, Robotic Welding, Articulated Robots, Robot Automation, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

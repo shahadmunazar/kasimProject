@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Premier CNC, VMC, and HMC Machining Services | TC Smart Technology')
+@section('meta_description', 'High-speed CNC, VMC, and HMC machining solutions with robotic automation, IoT connectivity, and ultra-high precision engineering by TC Smart Technology.')
+@section('meta_keywords', 'CNC Machining, VMC Machining Centers, HMC Machining, High Precision Machining, Industrial CNC, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

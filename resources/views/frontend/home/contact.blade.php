@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Contact Us | TC Smart Technology - Get a Quote')
+@section('meta_title', 'Contact Us | TC Smart Technology - Get a Free Quote & Consultation')
+@section('meta_description', 'Contact TC Smart Technology in Delhi NCR. Speak with our experts for project consultations, inquiries, and quotations on embedded systems, automation, HVAC, and software.')
+@section('meta_keywords', 'Contact TC Smart Technology, Get a Quote, Industrial Automation Enquiry, Embedded Systems Consultation, Delhi NCR')
 
 @section('content')
     @include('frontend.layouts.page-header', [

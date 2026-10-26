@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Premier Laser Cutting, Engraving & Marking Machines | TC Smart Technology')
+@section('meta_description', 'High-speed fiber laser cutting, precision CNC engraving, and industrial marking solutions by TC Smart Technology for sheet metal and materials.')
+@section('meta_keywords', 'Laser Cutting Machines, Fiber Laser Cutting, Laser Engraving, Laser Marking, CNC Laser, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

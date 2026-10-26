@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'IIoT, Data Logging & Industry 4.0 Implementation | TC Smart Technology')
+@section('meta_description', 'Industrial IoT edge gateways, sensor telemetry, cloud data logging, OEE monitoring, and Industry 4.0 smart factory integration by TC Smart Technology.')
+@section('meta_keywords', 'IIoT, Industry 4.0, Data Logging, OEE Dashboards, Smart Factory, Edge Gateways, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

@@ -1,7 +1,9 @@
 
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Automated Testing, Verification & Validation (V&V) | AI Coin Innovation')
+@section('meta_title', 'Automated Testing, Verification & Validation (V&V) | TC Smart Technology')
+@section('meta_description', 'Rigorous hardware-in-the-loop (HIL) automated testing, firmware validation, and environmental reliability testing by TC Smart Technology.')
+@section('meta_keywords', 'Automated Testing, Verification Validation, HIL Testing, Firmware Testing, QA Testing, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

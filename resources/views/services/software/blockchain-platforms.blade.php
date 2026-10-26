@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Blockchain and Cryptocurrency Platforms | TC Smart Technology')
+@section('meta_description', 'Secure smart contract development, DeFi applications, custom blockchain platforms, and cryptocurrency wallets by TC Smart Technology.')
+@section('meta_keywords', 'Blockchain Platforms, Cryptocurrency Development, Smart Contracts, DeFi Development, Crypto Wallets, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [

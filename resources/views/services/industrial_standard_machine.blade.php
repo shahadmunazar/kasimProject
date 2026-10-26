@@ -1,27 +1,29 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Industrial Standard Machine')
+@section('meta_title', 'Industrial Standard Machine & CNC Solutions | TC Smart Technology')
+@section('meta_description', 'High-performance CNC, VMC, and HMC machining centers, robotic welding cells, laser cutting, and hydraulic power press solutions by TC Smart Technology.')
+@section('meta_keywords', 'Industrial Standard Machine, CNC VMC Machining Centers, Robotic Welding Cells, Laser Cutting, Power Press, TC Smart Technology')
 
 @section('content')
     @include('frontend.layouts.page-header', [
-        'title' => 'HVAC System Solutions',
+        'title' => 'Industrial Standard Machine',
         'breadcrumb' => ['Services', 'Industrial Standard Machine']
     ])
 
     <div class="container py-4">
         <div class="row align-items-center mb-5 flex-md-row-reverse">
             <div class="col-md-6">
-                <img src="/assets/img/HVAC.png" alt="HVAC Systems" class="img-fluid mb-3" style="height: 400px; width: 500px; object-fit: cover;">
+                <img src="{{ asset('assets/img/Industrial Automation HMI.png') }}" alt="Industrial Standard Machine" class="img-fluid rounded shadow-sm mb-3" style="height: 400px; width: 100%; object-fit: cover;">
             </div>
             <div class="col-md-6">
-                <h5 class="text-uppercase">HVAC System Solutions</h5>
-                <p>We offer full-service HVAC solutions for residential, commercial, and industrial setups:</p>
+                <h5 class="text-uppercase text-primary fw-bold">Industrial Standard Machine Solutions</h5>
+                <p>TC Smart Technology delivers cutting-edge CNC &amp; VMC/HMC Machining Centers, Robotic Welding Cells, Laser Cutting, and Hydraulic Press machines designed for high-precision manufacturing:</p>
                 <ul>
-                    <li>Centralized HVAC design, supply, and installation</li>
-                    <li>Split AC systems with Annual Maintenance Contracts (AMC)</li>
-                    <li>Smart climate control systems</li>
-                    <li>IAQ (Indoor Air Quality) enhancement and energy recovery ventilation</li>
-                    <li>System optimization, load calculation, and 24/7 emergency support</li>
+                    <li>CNC Vertical &amp; Horizontal Machining Centers (VMC / HMC)</li>
+                    <li>Robotic Welding &amp; Automation Cells</li>
+                    <li>Laser Cutting, Engraving &amp; Marking Machines</li>
+                    <li>Hydraulic &amp; Servo Power Press Machines</li>
+                    <li>Smart Packaging, Labeling &amp; Sheet Metal Bending</li>
                 </ul>
                 <p>Our focus is on comfort, efficiency, and long-term performance.</p>
             </div>
