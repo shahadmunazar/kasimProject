@@ -43,6 +43,9 @@ Route::get('/return-policy', [HomeController::class, 'returnPolicy'])->name('ret
 Route::get('/returns-and-refunds', [HomeController::class, 'returnPolicy'])->name('returns.refunds');
 Route::get('/accessibility-statement', [HomeController::class, 'accessibilityStatement'])->name('accessibility.statement');
 Route::get('/sitemap', [HomeController::class, 'sitemap'])->name('sitemap.index');
+Route::get('/features', [HomeController::class, 'features'])->name('features.index');
+Route::get('/teams', [HomeController::class, 'teams'])->name('teams.index');
+Route::get('/testimonials', [HomeController::class, 'testimonials'])->name('testimonials.index');
 Route::get('/blogs', [HomeController::class, 'blogs'])->name('blogs.index');
 Route::get('/blog/{slug}', [HomeController::class, 'blog_details'])->name('blogs.details');
 Route::get('/get-current',[HomeController::class,'get_current']);
@@ -177,6 +180,7 @@ Route::prefix('services')->group(function () {
     Route::get('/industrial-iot', fn() => redirect('/services/industrial-iot-solutions', 301))->name('services.industrial_iot');
     Route::get('/industrial-automation-nav', fn() => redirect('/services/industrial-automation', 301))->name('services.industrial_automation_nav');
     Route::get('/custom-ai-agents', fn() => redirect('/services/ai-solutions-custom-ai-agents', 301))->name('services.custom_ai_agents');
+    Route::get('/embedded-systems', fn() => redirect('/services/embedded-systems-solutions', 301))->name('services.embedded_systems_alias');
 
     // Dynamic Category & Service Routes
     Route::get('/{categorySlug}', [HomeController::class, 'serviceCategory'])->name('services.category');

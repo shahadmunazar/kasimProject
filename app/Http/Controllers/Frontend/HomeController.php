@@ -463,7 +463,19 @@ public function testingFrameworks() {
     {
         $product = \App\Models\Product::with(['category', 'productModel', 'reviews' => function($q) {
             $q->where('is_approved', true)->latest();
-        }])->where('slug', $slug)->where('is_active', true)->firstOrFail();
+        }])->where('slug', $slug)->where('is_active', true)->first();
+
+        // Resilient self-healing for flagship monitoring product if missing in database
+        if (!$product && $slug === 'industrial-iot-monitoring-product') {
+            $product = \App\Services\FlagshipProductService::ensureIndustrialIotMonitoringProduct();
+            $product->load(['category', 'productModel', 'reviews' => function($q) {
+                $q->where('is_approved', true)->latest();
+            }]);
+        }
+
+        if (!$product) {
+            abort(404);
+        }
         
         $hasLiked = session()->has('liked_product_' . $product->id);
 
