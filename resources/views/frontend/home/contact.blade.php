@@ -69,7 +69,7 @@
 
                                 <div class="col-12 text-start">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="contactTerms" name="agree_terms" required checked>
+                                        <input class="form-check-input" type="checkbox" id="contactTerms" name="agree_terms" required>
                                         <label class="form-check-label small text-secondary" for="contactTerms">
                                             I agree to the <a href="{{ route('terms.conditions') }}" target="_blank" class="text-primary text-decoration-underline fw-semibold">Terms &amp; Conditions</a> and <a href="{{ route('privacy.policy') }}" target="_blank" class="text-primary text-decoration-underline fw-semibold">Privacy Policy</a>. <span class="text-danger">*</span>
                                         </label>
