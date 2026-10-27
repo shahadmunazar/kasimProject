@@ -142,16 +142,16 @@
 
     .mega-cat-btn:hover {
         background: #ffffff;
-        color: #0056b3;
+        color: var(--bs-primary, #df9b15);
         border-color: #e2e8f0;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
 
     .mega-cat-btn.active {
         background: #ffffff;
-        color: #0056b3;
-        border-color: rgba(0, 86, 179, 0.22);
-        box-shadow: 0 4px 14px rgba(0, 86, 179, 0.08);
+        color: var(--bs-primary, #df9b15);
+        border-color: rgba(223, 155, 21, 0.3);
+        box-shadow: 0 4px 14px rgba(223, 155, 21, 0.1);
         position: relative;
     }
 
@@ -162,7 +162,7 @@
         top: 8px;
         bottom: 8px;
         width: 4px;
-        background: #0056b3;
+        background: var(--bs-primary, #df9b15);
         border-radius: 0 4px 4px 0;
     }
 
@@ -263,7 +263,7 @@
 }
 
 .mega-service-link:hover {
-    color: #0056b3;
+    color: var(--bs-primary, #df9b15);
     transform: translateX(3px);
 }
 
@@ -349,8 +349,8 @@
     }
 
     .mega-mobile-cat-header.active {
-        color: #0056b3;
-        border-color: rgba(0, 86, 179, 0.3);
+        color: var(--bs-primary, #df9b15);
+        border-color: rgba(223, 155, 21, 0.3);
     }
 
     .mega-mobile-cat-body {
@@ -718,15 +718,15 @@
                                             <div class="col-6">
                                                 <div class="p-3 rounded-3 bg-light border h-100">
                                                     <div class="mega-group-title text-dark">
-                                                        <i class="fa fa-check-double text-warning me-2 fs-6"></i> Automated Test and Quality
+                                                        <i class="fa fa-check-double text-warning me-2 fs-6"></i> PLC/HMI, LabVIEW & EOL Test Benches
                                                         <span class="badge bg-primary text-white ms-auto extra-small">Traceability</span>
                                                     </div>
-                                                    <p class="text-muted extra-small mb-3">High-speed machine vision inspection, automated test benches, high-voltage compliance & part serialization.</p>
+                                                    <p class="text-muted extra-small mb-3">PLC/HMI, LabVIEW & EOL Test Benches, automated functional validation, safety hipot & serialized quality records.</p>
                                                     
                                                     <div class="row g-2">
                                                         <div class="col-6">
                                                             <a href="{{ url('/services/industrial-automation/test-bench-end-of-line-testing-automation') }}" class="mega-service-link fw-semibold">
-                                                                <i class="fa fa-desktop text-success"></i>Automated Test Bench Design
+                                                                <i class="fa fa-desktop text-success"></i>EOL Automated Test Benches
                                                             </a>
                                                         </div>
                                                         <div class="col-6">
@@ -967,7 +967,7 @@
                                         Explore Automation Category <i class="fa fa-arrow-right ms-1"></i>
                                     </a>
                                     <div class="alert alert-warning py-1 px-2 small mb-2" style="font-size: 0.76rem;">
-                                        <strong>Focused Capabilities:</strong> Machine Control, Robotics, Automated Testing & Traceability
+                                        <strong>Focused Capabilities:</strong> PLC/HMI, LabVIEW & EOL Test Benches, Machine Control & Traceability
                                     </div>
                                     <div class="fw-bold text-dark small mb-1">Control and Robotics</div>
                                     <ul class="list-unstyled mb-2 ms-2">
@@ -977,7 +977,7 @@
                                         <li><a href="{{ url('/services/industrial-iot-solutions/industrial-data-logging') }}" class="mega-service-link">Motion Control Solutions</a></li>
                                         <li><a href="{{ url('/services/industrial-automation/plc-hmi-vfd-integration') }}" class="mega-service-link">Switchgear Panel Design</a></li>
                                     </ul>
-                                    <div class="fw-bold text-dark small mb-1">Automated Test and Quality</div>
+                                    <div class="fw-bold text-dark small mb-1">PLC/HMI, LabVIEW & EOL Test Benches</div>
                                     <ul class="list-unstyled mb-0 ms-2">
                                         <li><a href="{{ url('/services/industrial-automation/test-bench-end-of-line-testing-automation') }}" class="mega-service-link">Automated Test Bench Design</a></li>
                                         <li><a href="{{ url('/services/industrial-automation/labview-automation') }}" class="mega-service-link">Machine Vision & Quality Inspection</a></li>

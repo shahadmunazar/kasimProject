@@ -421,7 +421,7 @@
 
                 <!-- Recently Interested Products SECTION (Shown first if session has viewed products) -->
                 @if(isset($recentlyViewedProducts) && $recentlyViewedProducts->count() > 0)
-                <div class="card border-0 shadow-sm p-3 mb-4 rounded-3 bg-white" style="border-left: 4px solid var(--bs-primary, #0d6efd) !important;">
+                <div class="card border-0 shadow-sm p-3 mb-4 rounded-3 bg-white" style="border-left: 4px solid var(--bs-primary, #df9b15) !important;">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
                             <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
@@ -576,6 +576,12 @@
           <div class="mb-3">
             <label>Message / Address</label>
             <textarea name="message" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="form-check mb-3 text-start">
+            <input class="form-check-input" type="checkbox" name="agree_terms" id="indexInquiryTerms" required checked>
+            <label class="form-check-label small text-secondary" for="indexInquiryTerms">
+              I agree to the <a href="{{ route('terms.conditions') }}" target="_blank" class="text-primary text-decoration-underline fw-semibold">Terms &amp; Conditions</a>. <span class="text-danger">*</span>
+            </label>
           </div>
         </div>
         <div class="modal-footer">

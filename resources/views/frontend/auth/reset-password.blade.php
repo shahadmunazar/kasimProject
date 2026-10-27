@@ -6,8 +6,8 @@
     .auth-card .card-body { padding: 3rem !important; }
     .input-group-text { background-color: #f8f9fa; border-right: none; }
     .form-control { border-left: none; box-shadow: none !important; }
-    .form-control:focus { border-color: #0d6efd; }
-    .input-group:focus-within .input-group-text, .input-group:focus-within .form-control { border-color: #0d6efd; }
+    .form-control:focus { border-color: #df9b15; }
+    .input-group:focus-within .input-group-text, .input-group:focus-within .form-control { border-color: #df9b15; }
     .btn-auth { border-radius: 0.5rem; padding: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 </style>
 

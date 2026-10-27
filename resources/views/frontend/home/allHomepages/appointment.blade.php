@@ -98,6 +98,14 @@
                                     <label for="message">Message</label>
                                 </div>
                             </div>
+                            <div class="col-12 text-start">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="apptTerms" name="agree_terms" required checked>
+                                    <label class="form-check-label small text-secondary" for="apptTerms">
+                                        I agree to the <a href="{{ route('terms.conditions') }}" target="_blank" class="text-primary text-decoration-underline fw-semibold">Terms &amp; Conditions</a> and <a href="{{ route('privacy.policy') }}" target="_blank" class="text-primary text-decoration-underline fw-semibold">Privacy Policy</a>. <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                            </div>
                             <div class="col-12 text-center">
                                 <button class="btn btn-primary w-100 py-3" type="submit">Submit Now</button>
                             </div>

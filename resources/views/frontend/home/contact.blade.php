@@ -67,6 +67,15 @@
                                     <textarea class="form-control rounded-4" name="message" id="message" rows="5" required></textarea>
                                 </div>
 
+                                <div class="col-12 text-start">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="contactTerms" name="agree_terms" required checked>
+                                        <label class="form-check-label small text-secondary" for="contactTerms">
+                                            I agree to the <a href="{{ route('terms.conditions') }}" target="_blank" class="text-primary text-decoration-underline fw-semibold">Terms &amp; Conditions</a> and <a href="{{ route('privacy.policy') }}" target="_blank" class="text-primary text-decoration-underline fw-semibold">Privacy Policy</a>. <span class="text-danger">*</span>
+                                        </label>
+                                    </div>
+                                </div>
+
                                 <div class="col-12 text-center">
                                     <button type="submit" class="btn btn-primary btn-animated px-5 py-2 mt-4">
                                         Send Message
@@ -88,6 +97,11 @@
         $(document).ready(function () {
             $('#contactForm').on('submit', function (e) {
                 e.preventDefault();
+
+                if (!$('#contactTerms').is(':checked')) {
+                    $('#formResponse').html('<div class="alert alert-warning">Please agree to the Terms & Conditions and Privacy Policy to send your message.</div>');
+                    return;
+                }
 
                 let formData = {
                     name: $('#name').val(),

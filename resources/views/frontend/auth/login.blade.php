@@ -6,8 +6,8 @@
     .auth-card .card-body { padding: 3rem !important; }
     .input-group-text { background-color: #f8f9fa; border-right: none; }
     .form-control { border-left: none; box-shadow: none !important; }
-    .form-control:focus { border-color: #0d6efd; }
-    .input-group:focus-within .input-group-text, .input-group:focus-within .form-control { border-color: #0d6efd; }
+    .form-control:focus { border-color: #df9b15; }
+    .input-group:focus-within .input-group-text, .input-group:focus-within .form-control { border-color: #df9b15; }
     .btn-auth { border-radius: 0.5rem; padding: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
     .divider { display: flex; align-items: center; text-align: center; color: #6c757d; margin: 1.5rem 0; }
     .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #dee2e6; }
@@ -101,12 +101,18 @@
                                     <input type="email" id="regEmail" class="form-control form-control-lg" required placeholder="name@example.com">
                                 </div>
                             </div>
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="form-label text-secondary fw-semibold small text-uppercase">Password</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-lock text-muted"></i></span>
                                     <input type="password" id="regPassword" class="form-control form-control-lg" required placeholder="Create password">
                                 </div>
+                            </div>
+                            <div class="form-check mb-4 text-start">
+                                <input class="form-check-input" type="checkbox" id="regTerms" required checked>
+                                <label class="form-check-label small text-secondary" for="regTerms">
+                                    I agree to the <a href="{{ route('terms.conditions') }}" target="_blank" class="text-primary text-decoration-underline fw-semibold">Terms &amp; Conditions</a> and <a href="{{ route('privacy.policy') }}" target="_blank" class="text-primary text-decoration-underline fw-semibold">Privacy Policy</a>. <span class="text-danger">*</span>
+                                </label>
                             </div>
                             <div class="d-grid mb-4">
                                 <button type="submit" class="btn btn-primary btn-auth" id="btnRegister">Register</button>
@@ -293,6 +299,12 @@
     function handleRegister(e) {
         e.preventDefault();
         hideAlert();
+
+        if (!$('#regTerms').is(':checked')) {
+            showAlert('Please agree to the Terms & Conditions and Privacy Policy to register.', 'warning');
+            return;
+        }
+
         const btn = document.getElementById('btnRegister');
         btn.disabled = true;
         btn.innerHTML = 'Registering...';

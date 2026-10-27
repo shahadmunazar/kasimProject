@@ -77,12 +77,12 @@ class ServiceCatalog
                 'short_name' => 'Industrial Automation',
                 'slug' => 'industrial-automation',
                 'target_keyword' => 'industrial automation services',
-                'ai_hook' => 'Controls machines, integrates robotics, automates testing and maintains traceable production quality workflows.',
-                'meta_title' => 'Industrial Automation Services | TC Smart',
-                'meta_description' => 'Integrate PLC, HMI, VFD, robotics, automated testing and production traceability for controlled industrial workflows.',
+                'ai_hook' => 'PLC/HMI, LabVIEW & EOL Test Benches, machine control, robotics integration, and traceable production quality workflows.',
+                'meta_title' => 'Industrial Automation & EOL Test Benches | TC Smart',
+                'meta_description' => 'PLC/HMI, LabVIEW & EOL Test Benches: Siemens/Allen-Bradley PLC, HMI touchscreens, NI LabVIEW automated test benches and production traceability.',
                 'icon' => 'fa-robot',
                 'badge' => 'Core Capability',
-                'overview' => 'TC Smart Technology delivers Industrial Automation services to coordinate machine control, automated test benches, robotics cells, and plant-floor traceability. Our solutions link PLC, HMI, VFD drives and NI LabVIEW/TestStand platforms with verifiable pass/fail reporting.',
+                'overview' => 'TC Smart Technology delivers Industrial Automation services to coordinate machine control, PLC/HMI, LabVIEW & EOL Test Benches, robotics cells, and plant-floor traceability. Our solutions link PLC, HMI, VFD drives and NI LabVIEW/TestStand platforms with verifiable pass/fail reporting.',
                 'subcategories' => [
                     'control-robotics' => [
                         'name' => 'Industrial Control and Robotics Integration',

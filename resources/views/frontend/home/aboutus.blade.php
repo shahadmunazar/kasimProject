@@ -125,8 +125,8 @@
                     <div class="mx-auto mb-3 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
                         <i class="fa fa-cogs"></i>
                     </div>
-                    <h5 class="fw-bold text-dark mb-3">Automation & Testing</h5>
-                    <p class="text-secondary small mb-3">Integrated PLC/HMI/VFD logic, compatible robot integration, LabVIEW & TestStand test stations, EOL verification benches, and traceability.</p>
+                    <h5 class="fw-bold text-dark mb-3">PLC/HMI, LabVIEW & EOL Test Benches</h5>
+                    <p class="text-secondary small mb-3">Integrated PLC/HMI/VFD logic, compatible robot integration, NI LabVIEW & TestStand test stations, and automated EOL verification benches.</p>
                     <a href="{{ route('services.industrial_automation_services') }}" class="btn btn-outline-primary btn-sm rounded-pill mt-auto fw-bold">Explore Automation</a>
                 </div>
             </div>

@@ -105,7 +105,7 @@
             border-radius: 14px;
             padding: 14px 18px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
-            border-left: 5px solid #0d6efd;
+            border-left: 5px solid #df9b15;
             font-family: inherit;
             color: #1e293b;
             animation: customAlertSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -210,6 +210,60 @@
         @keyframes customAlertProgress {
             from { width: 100%; }
             to { width: 0%; }
+        }
+
+        /* Unified Brand Color System across Every Page */
+        :root {
+            --bs-primary: #df9b15;
+            --bs-primary-rgb: 223, 155, 21;
+            --bs-dark: #1e293b;
+            --bs-dark-rgb: 30, 41, 59;
+            --bs-link-color: #df9b15;
+            --bs-link-hover-color: #c9880f;
+        }
+        .btn-primary {
+            background-color: #df9b15 !important;
+            border-color: #df9b15 !important;
+            color: #ffffff !important;
+        }
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+            background-color: #c9880f !important;
+            border-color: #c9880f !important;
+            color: #ffffff !important;
+        }
+        .btn-outline-primary {
+            color: #df9b15 !important;
+            border-color: #df9b15 !important;
+        }
+        .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
+            background-color: #df9b15 !important;
+            border-color: #df9b15 !important;
+            color: #ffffff !important;
+        }
+        .text-primary {
+            color: #df9b15 !important;
+        }
+        .bg-primary {
+            background-color: #df9b15 !important;
+        }
+        .bg-primary-subtle {
+            background-color: rgba(223, 155, 21, 0.12) !important;
+        }
+        .border-primary {
+            border-color: #df9b15 !important;
+        }
+        .form-check-input:checked {
+            background-color: #df9b15 !important;
+            border-color: #df9b15 !important;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #df9b15 !important;
+            box-shadow: 0 0 0 0.2rem rgba(223, 155, 21, 0.22) !important;
+        }
+        .page-item.active .page-link {
+            background-color: #df9b15 !important;
+            border-color: #df9b15 !important;
+            color: #ffffff !important;
         }
     </style>
 
