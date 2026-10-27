@@ -27,6 +27,8 @@ class User extends Authenticatable
         'avatar',
         'otp',
         'otp_expires_at',
+        'terms_accepted_at',
+        'terms_accepted_ip',
     ];
 
     /**

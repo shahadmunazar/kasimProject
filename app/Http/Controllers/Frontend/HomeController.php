@@ -37,7 +37,14 @@ class HomeController extends Controller
             'address' => 'nullable|string|max:255',
             'subject' => 'nullable|string|max:255',
             'message' => 'required|string',
+            'agree_terms' => 'nullable'
         ]);
+
+        $validated['address'] = $validated['address'] ?? 'Online Inquiry';
+        $validated['subject'] = $validated['subject'] ?? 'General Inquiry';
+        $validated['service_type'] = $validated['service_type'] ?? 'General Consultation';
+        $validated['terms_accepted_at'] = $request->filled('agree_terms') ? now() : null;
+        $validated['terms_accepted_ip'] = $request->ip();
 
         $contact = \App\Models\Contact::create($validated);
 
@@ -49,6 +56,39 @@ class HomeController extends Controller
         }
 
         return response()->json(['success' => true, 'message' => 'Your message has been sent successfully!']);
+    }
+
+    public function appointment_store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'mobile' => 'required|string|max:20',
+            'service' => 'nullable|string|max:255',
+            'message' => 'required|string',
+            'agree_terms' => 'nullable'
+        ]);
+
+        $contact = \App\Models\Contact::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'mobile' => $validated['mobile'],
+            'service_type' => $validated['service'] ?? 'General Consultation',
+            'subject' => 'Online Appointment Request - ' . ($validated['service'] ?? 'General Consultation'),
+            'address' => 'Online Appointment',
+            'message' => $validated['message'],
+            'terms_accepted_at' => $request->filled('agree_terms') ? now() : null,
+            'terms_accepted_ip' => $request->ip()
+        ]);
+
+        try {
+            $adminEmail = config('services.admin.email', config('mail.admin_address', env('ADMIN_EMAIL', 'tcsmarttechnology@gmail.com')));
+            \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminLeadMessage($contact->toArray()));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send appointment email: ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Your appointment request has been submitted successfully! Our team will contact you shortly.');
     }
 
 
@@ -581,7 +621,10 @@ public function testingFrameworks() {
             'name' => 'required',
             'phone' => 'required',
         ]);
-        $inquiry = \App\Models\ProductInquiry::create($request->all());
+        $inquiryData = $request->all();
+        $inquiryData['terms_accepted_at'] = $request->filled('agree_terms') ? now() : null;
+        $inquiryData['terms_accepted_ip'] = $request->ip();
+        $inquiry = \App\Models\ProductInquiry::create($inquiryData);
 
         try {
             $inquiry->load('product');

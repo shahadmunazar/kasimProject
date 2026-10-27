@@ -193,7 +193,7 @@ Route::prefix('services')->group(function () {
     })->name('404');
     
     Route::get('/appointment', [HomeController::class, 'appointment'])->name('appointment.index');
-    Route::post('/appointment', [HomeController::class, 'store'])->name('appointment.store');
+    Route::post('/appointment', [HomeController::class, 'appointment_store'])->name('appointment.store');
 
 // Frontend Auth Routes
 Route::middleware('guest')->group(function () {

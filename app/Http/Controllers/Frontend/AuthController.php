@@ -64,7 +64,9 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'terms_accepted_at' => now(),
+            'terms_accepted_ip' => $request->ip()
         ]);
 
         $otp = rand(100000, 999999);

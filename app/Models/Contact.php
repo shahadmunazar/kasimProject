@@ -17,5 +17,7 @@ class Contact extends Model
         'address',
         'subject',
         'message',
+        'terms_accepted_at',
+        'terms_accepted_ip',
     ];
 }

@@ -111,6 +111,7 @@
                     service_type: $('#service_type').val(),
                     address: $('#address').val(),
                     subject: $('#subject').val(),
+                    agree_terms: $('#contactTerms').is(':checked') ? 1 : 0
                 };
 
                 $('#formResponse').html('<div class="text-primary">Sending message...</div>');

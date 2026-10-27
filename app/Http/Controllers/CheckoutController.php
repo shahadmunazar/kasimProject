@@ -202,9 +202,10 @@ class CheckoutController extends Controller
         $order->transaction_id = $request->transaction_id;
         $order->utr_number = $request->utr_number;
         $order->payment_amount = $request->payment_amount;
-        $order->payment_date = $request->payment_date;
         $order->status = 'pending';
         $order->is_confirmed = false;
+        $order->terms_accepted_at = ($request->filled('agree_terms') || $request->filled('confirmation')) ? now() : null;
+        $order->terms_accepted_ip = $request->ip();
 
         if ($request->hasFile('payment_screenshot')) {
             $order->payment_screenshot = $request->file('payment_screenshot')->store('payments', 'public');

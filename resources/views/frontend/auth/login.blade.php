@@ -321,6 +321,7 @@
             phone: $('#regPhone').val(),
             email: $('#regEmail').val(),
             password: $('#regPassword').val(),
+            agree_terms: 1,
             _token: '{{ csrf_token() }}'
         }).done(res => {
             if (res.require_otp) {
