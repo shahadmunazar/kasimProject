@@ -14,10 +14,16 @@
             <div class="row align-items-center g-5">
                 <!-- Left Column: Copy & Actions -->
                 <div class="col-lg-7">
-                    <!-- Eyebrow / badge -->
-                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary-subtle text-primary mb-3">
-                        <i class="fa fa-microchip"></i>
-                        <span class="fw-bold small text-uppercase" style="letter-spacing: 0.08em; font-size: 0.76rem;">ENGINEERING SMARTER PRODUCTS, PROCESSES AND BUSINESSES</span>
+                    <!-- Eyebrow / badges -->
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                        <span class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-primary-subtle text-primary border border-primary-subtle">
+                            <i class="fa fa-microchip"></i>
+                            <span class="fw-bold small text-uppercase" style="letter-spacing: 0.08em; font-size: 0.76rem;">Schematics, Multilayer PCB, Firmware</span>
+                        </span>
+                        <span class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-secondary-subtle text-secondary border">
+                            <i class="fa fa-robot"></i>
+                            <span class="fw-bold small text-uppercase" style="letter-spacing: 0.08em; font-size: 0.76rem;">PLC/HMI, LabVIEW &amp; EOL Test Benches</span>
+                        </span>
                     </div>
 
                     <!-- Single Visible H1 -->
@@ -42,8 +48,8 @@
 
                     <!-- Trust line -->
                     <div class="pt-3 border-top border-secondary-subtle">
-                        <p class="extra-small fw-semibold text-uppercase text-muted mb-0" style="font-size: 0.78rem; letter-spacing: 0.05em;">
-                            <i class="fa fa-shield-alt text-success me-2"></i>Embedded Product Engineering &nbsp;|&nbsp; Industrial IoT &nbsp;|&nbsp; Smart Manufacturing &nbsp;|&nbsp; OEE and Monitoring
+                        <p class="extra-small fw-semibold text-uppercase text-secondary mb-0" style="font-size: 0.78rem; letter-spacing: 0.05em;">
+                            <i class="fa fa-check-circle text-success me-2"></i><strong>Schematics, Multilayer PCB, Firmware</strong> &nbsp;|&nbsp; Industrial IoT &nbsp;|&nbsp; <strong>PLC/HMI, LabVIEW &amp; EOL Test Benches</strong> &nbsp;|&nbsp; Custom AI Agents
                         </p>
                     </div>
                 </div>
@@ -69,7 +75,7 @@
                                         <i class="fa fa-microchip text-primary fs-5"></i>
                                         <div>
                                             <strong class="d-block small text-white">Embedded Product Engineering</strong>
-                                            <span class="extra-small text-muted" style="font-size: 0.75rem;">Schematics, Multilayer PCB, Firmware</span>
+                                            <span class="d-block extra-small text-light" style="font-size: 0.82rem; color: #e2e8f0 !important; font-weight: 500;">Schematics, Multilayer PCB, Firmware</span>
                                         </div>
                                     </div>
                                     <span class="badge bg-primary-subtle text-primary extra-small">Priority</span>
@@ -80,7 +86,7 @@
                                         <i class="fa fa-chart-line text-info fs-5"></i>
                                         <div>
                                             <strong class="d-block small text-white">Industrial IoT & Smart Manufacturing</strong>
-                                            <span class="extra-small text-muted" style="font-size: 0.75rem;">10-Module OEE & Machine Telemetry</span>
+                                            <span class="d-block extra-small text-light" style="font-size: 0.82rem; color: #e2e8f0 !important; font-weight: 500;">10-Module OEE & Machine Telemetry</span>
                                         </div>
                                     </div>
                                     <span class="badge bg-info-subtle text-info extra-small">Priority</span>
@@ -91,7 +97,7 @@
                                         <i class="fa fa-robot text-warning fs-5"></i>
                                         <div>
                                             <strong class="d-block small text-white">Industrial Automation & Robotics</strong>
-                                            <span class="extra-small text-muted" style="font-size: 0.75rem;">PLC/HMI, LabVIEW & EOL Test Benches</span>
+                                            <span class="d-block extra-small text-light" style="font-size: 0.82rem; color: #e2e8f0 !important; font-weight: 500;">PLC/HMI, LabVIEW & EOL Test Benches</span>
                                         </div>
                                     </div>
                                     <span class="badge bg-warning-subtle text-warning extra-small">Core</span>
@@ -102,7 +108,7 @@
                                         <i class="fa fa-brain text-success fs-5"></i>
                                         <div>
                                             <strong class="d-block small text-white">Custom AI Solutions & Agents</strong>
-                                            <span class="extra-small text-muted" style="font-size: 0.75rem;">11 Approved Agents • Human Oversight</span>
+                                            <span class="d-block extra-small text-light" style="font-size: 0.82rem; color: #e2e8f0 !important; font-weight: 500;">11 Approved Agents • Human Oversight</span>
                                         </div>
                                     </div>
                                     <span class="badge bg-success-subtle text-success extra-small">Governed</span>
@@ -123,8 +129,8 @@
             <div class="row g-3 text-center align-items-center">
                 <div class="col-md-3 col-6">
                     <div class="d-flex align-items-center justify-content-center gap-2">
-                        <i class="fa fa-check-circle text-primary"></i>
-                        <span class="small fw-semibold text-dark">Turnkey Embedded DFM</span>
+                        <i class="fa fa-microchip text-primary"></i>
+                        <span class="small fw-semibold text-dark">Schematics, Multilayer PCB, Firmware</span>
                     </div>
                 </div>
                 <div class="col-md-3 col-6">

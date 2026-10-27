@@ -122,6 +122,8 @@
                     <a href="{{ route('accessibility.statement') }}" class="text-decoration-none text-light-50">Accessibility Statement</a>
                     <span class="text-secondary">•</span>
                     <a href="{{ route('sitemap.index') }}" class="text-decoration-none text-light-50">HTML Sitemap</a>
+                    <span class="text-secondary">•</span>
+                    <a href="javascript:;" onclick="tcOpenCookieSettings()" class="text-decoration-none text-light-50">Cookie Preferences</a>
                 </div>
             </div>
         </div>
