@@ -625,7 +625,7 @@ public function testingFrameworks() {
     }
     public function services()
     {
-        return view('frontend.home.services');
+        return view('frontend.services.index');
     }
     public function features()
     {

@@ -163,6 +163,21 @@ Route::prefix('services')->group(function () {
         Route::get('custom-erp-development', [HomeController::class, 'customErpDevelopment'])->name('services.software.custom_erp_development');
         Route::get('mlm-network-software', [HomeController::class, 'mlmNetworkSoftware'])->name('services.software.mlm_network_software');
     });
+
+    // 4 Parent Service Categories
+    Route::get('/embedded-design-development', [HomeController::class, 'embeddedDesignDevelopment'])->name('services.embedded_design_development');
+    Route::get('/industrial-iot-solutions', [HomeController::class, 'industrialIotSolutions'])->name('services.industrial_iot_solutions');
+    Route::get('/industrial-automation-services', [HomeController::class, 'industrialAutomationServices'])->name('services.industrial_automation_services');
+    Route::get('/ai-solutions-custom-ai-agents', [HomeController::class, 'aiSolutionsCustomAiAgents'])->name('services.ai_solutions_custom_ai_agents');
+
+    // Named Route Aliases
+    Route::get('/industrial-iot', fn() => redirect('/services/industrial-iot-solutions', 301))->name('services.industrial_iot');
+    Route::get('/industrial-automation-nav', fn() => redirect('/services/industrial-automation', 301))->name('services.industrial_automation_nav');
+    Route::get('/custom-ai-agents', fn() => redirect('/services/ai-solutions-custom-ai-agents', 301))->name('services.custom_ai_agents');
+
+    // Dynamic Category & Service Routes
+    Route::get('/{categorySlug}', [HomeController::class, 'serviceCategory'])->name('services.category');
+    Route::get('/{categorySlug}/{serviceSlug}', [HomeController::class, 'serviceDetail'])->name('services.detail');
 });
     
     // 404 & Appointments
