@@ -118,7 +118,7 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="d-flex flex-row flex-md-column gap-2 align-self-stretch align-self-md-center justify-content-end" style="min-width: 190px;">
+        <div class="d-flex flex-column flex-sm-row flex-md-column gap-2 align-self-stretch align-self-md-center justify-content-end" style="min-width: 190px;">
             <button type="button" class="btn btn-primary btn-sm px-3 py-2 rounded-pill fw-bold text-uppercase w-100 shadow-sm" onclick="tcHandleConsent('all')">
                 Accept All
             </button>

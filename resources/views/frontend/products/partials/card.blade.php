@@ -127,10 +127,10 @@
                         <i class="fa fa-ban me-1"></i> Out of Stock
                     </button>
                 @endif
-                <button type="button" class="btn btn-sm btn-light border px-2 text-muted" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}" title="Enquiry">
+                <button type="button" class="btn btn-sm btn-light border px-2 text-dark" data-bs-toggle="modal" data-bs-target="#buyModal" data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}" title="Enquiry">
                     <i class="fa fa-envelope"></i>
                 </button>
-                <a href="{{ $productUrl }}" class="btn btn-sm btn-light border px-2 text-muted" title="View Details">
+                <a href="{{ $productUrl }}" class="btn btn-sm btn-light border px-2 text-dark" title="View Details">
                     <i class="fa fa-eye"></i>
                 </a>
             </div>

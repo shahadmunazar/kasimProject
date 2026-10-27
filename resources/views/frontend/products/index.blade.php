@@ -193,7 +193,7 @@
             opacity: 0;
             pointer-events: none;
             z-index: 1040;
-            box-shadow: 0 8px 24px rgba(13, 110, 253, 0.35);
+            box-shadow: 0 8px 24px rgba(223, 155, 21, 0.35);
             border-radius: 50rem;
             padding: 0.65rem 1.3rem;
             font-weight: 600;

@@ -212,33 +212,177 @@
             to { width: 0%; }
         }
 
-        /* Unified Brand Color System across Every Page */
+        /* =========================================================
+           1. UNIFIED BRAND COLORS & WCAG HIGH-CONTRAST TYPOGRAPHY
+           ========================================================= */
         :root {
             --bs-primary: #df9b15;
             --bs-primary-rgb: 223, 155, 21;
-            --bs-dark: #1e293b;
-            --bs-dark-rgb: 30, 41, 59;
+            --bs-dark: #0f172a;
+            --bs-dark-rgb: 15, 23, 42;
+            --bs-body-color: #1e293b;
+            --bs-body-bg: #ffffff;
             --bs-link-color: #df9b15;
-            --bs-link-hover-color: #c9880f;
+            --bs-link-hover-color: #b4780a;
         }
+
+        /* Universal HTML & Body Safeguards against horizontal overflow */
+        html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+            position: relative;
+        }
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Body Typography: deep, crisp slate for effortless reading everywhere */
+        body {
+            color: #1e293b;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.68;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Headings: deep rich slate-900 with sharp contrast */
+        h1, h2, h3, h4, h5, h6,
+        .h1, .h2, .h3, .h4, .h5, .h6 {
+            color: #0f172a;
+            font-family: 'Roboto', 'Poppins', -apple-system, sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.015em;
+        }
+        .display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+            color: #0f172a;
+            font-family: 'Roboto', 'Poppins', -apple-system, sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        /* Global Text Contrast Enhancements: No faded or washed-out fonts */
+        .text-dark {
+            color: #0f172a !important;
+        }
+        .text-secondary {
+            color: #334155 !important; /* Deep Slate-700 */
+        }
+        .text-muted {
+            color: #475569 !important; /* Slate-600: strong contrast against white & light-gray */
+            font-weight: 500;
+        }
+        p.lead, .lead {
+            color: #334155 !important;
+            line-height: 1.75;
+        }
+
+        /* Contrast overrides for Dark Containers (Hero dark card, Footer, bg-dark) */
+        .bg-dark, footer.footer, .card.bg-dark, .modal-dark {
+            color: #f1f5f9;
+        }
+        .bg-dark h1, .bg-dark h2, .bg-dark h3, .bg-dark h4, .bg-dark h5, .bg-dark h6,
+        footer h1, footer h2, footer h3, footer h4, footer h5, footer h6,
+        .card.bg-dark h1, .card.bg-dark h2, .card.bg-dark h3, .card.bg-dark h4, .card.bg-dark h5, .card.bg-dark h6 {
+            color: #ffffff !important;
+        }
+        .bg-dark p, footer p, .card.bg-dark p {
+            color: #cbd5e1;
+        }
+        .bg-dark .text-muted, footer .text-muted, .card.bg-dark .text-muted,
+        .bg-dark .text-secondary, footer .text-secondary, .card.bg-dark .text-secondary,
+        .text-light-50, .text-white-50 {
+            color: #cbd5e1 !important;
+        }
+        footer .footer-links a {
+            color: #cbd5e1 !important;
+            transition: color 0.2s ease, padding-left 0.2s ease;
+        }
+        footer .footer-links a:hover {
+            color: #df9b15 !important;
+            padding-left: 4px;
+        }
+
+        /* Global Form Controls & Labels: Crisp visibility */
+        .form-label, label {
+            color: #0f172a !important;
+            font-weight: 600;
+            font-size: 0.88rem;
+            margin-bottom: 0.35rem;
+        }
+        .form-control, .form-select {
+            color: #0f172a !important;
+            font-weight: 500;
+            border: 1.5px solid #cbd5e1;
+            background-color: #ffffff;
+            border-radius: 8px;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .form-control::placeholder, .form-select::placeholder {
+            color: #64748b !important;
+            opacity: 1;
+        }
+        .form-control:focus, .form-select:focus {
+            color: #0f172a !important;
+            background-color: #ffffff;
+            border-color: #df9b15 !important;
+            box-shadow: 0 0 0 0.2rem rgba(223, 155, 21, 0.22) !important;
+        }
+        .input-group-text {
+            color: #475569;
+            font-weight: 600;
+            background-color: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+        }
+
+        /* Buttons: Solid Brand Consistency & Contrast */
         .btn-primary {
             background-color: #df9b15 !important;
             border-color: #df9b15 !important;
             color: #ffffff !important;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
         }
         .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
-            background-color: #c9880f !important;
-            border-color: #c9880f !important;
+            background-color: #b4780a !important;
+            border-color: #b4780a !important;
             color: #ffffff !important;
         }
         .btn-outline-primary {
             color: #df9b15 !important;
             border-color: #df9b15 !important;
+            font-weight: 600;
         }
         .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
             background-color: #df9b15 !important;
             border-color: #df9b15 !important;
             color: #ffffff !important;
+        }
+        .btn-secondary {
+            background-color: #475569 !important;
+            border-color: #475569 !important;
+            color: #ffffff !important;
+        }
+        .btn-outline-secondary {
+            color: #334155 !important;
+            border-color: #cbd5e1 !important;
+            font-weight: 600;
+        }
+        .btn-outline-secondary:hover {
+            background-color: #f1f5f9 !important;
+            border-color: #94a3b8 !important;
+            color: #0f172a !important;
+        }
+        .btn-light {
+            background-color: #ffffff !important;
+            color: #1e293b !important;
+            border-color: #cbd5e1 !important;
+        }
+        .btn-light:hover {
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+            border-color: #94a3b8 !important;
         }
         .text-primary {
             color: #df9b15 !important;
@@ -256,14 +400,189 @@
             background-color: #df9b15 !important;
             border-color: #df9b15 !important;
         }
-        .form-control:focus, .form-select:focus {
-            border-color: #df9b15 !important;
-            box-shadow: 0 0 0 0.2rem rgba(223, 155, 21, 0.22) !important;
-        }
         .page-item.active .page-link {
             background-color: #df9b15 !important;
             border-color: #df9b15 !important;
             color: #ffffff !important;
+        }
+
+        /* Badges: High Contrast & Accessible */
+        .badge {
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        .badge.bg-light {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+        .badge.bg-secondary-subtle {
+            background-color: #f1f5f9 !important;
+            color: #1e293b !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+        .badge.bg-primary-subtle {
+            background-color: rgba(223, 155, 21, 0.12) !important;
+            color: #9c6806 !important;
+            border: 1px solid rgba(223, 155, 21, 0.25) !important;
+        }
+        .badge.bg-info-subtle {
+            background-color: #e0f2fe !important;
+            color: #0369a1 !important;
+            border: 1px solid #bae6fd !important;
+        }
+        .badge.bg-warning-subtle {
+            background-color: #fef3c7 !important;
+            color: #92400e !important;
+            border: 1px solid #fde68a !important;
+        }
+        .badge.bg-success-subtle {
+            background-color: #dcfce7 !important;
+            color: #15803d !important;
+            border: 1px solid #bbf7d0 !important;
+        }
+        .badge.bg-danger-subtle {
+            background-color: #fee2e2 !important;
+            color: #b91c1c !important;
+            border: 1px solid #fecaca !important;
+        }
+
+        /* Cards & Breadcrumbs */
+        .card {
+            border-color: #e2e8f0;
+        }
+        .card-title {
+            color: #0f172a !important;
+            font-weight: 700;
+        }
+        .breadcrumb-item a {
+            color: #df9b15;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .breadcrumb-item a:hover {
+            color: #b4780a;
+            text-decoration: underline;
+        }
+        .breadcrumb-item.active {
+            color: #0f172a !important;
+            font-weight: 700;
+        }
+        .list-group-item.active {
+            background-color: #df9b15 !important;
+            border-color: #df9b15 !important;
+            color: #ffffff !important;
+        }
+        .hover-primary:hover {
+            color: #df9b15 !important;
+        }
+
+        /* Media Responsiveness & Fluid Containers */
+        img, svg, video, canvas, audio, iframe {
+            max-width: 100%;
+            height: auto;
+        }
+        .container, .container-fluid, .container-sm, .container-md, .container-lg, .container-xl, .container-xxl {
+            max-width: 100%;
+        }
+
+        /* =========================================================
+           2. RESPONSIVE MEDIA QUERIES (TABLETS & MOBILE DEVICES)
+           ========================================================= */
+
+        /* Tablets (768px - 991.98px) */
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            .display-1 { font-size: 3.5rem !important; }
+            .display-2 { font-size: 3.0rem !important; }
+            .display-3 { font-size: 2.5rem !important; }
+            .display-4 { font-size: 2.2rem !important; }
+            .display-5 { font-size: 1.95rem !important; }
+            .display-6, h1, .h1 { font-size: 1.8rem !important; }
+            h2, .h2 { font-size: 1.55rem !important; }
+            h3, .h3 { font-size: 1.35rem !important; }
+            .page-header .bg-white {
+                padding: 2.5rem 2rem !important;
+            }
+        }
+
+        /* Mobile Viewports (< 768px) */
+        @media (max-width: 767.98px) {
+            /* Fluid Headings for Mobile */
+            .display-1 { font-size: 2.5rem !important; line-height: 1.15 !important; }
+            .display-2 { font-size: 2.2rem !important; line-height: 1.15 !important; }
+            .display-3 { font-size: 1.95rem !important; line-height: 1.2 !important; }
+            .display-4 { font-size: 1.8rem !important; line-height: 1.2 !important; }
+            .display-5 { font-size: 1.6rem !important; line-height: 1.25 !important; }
+            .display-6, h1, .h1 { font-size: 1.5rem !important; line-height: 1.25 !important; }
+            h2, .h2 { font-size: 1.35rem !important; line-height: 1.3 !important; }
+            h3, .h3 { font-size: 1.2rem !important; line-height: 1.35 !important; }
+            h4, .h4 { font-size: 1.08rem !important; }
+            h5, .h5 { font-size: 0.98rem !important; }
+            h6, .h6 { font-size: 0.88rem !important; }
+            .lead { font-size: 0.98rem !important; line-height: 1.7 !important; }
+
+            /* Mobile Form Usability: Strictly 16px to prevent iOS Safari auto-zoom */
+            .form-control, .form-select, input[type="text"], input[type="email"], input[type="tel"], input[type="password"], input[type="number"], select, textarea {
+                font-size: 16px !important;
+            }
+
+            /* Touch targets: min 42px height for mobile buttons */
+            .btn {
+                min-height: 42px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .btn-sm {
+                min-height: 34px;
+            }
+
+            /* Card padding on mobile to prevent cramped contents */
+            .auth-card .card-body,
+            .card-body.p-5,
+            .card.p-5,
+            .card.p-lg-5 {
+                padding: 1.5rem 1.2rem !important;
+            }
+
+            /* Page header responsive padding */
+            .page-header .bg-white {
+                padding: 1.75rem 1.25rem !important;
+            }
+            .page-header {
+                padding-top: 1.5rem !important;
+                margin-bottom: 2.5rem !important;
+            }
+
+            /* Table responsive wrapper touch scrolling */
+            .table-responsive {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Back to top button position */
+            .back-to-top {
+                right: 16px !important;
+                bottom: 16px !important;
+                width: 44px !important;
+                height: 44px !important;
+                font-size: 1.1rem !important;
+            }
+
+            /* Navbar links spacing & mobile highlight */
+            .navbar .navbar-nav .nav-link {
+                margin-right: 0 !important;
+                padding: 10px 14px !important;
+                color: #0f172a !important;
+                font-weight: 600;
+                border-radius: 6px;
+            }
+            .navbar .navbar-nav .nav-link:hover,
+            .navbar .navbar-nav .nav-link.active {
+                color: var(--bs-primary) !important;
+                background-color: rgba(223, 155, 21, 0.08);
+            }
         }
     </style>
 

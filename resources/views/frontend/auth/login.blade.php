@@ -4,6 +4,9 @@
 <style>
     .auth-card { border-radius: 1rem; overflow: hidden; transition: all 0.3s ease; }
     .auth-card .card-body { padding: 3rem !important; }
+    @media (max-width: 575.98px) {
+        .auth-card .card-body { padding: 1.75rem 1.25rem !important; }
+    }
     .input-group-text { background-color: #f8f9fa; border-right: none; }
     .form-control { border-left: none; box-shadow: none !important; }
     .form-control:focus { border-color: #df9b15; }
