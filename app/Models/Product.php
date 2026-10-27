@@ -117,4 +117,48 @@ class Product extends Model
         }
         return (float)($this->price ?? 0);
     }
+
+    public function imageUrl(?string $path = null): string
+    {
+        $target = $path ?: (($this->images && count($this->images) > 0) ? $this->images[0] : $this->image);
+        if (!$target && $this->slug === 'industrial-iot-monitoring-product') {
+            return asset('assets/img/products/industrial-iot-monitoring-product.jpg');
+        }
+        if (!$target) {
+            return asset('favicon.png');
+        }
+        if (str_starts_with($target, 'http://') || str_starts_with($target, 'https://')) {
+            return $target;
+        }
+        if (str_starts_with($target, 'assets/')) {
+            return asset($target);
+        }
+        if (str_starts_with($target, 'storage/')) {
+            return asset($target);
+        }
+        return asset('storage/' . ltrim($target, '/'));
+    }
+
+    public function imageGallery(): array
+    {
+        $list = [];
+        if (!empty($this->images) && is_array($this->images)) {
+            $list = $this->images;
+        } elseif (!empty($this->image)) {
+            $list = [$this->image];
+        }
+
+        if (empty($list) && $this->slug === 'industrial-iot-monitoring-product') {
+            $list = ['assets/img/products/industrial-iot-monitoring-product.jpg'];
+        }
+
+        if (empty($list)) {
+            return [];
+        }
+
+        return array_map(function ($img) {
+            return $this->imageUrl($img);
+        }, $list);
+    }
 }
+

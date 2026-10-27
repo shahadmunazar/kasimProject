@@ -38,14 +38,18 @@
             <i class="fa fa-heart text-muted" style="font-size: 0.95rem; transition: transform 0.2s ease, color 0.2s ease;"></i>
         </button>
 
-        @if($product->images && count($product->images) > 0)
-            @if(count($product->images) > 1)
+        @php
+            $cardImages = $product->imageGallery();
+        @endphp
+
+        @if(count($cardImages) > 0)
+            @if(count($cardImages) > 1)
                 <div id="{{ $carouselId }}" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
-                        @foreach($product->images as $index => $img)
+                        @foreach($cardImages as $index => $imgUrl)
                             <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
                                 <a href="{{ $productUrl }}" title="{{ $product->name }}">
-                                    <img src="{{ asset('storage/' . $img) }}" class="card-img-top" alt="{{ $product->name }}" loading="lazy" style="height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
+                                    <img src="{{ $imgUrl }}" class="card-img-top" alt="{{ $product->name }}" loading="lazy" style="height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
                                 </a>
                             </div>
                         @endforeach
@@ -59,7 +63,7 @@
                 </div>
             @else
                 <a href="{{ $productUrl }}" title="{{ $product->name }}">
-                    <img src="{{ asset('storage/' . $product->images[0]) }}" class="card-img-top" alt="{{ $product->name }}" loading="lazy" style="height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
+                    <img src="{{ $cardImages[0] }}" class="card-img-top" alt="{{ $product->name }}" loading="lazy" style="height: 200px; object-fit: contain; background-color: #f8f9fa; padding: 10px;">
                 </a>
             @endif
         @else

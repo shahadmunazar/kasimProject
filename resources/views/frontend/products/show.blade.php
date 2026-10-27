@@ -10,7 +10,7 @@
     '@' . 'context' => 'https://schema.org/',
     '@' . 'type' => 'Product',
     'name' => $product->name,
-    'image' => ($product->images && count($product->images) > 0) ? [asset($product->images[0])] : [asset('favicon.png')],
+    'image' => count($product->imageGallery()) > 0 ? $product->imageGallery() : [asset('favicon.png')],
     'description' => Str::limit(strip_tags($product->description ?? $product->short_description ?? $product->name), 200),
     'sku' => $product->sku ?: null,
     'brand' => [
@@ -46,13 +46,16 @@
 
         <div class="row">
             <div class="col-md-6 mb-4">
-                @if($product->images && count($product->images) > 0)
-                    @if(count($product->images) > 1)
+                @php
+                    $detailImages = $product->imageGallery();
+                @endphp
+                @if(count($detailImages) > 0)
+                    @if(count($detailImages) > 1)
                         <div id="carouselProductDetails" class="carousel slide border rounded bg-white shadow-sm" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                @foreach($product->images as $index => $img)
+                                @foreach($detailImages as $index => $imgUrl)
                                     <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
-                                        <img src="{{ asset('storage/' . $img) }}" class="d-block w-100" alt="{{ $product->name }}" style="height: 400px; object-fit: contain;">
+                                        <img src="{{ $imgUrl }}" class="d-block w-100" alt="{{ $product->name }}" style="height: 400px; object-fit: contain;">
                                     </div>
                                 @endforeach
                             </div>
@@ -65,7 +68,7 @@
                         </div>
                     @else
                         <div class="border rounded bg-white shadow-sm text-center">
-                            <img src="{{ asset('storage/' . $product->images[0]) }}" class="img-fluid" alt="{{ $product->name }}" style="height: 400px; object-fit: contain;">
+                            <img src="{{ $detailImages[0] }}" class="img-fluid" alt="{{ $product->name }}" style="height: 400px; object-fit: contain;">
                         </div>
                     @endif
                 @else

@@ -19,6 +19,8 @@ class FlagshipProductAvailabilityTest extends TestCase
         $response->assertOk();
         $response->assertSee('Industrial IoT Monitoring Product');
         $response->assertSee('Config 01');
+        $response->assertSee('assets/img/products/industrial-iot-monitoring-product.jpg');
+        $response->assertDontSee('No Image Available');
 
         $this->assertDatabaseHas('products', [
             'slug' => 'industrial-iot-monitoring-product',

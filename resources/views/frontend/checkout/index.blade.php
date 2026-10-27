@@ -198,10 +198,7 @@
                 </div>
                 <div class="card-body p-0">
                     <div class="d-flex p-3 border-bottom align-items-center">
-                        @php
-                            $checkoutImage = ($product->images && count($product->images) > 0) ? $product->images[0] : 'default.png';
-                        @endphp
-                        <img src="{{ asset('storage/' . $checkoutImage) }}" alt="{{ $product->name }}" class="rounded me-3" style="width: 70px; height: 70px; object-fit: cover;">
+                        <img src="{{ $product->imageUrl() }}" alt="{{ $product->name }}" class="rounded me-3" style="width: 70px; height: 70px; object-fit: cover;">
                         <div>
                             <h6 class="fw-bold mb-1">{{ $product->name }}</h6>
                             <p class="text-muted small mb-0">Qty: 1</p>

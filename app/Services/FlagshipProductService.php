@@ -50,6 +50,8 @@ class FlagshipProductService
                 'is_active' => 1,
                 'meta_title' => 'Industrial IoT Monitoring Product | TC Smart',
                 'meta_description' => 'Monitor temperature, humidity, AQI, door and power status with dashboards, alerts, trends and scheduled reports.',
+                'image' => 'products/industrial-iot-monitoring-product.jpg',
+                'images' => ['assets/img/products/industrial-iot-monitoring-product.jpg'],
                 'description' => self::getDescriptionHtml(),
                 'likes' => 0
             ]);
@@ -61,6 +63,11 @@ class FlagshipProductService
             }
             if (!$product->description || strlen($product->description) < 50) {
                 $product->description = self::getDescriptionHtml();
+                $updated = true;
+            }
+            if (empty($product->images) || count($product->images) === 0 || !in_array('assets/img/products/industrial-iot-monitoring-product.jpg', (array)$product->images)) {
+                $product->images = ['assets/img/products/industrial-iot-monitoring-product.jpg'];
+                $product->image = 'assets/img/products/industrial-iot-monitoring-product.jpg';
                 $updated = true;
             }
             if ($updated) {

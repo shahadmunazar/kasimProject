@@ -505,8 +505,8 @@ public function testingFrameworks() {
             $q->where('is_approved', true)->latest();
         }])->where('slug', $slug)->where('is_active', true)->first();
 
-        // Resilient self-healing for flagship monitoring product if missing in database
-        if (!$product && $slug === 'industrial-iot-monitoring-product') {
+        // Resilient self-healing for flagship monitoring product if missing or incomplete in database
+        if ($slug === 'industrial-iot-monitoring-product' && (!$product || empty($product->images))) {
             $product = \App\Services\FlagshipProductService::ensureIndustrialIotMonitoringProduct();
             $product->load(['category', 'productModel', 'reviews' => function($q) {
                 $q->where('is_approved', true)->latest();
