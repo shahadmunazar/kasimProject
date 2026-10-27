@@ -1,5 +1,9 @@
 @extends('frontend.layouts.main')
 
+@section('meta_title', 'Customer Account Dashboard | TC Smart Technology')
+@section('meta_description', 'Manage your profile, active orders, shipments, GST invoices, and saved delivery addresses in your TC Smart Technology customer portal.')
+@section('meta_keywords', 'customer dashboard, TC Smart Technology account, order management, profile settings, delivery addresses')
+
 @section('content')
 <div class="container py-4 py-lg-5 mt-2 mt-lg-4">
     <div class="row">

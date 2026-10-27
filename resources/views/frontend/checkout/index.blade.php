@@ -1,5 +1,9 @@
 @extends('frontend.layouts.main')
 
+@section('meta_title', 'Secure Checkout | ' . ($product->name ?? 'Product') . ' - TC Smart Technology')
+@section('meta_description', 'Complete your secure order for ' . ($product->name ?? 'industrial electronic components') . ' at TC Smart Technology. Fast delivery across India with verified GST invoicing.')
+@section('meta_keywords', 'secure checkout, buy ' . ($product->name ?? 'embedded devices') . ' online, TC Smart Technology order, industrial electronics shipping, UPI QR payment')
+
 @section('content')
 <div class="container py-5 my-5">
     <div class="row">

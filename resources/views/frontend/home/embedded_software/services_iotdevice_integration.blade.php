@@ -2,6 +2,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', '3D Printing & Additive Manufacturing Machines | TC Smart Technology')
+@section('meta_description', 'Industrial 3D printers and additive manufacturing systems for rapid prototyping, functional jigs, and direct digital manufacturing.')
+@section('meta_keywords', '3D printing machines, additive manufacturing, rapid prototyping, industrial 3D printer, functional plastic prototyping')
 
 @section('content')
     @include('frontend.layouts.page-header', [

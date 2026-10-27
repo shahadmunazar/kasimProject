@@ -2,6 +2,7 @@
 
 @section('meta_title', 'HTML Sitemap & Complete Website Architecture | TC Smart Technology')
 @section('meta_description', 'Navigate the complete directory of TC Smart Technology: Embedded Systems, Industrial IoT solutions, Industrial Automation, Custom AI Agents, and products.')
+@section('meta_keywords', 'HTML sitemap, website directory, TC Smart Technology pages, sitemap.xml, embedded systems index, industrial IoT architecture')
 
 @section('content')
     @include('frontend.layouts.page-header', [

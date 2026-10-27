@@ -2,6 +2,7 @@
 
 @section('meta_title', 'About TC Smart Technology | Embedded Engineering & Industrial IoT Solutions')
 @section('meta_description', 'Learn about TC Smart Technology: engineering smarter connected products and operations through Embedded Design & Development, Industrial IoT, Smart Manufacturing, Industrial Automation, and Governed AI Agents.')
+@section('meta_keywords', 'about TC Smart Technology, embedded engineering company, industrial IoT provider Delhi NCR, automation engineers, custom AI agent developers, electronics prototyping India')
 
 @section('content')
 <!-- Page Header Start -->

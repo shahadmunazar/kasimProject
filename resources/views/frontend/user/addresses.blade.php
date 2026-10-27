@@ -1,5 +1,9 @@
 @extends('frontend.user.layout')
 
+@section('meta_title', 'Manage Delivery Addresses | TC Smart Technology')
+@section('meta_description', 'Save and manage default billing and delivery shipping addresses for fast and seamless product checkout at TC Smart Technology.')
+@section('meta_keywords', 'saved addresses, delivery address, shipping address, billing address, TC Smart Technology')
+
 @section('dashboard_content')
 <div class="card shadow-sm border-0 mb-4">
     <div class="card-body p-4">

@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Hydraulic & Servo Power Press Machines | TC Smart Technology')
+@section('meta_description', 'High-precision hydraulic presses and servo power press automation systems with load monitoring, PLC integration, and safety light curtains.')
+@section('meta_keywords', 'hydraulic press machines, servo power press, press automation, force distance monitoring, metal forming machinery')
 
 @section('content')
     @include('frontend.layouts.page-header', [

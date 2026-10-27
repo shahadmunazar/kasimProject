@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Shopping Cart - TC SMART')
+@section('meta_title', 'Shopping Cart | TC Smart Technology - Industrial & Embedded Hardware')
+@section('meta_description', 'View and manage items in your TC Smart Technology shopping cart. Review selected embedded controllers, IIoT telemetry sensors, and automation products before checkout.')
+@section('meta_keywords', 'shopping cart, TC Smart Technology cart, embedded hardware online, industrial IoT products cart, buy automation electronics')
 
 @section('content')
 <style>

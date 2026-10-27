@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Automated Sheet Metal Bending & Shearing Machines | TC Smart Technology')
+@section('meta_description', 'CNC sheet metal bending machines and hydraulic shearing machinery with multi-axis backgauges and automated angle correction.')
+@section('meta_keywords', 'sheet metal bending, hydraulic shearing machine, CNC press brake, sheet metal fabrication automation, industrial metal machinery')
 
 @section('content')
     @include('frontend.layouts.page-header', [

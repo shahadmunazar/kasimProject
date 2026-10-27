@@ -1,5 +1,9 @@
 @extends('frontend.user.layout')
 
+@section('meta_title', 'My Profile & Account Settings | TC Smart Technology')
+@section('meta_description', 'Update your personal profile, email, phone number, and avatar photo on your TC Smart Technology customer portal.')
+@section('meta_keywords', 'profile settings, update account, customer profile, TC Smart Technology')
+
 @section('dashboard_content')
 <div class="card shadow-sm border-0 mb-4">
     <div class="card-body p-4">

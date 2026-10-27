@@ -1,5 +1,9 @@
 @extends('frontend.layouts.main')
 
+@section('meta_title', 'Customer Sign In & Account Registration | TC Smart Technology')
+@section('meta_description', 'Sign in to your TC Smart Technology account or register to manage orders, track delivery shipments, access tax invoices, and save your delivery addresses.')
+@section('meta_keywords', 'login, sign in, register, create account, TC Smart Technology customer portal, order tracking account, industrial electronics login')
+
 @section('content')
 <style>
     .auth-card { border-radius: 1rem; overflow: hidden; transition: all 0.3s ease; }

@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'Get a Free Quote | TC Smart Technology - Industrial Solutions')
+@section('meta_title', 'Request a Consultation & Engineering Quote | TC Smart Technology')
+@section('meta_description', 'Book an engineering consultation or request a customized project quote with TC Smart Technology. Expert assistance in embedded systems, IIoT, and automation.')
+@section('meta_keywords', 'request a quote, engineering consultation, project inquiry, embedded systems quote, industrial automation pricing, Delhi NCR technology consultation')
 
 @section('content')
     @include('frontend.layouts.page-header', [

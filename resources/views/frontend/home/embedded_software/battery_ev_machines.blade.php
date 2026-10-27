@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Battery Assembly, EV & Energy Sector Machines | TC Smart Technology')
+@section('meta_description', 'Engineered automation and assembly machines for EV battery packs, energy storage, cell sorting, spot welding, and BMS testing by TC Smart Technology.')
+@section('meta_keywords', 'battery assembly machines, EV battery automation, energy sector machines, cell sorting, spot welding, BMS testing, Delhi NCR automation')
 
 @section('content')
     @include('frontend.layouts.page-header', [

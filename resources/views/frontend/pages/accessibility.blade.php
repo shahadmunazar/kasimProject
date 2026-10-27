@@ -2,6 +2,7 @@
 
 @section('meta_title', 'Accessibility Statement | TC Smart Technology')
 @section('meta_description', 'Read TC Smart Technology\'s commitment to digital accessibility, inclusive design standards, keyboard navigation, and semantic web principles.')
+@section('meta_keywords', 'accessibility statement, WCAG compliance, web accessibility, inclusive design, screen reader support, keyboard navigation')
 
 @section('content')
     @include('frontend.layouts.page-header', [

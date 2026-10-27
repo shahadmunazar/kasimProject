@@ -1,7 +1,8 @@
-```blade
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Robotic Welding & Automation Cells | TC Smart Technology')
+@section('meta_description', 'Turnkey robotic welding cells and automated welding jigs with seam tracking, fume extraction, and programmable robotic manipulators.')
+@section('meta_keywords', 'robotic welding cells, automated welding, MIG TIG robot welding, industrial welding automation, robotic cells Delhi NCR')
 
 @section('content')
     @include('frontend.layouts.page-header', [

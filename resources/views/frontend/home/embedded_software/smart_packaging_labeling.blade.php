@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Smart Packaging & Labeling Machines | TC Smart Technology')
+@section('meta_description', 'Automated inline packaging, barcode carton labeling, checkweighing, and batch date stamping machinery with vision inspection.')
+@section('meta_keywords', 'packaging machines, automatic labeling machine, inline packaging automation, barcode labeling, vision inspection packaging')
 
 @section('content')
     @include('frontend.layouts.page-header', [

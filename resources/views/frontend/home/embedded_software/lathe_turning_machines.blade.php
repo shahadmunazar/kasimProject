@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
 @section('meta_title', 'Lathe & Turning Machines (Manual & CNC) | TC Smart Technology')
+@section('meta_description', 'Precision manual and CNC lathe turning machines with automated tool changers, digital readouts, and smart IoT cycle monitoring.')
+@section('meta_keywords', 'lathe machines, CNC turning machines, precision lathe automation, industrial turning equipment, workshop machining')
 
 @section('content')
     @include('frontend.layouts.page-header', [

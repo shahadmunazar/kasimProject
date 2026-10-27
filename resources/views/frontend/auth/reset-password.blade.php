@@ -1,5 +1,9 @@
 @extends('frontend.layouts.main')
 
+@section('meta_title', 'Reset Account Password | TC Smart Technology')
+@section('meta_description', 'Set a new password for your TC Smart Technology customer account. Secure authentication for industrial automation and embedded systems services.')
+@section('meta_keywords', 'reset password, update password, account recovery, TC Smart Technology')
+
 @section('content')
 <style>
     .auth-card { border-radius: 1rem; overflow: hidden; transition: all 0.3s ease; }

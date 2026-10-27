@@ -23,34 +23,65 @@
     <meta name="twitter:title" content="@yield('meta_title', 'TC Smart Technology - Leading Innovation in Automation & Embedded Systems')">
     <meta name="twitter:description" content="@yield('meta_description', 'TC Smart Technology provides cutting-edge solutions in Embedded Systems, Industrial Automation, and Software Development.')">
     <meta name="twitter:image" content="{{ asset('favicon.png') }}">
+    <meta name="twitter:site" content="@tcsmarttechnology">
+    <meta name="twitter:creator" content="@tcsmarttechnology">
     
-    <!-- Google Indexing & Verification -->
+    <!-- Branding & Crawling Meta -->
+    <meta name="author" content="TC Smart Technology">
+    <meta name="publisher" content="TC Smart Technology">
+    <meta name="theme-color" content="#df9b15">
+    <meta property="og:locale" content="en_IN">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="TC Smart Technology - Embedded Systems & Industrial IoT Solutions">
     <meta name="robots" content="index, follow">
     <meta name="google-site-verification" content="google593c6f0cacafc57c">
 
-    <!-- Schema.org Organization Structured Data -->
+    <!-- Schema.org Organization & WebSite SearchAction Structured Data -->
     <script type="application/ld+json">
     {!! json_encode([
         '@' . 'context' => 'https://schema.org',
-        '@' . 'type' => 'Organization',
-        'name' => 'TC Smart Technology',
-        'url' => url('/'),
-        'logo' => asset('favicon.png'),
-        'description' => 'Leading provider of Embedded Systems, Industrial Automation, HVAC Solutions, and Software Development.',
-        'telephone' => '+91-7065122884',
-        'email' => 'info@tcsmarttechnology.com',
-        'address' => [
-            '@' . 'type' => 'PostalAddress',
-            'streetAddress' => 'D-364, Pocket 11, DDA Janta Flat, Jasola Vihar',
-            'addressLocality' => 'New Delhi',
-            'postalCode' => '110025',
-            'addressCountry' => 'IN'
-        ],
-        'sameAs' => [
-            'https://www.facebook.com/share/12L536bcJdV/?mibextid=wwXIfr',
-            'https://www.instagram.com/tc_smart_technology?igsh=a2s2MWNoNGNvdTU1',
-            'https://www.linkedin.com/company/tc-smart-technology/',
-            'https://youtube.com/@tcsmarttechnology?si=_YxgASgXOfdBwFgY'
+        '@' . 'graph' => [
+            [
+                '@' . 'type' => 'Organization',
+                '@' . 'id' => url('/') . '#organization',
+                'name' => 'TC Smart Technology',
+                'url' => url('/'),
+                'logo' => asset('favicon.png'),
+                'description' => 'Leading provider of Embedded Systems, Industrial IoT, Automation & Robotics, and Governed AI Agents.',
+                'telephone' => '+91-7065122884',
+                'email' => 'info@tcsmarttechnology.com',
+                'address' => [
+                    '@' . 'type' => 'PostalAddress',
+                    'streetAddress' => 'D-364, Pocket 11, DDA Janta Flat, Jasola Vihar',
+                    'addressLocality' => 'New Delhi',
+                    'postalCode' => '110025',
+                    'addressCountry' => 'IN'
+                ],
+                'sameAs' => [
+                    'https://www.facebook.com/share/12L536bcJdV/?mibextid=wwXIfr',
+                    'https://www.instagram.com/tc_smart_technology?igsh=a2s2MWNoNGNvdTU1',
+                    'https://www.linkedin.com/company/tc-smart-technology/',
+                    'https://youtube.com/@tcsmarttechnology?si=_YxgASgXOfdBwFgY'
+                ]
+            ],
+            [
+                '@' . 'type' => 'WebSite',
+                '@' . 'id' => url('/') . '#website',
+                'url' => url('/'),
+                'name' => 'TC Smart Technology',
+                'publisher' => [
+                    '@' . 'id' => url('/') . '#organization'
+                ],
+                'potentialAction' => [
+                    '@' . 'type' => 'SearchAction',
+                    'target' => [
+                        '@' . 'type' => 'EntryPoint',
+                        'urlTemplate' => url('/products') . '?search={search_term_string}'
+                    ],
+                    'query-input' => 'required name=search_term_string'
+                ]
+            ]
         ]
     ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
     </script>

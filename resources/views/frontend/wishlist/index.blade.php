@@ -1,6 +1,8 @@
 @extends('frontend.layouts.main')
 
-@section('meta_title', 'My Wishlist - TC SMART')
+@section('meta_title', 'My Wishlist | TC Smart Technology - Saved Products & Devices')
+@section('meta_description', 'View your saved favorite industrial electronics, embedded components, and IoT devices at TC Smart Technology. Easily convert saved items to orders.')
+@section('meta_keywords', 'wishlist, saved products, favorites, industrial electronics, embedded devices, TC Smart Technology')
 
 @section('content')
 <section class="page-title bg-1">

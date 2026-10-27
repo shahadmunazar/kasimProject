@@ -1,5 +1,8 @@
 @extends('frontend.user.layout')
 
+@section('meta_title', 'Order #' . ($order->order_number ?: $order->id) . ' Details & Tracking | TC Smart Technology')
+@section('meta_description', 'View order tracking details, dispatch status, line item pricing, and payment receipt for order #' . ($order->order_number ?: $order->id))
+@section('meta_keywords', 'order details, tracking status, order #' . ($order->order_number ?: $order->id) . ', courier tracking, TC Smart Technology')
 @section('title', 'Order #' . ($order->order_number ?: $order->id) . ' Details')
 
 @section('dashboard_content')

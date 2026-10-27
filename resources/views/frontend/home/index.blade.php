@@ -642,48 +642,27 @@
     </section>
 
     <!-- Schema.org Organization, WebSite & FAQPage JSON-LD -->
-    <script type="application/ld+json">
-    {!! json_encode([
-        '@context' => 'https://schema.org',
-        '@type' => 'Organization',
-        'name' => 'TC Smart Technology',
-        'url' => 'https://tcsmarttechnology.com/',
-        'logo' => asset('favicon.png'),
-        'description' => 'Embedded Design & Development and Industrial IoT / Smart Manufacturing solutions company.',
-        'contactPoint' => [
-            '@type' => 'ContactPoint',
-            'telephone' => '+91-7065122884',
-            'contactType' => 'customer support',
-            'areaServed' => 'IN'
-        ]
-    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-    </script>
-    <script type="application/ld+json">
-    {!! json_encode([
-        '@context' => 'https://schema.org',
-        '@type' => 'WebSite',
-        'name' => 'TC Smart Technology',
-        'url' => 'https://tcsmarttechnology.com/'
-    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-    </script>
-    @php
-        $schemaFaqs = [];
-        foreach($homepageFaqs as $hf) {
-            $schemaFaqs[] = [
-                '@type' => 'Question',
-                'name' => $hf['q'],
-                'acceptedAnswer' => [
-                    '@type' => 'Answer',
-                    'text' => $hf['a']
-                ]
-            ];
-        }
-    @endphp
-    <script type="application/ld+json">
-    {!! json_encode([
-        '@context' => 'https://schema.org',
-        '@type' => 'FAQPage',
-        'mainEntity' => $schemaFaqs
-    ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
-    </script>
 @endsection
+
+@push('schema')
+@php
+    $schemaFaqs = [];
+    foreach($homepageFaqs as $hf) {
+        $schemaFaqs[] = [
+            '@type' => 'Question',
+            'name' => $hf['q'],
+            'acceptedAnswer' => [
+                '@type' => 'Answer',
+                'text' => $hf['a']
+            ]
+        ];
+    }
+@endphp
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'FAQPage',
+    'mainEntity' => $schemaFaqs
+], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+@endpush

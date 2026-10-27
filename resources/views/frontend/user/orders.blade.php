@@ -1,5 +1,9 @@
 @extends('frontend.user.layout')
 
+@section('meta_title', 'My Orders & Shipment Tracking | TC Smart Technology')
+@section('meta_description', 'View order history, track active courier consignments, check dispatch statuses, and download official GST tax invoices at TC Smart Technology.')
+@section('meta_keywords', 'my orders, order history, courier tracking, track shipment, GST invoice download, TC Smart Technology orders')
+
 @section('dashboard_content')
 <div class="card shadow-sm border-0 mb-4">
     <div class="card-body p-4">
