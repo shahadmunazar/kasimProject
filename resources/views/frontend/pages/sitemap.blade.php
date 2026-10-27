@@ -45,6 +45,7 @@
                             <li class="pt-2 border-top text-muted extra-small">Legal & Compliance</li>
                             <li><a href="{{ route('privacy.policy') }}" class="text-decoration-none text-muted hover-primary extra-small">Privacy Policy</a></li>
                             <li><a href="{{ route('terms.conditions') }}" class="text-decoration-none text-muted hover-primary extra-small">Terms & Conditions</a></li>
+                            <li><a href="{{ route('return.policy') }}" class="text-decoration-none text-muted hover-primary extra-small">Return & Refund Policy</a></li>
                             <li><a href="{{ route('accessibility.statement') }}" class="text-decoration-none text-muted hover-primary extra-small">Accessibility Statement</a></li>
                         </ul>
                     </div>

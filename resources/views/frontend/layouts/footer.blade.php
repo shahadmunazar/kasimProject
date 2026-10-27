@@ -117,6 +117,8 @@
                     <span class="text-secondary">•</span>
                     <a href="{{ route('terms.conditions') }}" class="text-decoration-none text-light-50">Terms & Conditions</a>
                     <span class="text-secondary">•</span>
+                    <a href="{{ route('return.policy') }}" class="text-decoration-none text-light-50">Return & Refund Policy</a>
+                    <span class="text-secondary">•</span>
                     <a href="{{ route('accessibility.statement') }}" class="text-decoration-none text-light-50">Accessibility Statement</a>
                     <span class="text-secondary">•</span>
                     <a href="{{ route('sitemap.index') }}" class="text-decoration-none text-light-50">HTML Sitemap</a>

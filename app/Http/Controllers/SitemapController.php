@@ -89,6 +89,7 @@ class SitemapController extends Controller
         $add('/sitemap', '0.60', 'monthly');
         $add('/privacy-policy', '0.40', 'yearly');
         $add('/terms-and-conditions', '0.40', 'yearly');
+        $add('/return-policy', '0.40', 'yearly');
         $add('/accessibility-statement', '0.40', 'yearly');
 
         // 2. Main Service Categories & Landing Pages

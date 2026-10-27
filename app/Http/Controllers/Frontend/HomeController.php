@@ -953,6 +953,11 @@ public function testingFrameworks() {
         return view('frontend.pages.terms');
     }
 
+    public function returnPolicy()
+    {
+        return view('frontend.pages.returns');
+    }
+
     public function accessibilityStatement()
     {
         return view('frontend.pages.accessibility');

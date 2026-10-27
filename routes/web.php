@@ -38,6 +38,8 @@ Route::get('/contact-us', [HomeController::class, 'contact'])->name('contact_us.
 Route::get('/case-studies', [HomeController::class, 'caseStudies'])->name('case_studies.index');
 Route::get('/privacy-policy', [HomeController::class, 'privacyPolicy'])->name('privacy.policy');
 Route::get('/terms-and-conditions', [HomeController::class, 'termsConditions'])->name('terms.conditions');
+Route::get('/return-policy', [HomeController::class, 'returnPolicy'])->name('return.policy');
+Route::get('/returns-and-refunds', [HomeController::class, 'returnPolicy'])->name('returns.refunds');
 Route::get('/accessibility-statement', [HomeController::class, 'accessibilityStatement'])->name('accessibility.statement');
 Route::get('/sitemap', [HomeController::class, 'sitemap'])->name('sitemap.index');
 Route::get('/blogs', [HomeController::class, 'blogs'])->name('blogs.index');
