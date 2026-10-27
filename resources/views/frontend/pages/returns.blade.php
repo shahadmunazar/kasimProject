@@ -149,7 +149,7 @@
                         <p class="mb-2">For any questions regarding product returns, warranty replacements, or refund statuses, our customer support and legal team are ready to assist you:</p>
                         <p class="mb-0 text-muted" style="font-size: 0.82rem;">
                             <strong>Email:</strong> <a href="mailto:info@tcsmarttechnology.com" class="text-primary fw-semibold">info@tcsmarttechnology.com</a> • 
-                            <strong>Grievance Desk:</strong> <a href="mailto:grievance@tcsmarttechnology.com" class="text-primary fw-semibold">grievance@tcsmarttechnology.com</a> • 
+                            <strong>Grievance Desk:</strong> <a href="mailto:tcsmarttechnology@gmail.com" class="text-primary fw-semibold">tcsmarttechnology@gmail.com</a> • 
                             <strong>Phone:</strong> <a href="tel:+917065122884" class="text-primary fw-semibold">+91-7065122884</a><br>
                             <strong>Return Processing Center:</strong> TC Smart Technology, D-364, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025, India.
                         </p>

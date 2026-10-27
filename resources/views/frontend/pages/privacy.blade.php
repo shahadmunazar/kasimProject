@@ -37,7 +37,7 @@
                             By accessing this website, creating a customer account, checking the "I agree to the Terms & Conditions and Privacy Policy" checkbox on our checkout, registration, contact, or inquiry forms, you provide <strong>express, informed, and unambiguous consent</strong> to the collection, tracking, and processing of your information as outlined herein.
                         </p>
                         <p class="mb-0">
-                            <strong>Right to Withdraw Consent:</strong> You have the absolute right to revoke your consent at any time. To withdraw consent or request complete erasure of your profile and data, you may email our Grievance Officer at <a href="mailto:grievance@tcsmarttechnology.com" class="text-primary fw-semibold">grievance@tcsmarttechnology.com</a>. Upon receiving your verified request, we will stop processing your data within statutory timelines, except where retention is mandated by law (e.g., GST invoice retention).
+                            <strong>Right to Withdraw Consent:</strong> You have the absolute right to revoke your consent at any time. To withdraw consent or request complete erasure of your profile and data, you may email our Grievance Officer at <a href="mailto:tcsmarttechnology@gmail.com" class="text-primary fw-semibold">tcsmarttechnology@gmail.com</a>. Upon receiving your verified request, we will stop processing your data within statutory timelines, except where retention is mandated by law (e.g., GST invoice retention).
                         </p>
                     </div>
 
@@ -189,7 +189,7 @@
                             <div class="col-sm-6">
                                 <div class="p-2 bg-light rounded-2 border">
                                     <strong class="d-block text-dark small">Grievance Email:</strong>
-                                    <a href="mailto:grievance@tcsmarttechnology.com" class="text-primary fw-semibold small">grievance@tcsmarttechnology.com</a>
+                                    <a href="mailto:tcsmarttechnology@gmail.com" class="text-primary fw-semibold small">tcsmarttechnology@gmail.com</a>
                                     <span class="text-muted extra-small d-block">(cc: info@tcsmarttechnology.com)</span>
                                 </div>
                             </div>

@@ -164,7 +164,7 @@
                             <div class="col-sm-6">
                                 <div class="p-2 bg-light rounded-2 border">
                                     <strong class="d-block text-dark small">Grievance Email:</strong>
-                                    <a href="mailto:grievance@tcsmarttechnology.com" class="text-primary fw-semibold small">grievance@tcsmarttechnology.com</a>
+                                    <a href="mailto:tcsmarttechnology@gmail.com" class="text-primary fw-semibold small">tcsmarttechnology@gmail.com</a>
                                 </div>
                             </div>
                             <div class="col-sm-6">
