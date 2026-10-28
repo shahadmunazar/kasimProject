@@ -232,7 +232,7 @@
                         <i class="fa fa-map-marker-alt"></i>
                     </div>
                     <p class="topbar-address-text">
-                        D-364, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025
+                        B-598, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025
                     </p>
                 </div>
             </div>
@@ -392,7 +392,7 @@
             <div class="d-flex align-items-center text-white ms-auto">
                 <i class="fa fa-map-marker-alt me-2 opacity-75"></i>
                 <span class="small" style="font-size: 0.78rem;">
-                    D-364, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025
+                    B-598, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025
                 </span>
             </div>
         </div>
@@ -467,7 +467,7 @@
         <div class="d-none d-sm-flex align-items-center justify-content-between pt-1 mt-1 border-top border-white border-opacity-10">
             <div class="d-flex align-items-center text-white text-opacity-90 pe-2" style="font-size: 0.72rem; line-height: 1.2;">
                 <i class="fa fa-map-marker-alt me-1 text-white"></i>
-                <span>D-364, Pocket 11, Jasola Vihar, New Delhi – 110025</span>
+                <span>B-598, Pocket 11, Jasola Vihar, New Delhi – 110025</span>
             </div>
             <a href="mailto:info@tcsmarttechnology.com" class="topbar-link text-white" title="Email Us">
                 <i class="fa fa-envelope small"></i>

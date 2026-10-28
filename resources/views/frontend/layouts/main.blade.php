@@ -53,7 +53,7 @@
                 'email' => 'info@tcsmarttechnology.com',
                 'address' => [
                     '@' . 'type' => 'PostalAddress',
-                    'streetAddress' => 'D-364, Pocket 11, DDA Janta Flat, Jasola Vihar',
+                    'streetAddress' => 'B-598, Pocket 11, DDA Janta Flat, Jasola Vihar',
                     'addressLocality' => 'New Delhi',
                     'postalCode' => '110025',
                     'addressCountry' => 'IN'

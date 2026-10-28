@@ -26,7 +26,7 @@
                     <div>
                         <h5 class="fw-bold text-dark mb-2">1. Acceptance of Terms & Eligibility (Age Factor)</h5>
                         <p class="mb-2">
-                            Welcome to <strong>TC Smart Technology</strong> ("Company", "we", "us", or "our"), having its registered operations at D-364, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025, India. These Terms and Conditions ("Terms") constitute a legally binding agreement between you ("User", "Customer", or "Client") and TC Smart Technology regarding your access to our website (<strong>https://tcsmarttechnology.com</strong>), purchase of electronic products, and engagement with our engineering solutions.
+                            Welcome to <strong>TC Smart Technology</strong> ("Company", "we", "us", or "our"), having its registered operations at B-598, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025, India. These Terms and Conditions ("Terms") constitute a legally binding agreement between you ("User", "Customer", or "Client") and TC Smart Technology regarding your access to our website (<strong>https://tcsmarttechnology.com</strong>), purchase of electronic products, and engagement with our engineering solutions.
                         </p>
                         <p class="mb-0">
                             <strong>Age Factor & Capacity to Contract:</strong> You affirm that you are at least <strong>18 years of age</strong> (or the legal age of majority in your jurisdiction) and possess full legal capacity to enter into binding legal agreements under the <strong>Indian Contract Act, 1872</strong>. If you are under 18 years of age, you may browse this website only under the direct supervision and active consent of a parent or legal guardian. Minors are strictly prohibited from submitting payment transactions or placing purchase orders.
@@ -176,7 +176,7 @@
                             <div class="col-12">
                                 <div class="p-2 bg-light rounded-2 border">
                                     <strong class="d-block text-dark small">Corporate Address:</strong>
-                                    <span class="text-secondary small">TC Smart Technology, D-364, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025, India</span>
+                                    <span class="text-secondary small">TC Smart Technology, B-598, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025, India</span>
                                 </div>
                             </div>
                         </div>

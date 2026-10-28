@@ -26,7 +26,7 @@
                     <div>
                         <h5 class="fw-bold text-dark mb-2">1. Introduction & Company Overview</h5>
                         <p class="mb-0">
-                            <strong>TC Smart Technology</strong> ("we", "us", "our", or "the Company") is an Indian engineering enterprise located at D-364, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025. We specialize in Embedded Systems Design & Development, Industrial IoT Telemetry, Industrial Automation (PLC/HMI, LabVIEW & EOL Test Benches), Custom AI Agents, and smart electronic hardware products. This Privacy Policy discloses our privacy practices and describes how we collect, store, track, process, protect, and dispose of your personal and technical data when you access <strong>https://tcsmarttechnology.com</strong>, purchase hardware, or engage our engineering services.
+                            <strong>TC Smart Technology</strong> ("we", "us", "our", or "the Company") is an Indian engineering enterprise located at B-598, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025. We specialize in Embedded Systems Design & Development, Industrial IoT Telemetry, Industrial Automation (PLC/HMI, LabVIEW & EOL Test Benches), Custom AI Agents, and smart electronic hardware products. This Privacy Policy discloses our privacy practices and describes how we collect, store, track, process, protect, and dispose of your personal and technical data when you access <strong>https://tcsmarttechnology.com</strong>, purchase hardware, or engage our engineering services.
                         </p>
                     </div>
 
@@ -202,7 +202,7 @@
                             <div class="col-12">
                                 <div class="p-2 bg-light rounded-2 border">
                                     <strong class="d-block text-dark small">Official Address:</strong>
-                                    <span class="text-secondary small">TC Smart Technology, D-364, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025, India</span>
+                                    <span class="text-secondary small">TC Smart Technology, B-598, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025, India</span>
                                 </div>
                             </div>
                         </div>

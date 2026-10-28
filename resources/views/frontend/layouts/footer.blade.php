@@ -70,7 +70,7 @@
                 <div class="col-lg-3 col-md-6">
                     <h6 class="text-uppercase text-white mb-3 fw-bold small tracking-wider">Office & Contact</h6>
                     <p class="small text-light-50 mb-2" style="color: #cbd5e1;">
-                        <i class="fa fa-map-marker-alt text-primary me-2"></i>D-364, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025
+                        <i class="fa fa-map-marker-alt text-primary me-2"></i>B-598, Pocket 11, DDA Janta Flat, Jasola Vihar, New Delhi – 110025
                     </p>
                     <p class="small text-light-50 mb-2" style="color: #cbd5e1;">
                         <i class="fa fa-phone-alt text-primary me-2"></i><a href="tel:+917065122884" class="text-decoration-none text-light-50">+91-7065122884</a>
