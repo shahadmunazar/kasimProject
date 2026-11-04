@@ -1,4 +1,35 @@
 <style>
+    /* Navbar Brand Logo Responsive & Alignment */
+    .navbar-logo-img {
+        height: 48px;
+        max-height: 50px;
+        width: auto;
+        object-fit: contain;
+        display: block;
+        transition: transform 0.2s ease;
+    }
+    .navbar-brand:hover .navbar-logo-img {
+        transform: scale(1.02);
+    }
+    @media (max-width: 991.98px) {
+        .navbar-logo-img {
+            height: 38px;
+            max-height: 40px;
+        }
+    }
+    @media (max-width: 575.98px) {
+        .navbar-logo-img {
+            height: 32px;
+            max-height: 34px;
+        }
+    }
+    @media (min-width: 992px) and (max-width: 1250px) {
+        .navbar .navbar-nav .nav-link {
+            margin-right: 18px !important;
+            font-size: 14px !important;
+        }
+    }
+
     /* Style for dropdown-submenu */
 .dropdown-submenu {
     position: relative;
@@ -372,9 +403,10 @@
 
 <div class="container-fluid bg-white sticky-top wow fadeIn" data-wow-delay="0.1s">
     <div class="container position-relative">
-        <nav class="navbar navbar-expand-lg bg-white navbar-light p-lg-0">
-            <a href="{{ route('home.index') }}" class="navbar-brand d-lg-none py-1">
-                <h1 class="m-0 text-primary fs-3 fw-bold">TC SMART</h1>
+        <nav class="navbar navbar-expand-lg bg-white navbar-light p-lg-0 align-items-center">
+            <!-- Brand Logo (Mobile & Desktop) -->
+            <a href="{{ route('home.index') }}" class="navbar-brand d-flex align-items-center py-1 py-lg-2 me-2 me-xl-4" title="TC Smart Technology">
+                <img src="{{ asset('assets/img/tc_smart_logo.png') }}" alt="TC Smart Technology" class="navbar-logo-img">
             </a>
 
             <!-- Mobile Action Bar: Wishlist, Cart & Menu Toggler -->

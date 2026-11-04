@@ -5,6 +5,11 @@
             <div class="row g-4 pb-4 border-bottom border-secondary mb-4">
                 <!-- Col 1: Brand & Company Overview -->
                 <div class="col-lg-4 col-md-6">
+                    <div class="mb-3">
+                        <a href="{{ route('home.index') }}" class="d-inline-flex align-items-center bg-white p-2 rounded shadow-sm" title="TC Smart Technology">
+                            <img src="{{ asset('assets/img/tc_smart_logo.png') }}" alt="TC Smart Technology" style="height: 46px; width: auto; object-fit: contain; display: block;">
+                        </a>
+                    </div>
                     <h5 class="text-uppercase text-white mb-3 fw-bold tracking-wide">
                         <i class="fa fa-microchip text-primary me-2"></i>TC Smart Technology
                     </h5>

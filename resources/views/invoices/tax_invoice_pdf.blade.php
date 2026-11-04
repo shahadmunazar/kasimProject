@@ -175,14 +175,25 @@
     <!-- Header: Seller Brand & Document Title -->
     <table class="header-table">
         <tr>
-            <td style="width: 60%;">
-                <div class="company-title">{{ $seller['company_name'] }}</div>
-                <div style="color: #64748b; font-size: 10.5px;">{{ $seller['brand_name'] }}</div>
-                <div style="font-size: 10px; color: #475569; margin-top: 3px;">
-                    {{ $seller['address'] }}, {{ $seller['city'] }}, {{ $seller['state'] }} - {{ $seller['pincode'] }}<br>
-                    <strong>GSTIN:</strong> {{ $seller['gstin'] }} | <strong>PAN:</strong> {{ $seller['pan'] }}<br>
-                    <strong>Email:</strong> {{ $seller['email'] }} | <strong>Phone:</strong> {{ $seller['phone'] }}
-                </div>
+            <td style="width: 60%; vertical-align: top;">
+                <table style="width: 100%; border: none; margin: 0; padding: 0;">
+                    <tr>
+                        <td style="width: 75px; vertical-align: top; padding: 0 10px 0 0; border: none;">
+                            @if(file_exists(public_path('assets/img/tc_smart_logo.png')))
+                                <img src="{{ public_path('assets/img/tc_smart_logo.png') }}" alt="Logo" style="height: 52px; width: auto; display: block;">
+                            @endif
+                        </td>
+                        <td style="vertical-align: top; padding: 0; border: none;">
+                            <div class="company-title">{{ $seller['company_name'] }}</div>
+                            <div style="color: #64748b; font-size: 10.5px;">{{ $seller['brand_name'] }}</div>
+                            <div style="font-size: 10px; color: #475569; margin-top: 3px;">
+                                {{ $seller['address'] }}, {{ $seller['city'] }}, {{ $seller['state'] }} - {{ $seller['pincode'] }}<br>
+                                <strong>GSTIN:</strong> {{ $seller['gstin'] }} | <strong>PAN:</strong> {{ $seller['pan'] }}<br>
+                                <strong>Email:</strong> {{ $seller['email'] }} | <strong>Phone:</strong> {{ $seller['phone'] }}
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </td>
             <td style="width: 40%; text-align: right;">
                 <div class="invoice-badge-title">Tax Invoice</div>

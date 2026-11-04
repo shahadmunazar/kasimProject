@@ -15,14 +15,14 @@
     <meta property="og:title" content="@yield('meta_title', 'TC Smart Technology - Leading Innovation in Automation & Embedded Systems')">
     <meta property="og:description" content="@yield('meta_description', 'TC Smart Technology provides cutting-edge solutions in Embedded Systems, Industrial Automation, and Software Development.')">
     <meta property="og:site_name" content="TC Smart Technology">
-    <meta property="og:image" content="{{ asset('favicon.png') }}">
+    <meta property="og:image" content="{{ asset('assets/img/tc_smart_logo.png') }}">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="@yield('canonical_url', url()->current())">
     <meta name="twitter:title" content="@yield('meta_title', 'TC Smart Technology - Leading Innovation in Automation & Embedded Systems')">
     <meta name="twitter:description" content="@yield('meta_description', 'TC Smart Technology provides cutting-edge solutions in Embedded Systems, Industrial Automation, and Software Development.')">
-    <meta name="twitter:image" content="{{ asset('favicon.png') }}">
+    <meta name="twitter:image" content="{{ asset('assets/img/tc_smart_logo.png') }}">
     <meta name="twitter:site" content="@tcsmarttechnology">
     <meta name="twitter:creator" content="@tcsmarttechnology">
     
@@ -47,7 +47,7 @@
                 '@' . 'id' => url('/') . '#organization',
                 'name' => 'TC Smart Technology',
                 'url' => url('/'),
-                'logo' => asset('favicon.png'),
+                'logo' => asset('assets/img/tc_smart_logo.png'),
                 'description' => 'Leading provider of Embedded Systems, Industrial IoT, Automation & Robotics, and Governed AI Agents.',
                 'telephone' => '+91-7065122884',
                 'email' => 'info@tcsmarttechnology.com',
@@ -90,7 +90,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link href="{{ asset('favicon.png') }}" rel="icon" type="image/png">
+    <link href="{{ asset('favicon.png') }}" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

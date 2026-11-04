@@ -22,7 +22,7 @@
         'name' => 'TC Smart Technology',
         'logo' => [
             '@' . 'type' => 'ImageObject',
-            'url' => asset('favicon.png')
+            'url' => asset('assets/img/tc_smart_logo.png')
         ]
     ]
 ]), JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}

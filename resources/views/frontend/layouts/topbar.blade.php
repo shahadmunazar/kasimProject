@@ -15,24 +15,27 @@
         text-decoration: none;
         color: #ffffff;
         flex-shrink: 0;
-        transition: opacity 0.2s ease;
+        transition: transform 0.2s ease, opacity 0.2s ease;
     }
     .topbar-brand:hover {
         opacity: 0.95;
         color: #ffffff;
+        transform: translateY(-1px);
     }
-    .topbar-brand-title {
-        font-weight: 900;
-        line-height: 1.05;
-        font-size: 1.45rem;
-        letter-spacing: -0.5px;
-        margin: 0;
-        color: #ffffff;
+    .topbar-brand-badge {
+        background-color: #ffffff;
+        padding: 3px 8px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     }
-    .topbar-brand-subtitle {
-        font-weight: 800;
-        font-size: 1.15rem;
-        letter-spacing: 0.5px;
+    .topbar-brand-logo {
+        height: 32px;
+        width: auto;
+        object-fit: contain;
+        display: block;
     }
 
     .topbar-divider {
@@ -223,8 +226,10 @@
             
             <!-- Left: Brand + Address -->
             <div class="d-flex align-items-center flex-shrink-0">
-                <a href="{{ route('home.index') }}" class="topbar-brand me-3 me-xxl-4" title="TC SMART">
-                    <h2 class="topbar-brand-title">TC<br><span class="topbar-brand-subtitle">SMART</span></h2>
+                <a href="{{ route('home.index') }}" class="topbar-brand me-3 me-xxl-4" title="TC Smart Technology">
+                    <span class="topbar-brand-badge">
+                        <img src="{{ asset('assets/img/tc_smart_logo.png') }}" alt="TC Smart Technology" class="topbar-brand-logo">
+                    </span>
                 </a>
 
                 <div class="d-flex align-items-center text-white">
@@ -385,8 +390,10 @@
 
         <!-- Row 2: Brand + Address -->
         <div class="d-flex align-items-center justify-content-between pt-1">
-            <a href="{{ route('home.index') }}" class="topbar-brand" title="TC SMART">
-                <h2 class="topbar-brand-title" style="font-size: 1.35rem;">TC <span class="topbar-brand-subtitle">SMART</span></h2>
+            <a href="{{ route('home.index') }}" class="topbar-brand" title="TC Smart Technology">
+                <span class="topbar-brand-badge">
+                    <img src="{{ asset('assets/img/tc_smart_logo.png') }}" alt="TC Smart Technology" class="topbar-brand-logo" style="height: 28px;">
+                </span>
             </a>
 
             <div class="d-flex align-items-center text-white ms-auto">

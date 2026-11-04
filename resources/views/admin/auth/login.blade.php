@@ -20,10 +20,10 @@
           <div class="col-md-8 col-lg-6 col-xxl-3">
             <div class="card mb-0">
               <div class="card-body">
-                <a href="{{ route('admin.dashboard') }}" class="text-nowrap logo-img text-center d-block py-3 w-100">
-                   <h3 class="fw-bold text-dark">TC Smart Technology</h3>
+                <a href="{{ route('admin.dashboard') }}" class="text-nowrap logo-img text-center d-block py-2 w-100" title="TC Smart Technology">
+                   <img src="{{ asset('assets/img/tc_smart_logo.png') }}" alt="TC Smart Technology" style="height: 64px; max-width: 100%; width: auto; object-fit: contain;">
                 </a>
-                <p class="text-center">Admin Panel</p>
+                <p class="text-center text-muted fw-semibold small mb-4">Admin Portal</p>
                 <form action="{{ route('admin.authenticate') }}" method="POST">
                   @csrf
                   <div class="mb-3">

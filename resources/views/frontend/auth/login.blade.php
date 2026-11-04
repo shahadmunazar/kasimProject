@@ -28,6 +28,11 @@
         <div class="col-md-8 col-lg-5">
             <div class="card shadow-lg border-0 auth-card">
                 <div class="card-body">
+                    <div class="text-center mb-4">
+                        <a href="{{ route('home.index') }}" class="d-inline-block">
+                            <img src="{{ asset('assets/img/tc_smart_logo.png') }}" alt="TC Smart Technology" style="height: 56px; max-width: 100%; width: auto; object-fit: contain;">
+                        </a>
+                    </div>
                     <div id="alertBox" class="alert d-none rounded-3 px-3 py-2"></div>
 
                     <!-- LOGIN FORM -->

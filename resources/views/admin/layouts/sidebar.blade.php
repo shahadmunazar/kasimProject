@@ -1,9 +1,9 @@
 <aside class="left-sidebar">
       <!-- Sidebar scroll-->
       <div>
-        <div class="brand-logo d-flex align-items-center justify-content-between">
-          <a href="{{ route('admin.dashboard') }}" class="text-nowrap logo-img">
-             <h3 class="fw-bold text-dark">TC Smart Technology</h3>
+        <div class="brand-logo d-flex align-items-center justify-content-between px-3 py-2">
+          <a href="{{ route('admin.dashboard') }}" class="text-nowrap logo-img d-flex align-items-center" title="TC Smart Technology">
+             <img src="{{ asset('assets/img/tc_smart_logo.png') }}" alt="TC Smart Technology" style="height: 48px; max-width: 185px; width: auto; object-fit: contain;">
           </a>
           <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
             <i class="ti ti-x fs-8"></i>
